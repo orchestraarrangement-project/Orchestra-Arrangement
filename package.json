@@ -8,7 +8,8 @@
     "start": "node server-supabase.js",
     "dev:server": "nodemon server-supabase.js",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
-    "criar-admin": "node criar-admin.js"
+    "criar-admin": "node criar-admin.js",
+     "vercel-build": "echo 'Build complete'"
   },
   "keywords": [
     "music",
