@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários - Orchestra Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-placeholder">ORCHESTRA</div>
+            <span class="admin-badge">Admin</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+            
+            <a href="admin-ebooks.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ebooks
+            </a>
+            
+            <a href="admin-partituras.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Partituras
+            </a>
+            
+            <a href="admin-usuarios.html" class="sidebar-link active">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    ircle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Usuários
+            </a>
+            
+            <a href="admin-configuracoes.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    ircle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Configurações
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="index.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ver Site
+            </a>
+            <button onclick="logout()" class="sidebar-link" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M13 3H16C16.55 3 17 3.45 17 4V16C17 16.55 16.55 17 16 17H13M8 14L3 10M3 10L8 6M3 10H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-header">
+            <div class="header-left">
+                <h1 class="page-title">Gerenciar Usuários</h1>
+                <p class="page-subtitle">Adicione, edite ou remova usuários do sistema</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" onclick="openModal('create')">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Novo Usuário
+                </button>
+            </div>
+        </header>
+
+        <!-- Search and Filter -->
+        <section class="admin-filters">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    ircle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Buscar usuários..." class="search-input">
+            </div>
+            <select class="filter-select-admin" id="tipoFilter">
+                <option value="all">Todos os tipos</option>
+                <option value="admin">Administradores</option>
+                <option value="usuario">Usuários</option>
+            </select>
+        </section>
+
+        <!-- Users Table -->
+        <section class="admin-table-section">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Data de Cadastro</th>
+                        <th>Último Acesso</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">Carregando usuários...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Modal Criar/Editar Usuário -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Novo Usuário</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="userForm">
+                <input type="hidden" id="userId">
+                
+                <div class="form-group">
+                    <label class="form-label">Nome Completo*</label>
+                    <input type="text" id="nome" class="form-input" placeholder="Ex: João Silva" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email*</label>
+                    <input type="email" id="email" class="form-input" placeholder="joao@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tipo de Usuário*</label>
+                    <select id="tipo" class="form-input" required>
+                        <option value="usuario">Usuário Normal</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="senhaGroup">
+                    <label class="form-label">Senha*</label>
+                    <input type="password" id="senha" class="form-input" placeholder="Mínimo 6 caracteres" minlength="6">
+                    <small style="color: #666; font-size: 12px;" id="senhaHint">Deixe em branco para manter a senha atual</small>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Usuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        // Verificar autenticação
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'admin-login.html';
+        }
+
+        const usuarioLogado = api.getUsuario();
+        let usuarios = [];
+
+        function logout() {
+            api.logout();
+        }
+
+        // Carregar usuários - CORRIGIDO: usando endpoint correto
+        async function carregarUsuarios() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/usuarios', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários');
+                }
+
+                usuarios = await response.json();
+                renderizarUsuarios(usuarios);
+            } catch (error) {
+                console.error('Erro:', error);
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #f44336;">Erro ao carregar usuários</td></tr>';
+            }
+        }
+
+        // Renderizar usuários na tabela
+        function renderizarUsuarios(lista) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Nenhum usuário encontrado</td></tr>';
+                return;
+            }
+
+            lista.forEach(usuario => {
+                const tr = document.createElement('tr');
+                
+                const dataCadastro = new Date(usuario.data_criacao).toLocaleDateString('pt-BR');
+                const ultimoAcesso = usuario.ultimo_acesso ? new Date(usuario.ultimo_acesso).toLocaleDateString('pt-BR') : 'Nunca';
+                
+                const isCurrentUser = usuario.id === usuarioLogado.id;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="table-course">
+                            <div class="user-avatar" style="width: 40px; height: 40px; background: ${usuario.tipo === 'admin' ? '#4a4a7e' : '#10b981'}; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 700;">
+                                ${usuario.nome.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <strong>${usuario.nome}${isCurrentUser ? ' (Você)' : ''}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${usuario.email}</td>
+                    <td><span class="table-badge ${usuario.tipo === 'admin' ? 'badge-purple' : 'badge-blue'}">${usuario.tipo === 'admin' ? 'Admin' : 'Usuário'}</span></td>
+                    <td>${dataCadastro}</td>
+                    <td>${ultimoAcesso}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="action-btn action-edit" onclick="editarUsuario('${usuario.id}')" title="Editar">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                            ${!isCurrentUser ? `
+                                <button class="action-btn action-delete" onclick="deletarUsuario('${usuario.id}', '${usuario.nome}')" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Abrir modal para criar
+        function openModal(mode = 'create', userId = null) {
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('modalTitle');
+            const submitBtn = document.getElementById('submitBtn');
+            const senhaInput = document.getElementById('senha');
+            const senhaHint = document.getElementById('senhaHint');
+            
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+
+            if (mode === 'create') {
+                title.textContent = 'Novo Usuário';
+                submitBtn.textContent = 'Criar Usuário';
+                senhaInput.required = true;
+                senhaHint.style.display = 'none';
+            } else {
+                title.textContent = 'Editar Usuário';
+                submitBtn.textContent = 'Salvar Alterações';
+                senhaInput.required = false;
+                senhaHint.style.display = 'block';
+                
+                // Carregar dados do usuário
+                const usuario = usuarios.find(u => u.id === userId);
+                if (usuario) {
+                    document.getElementById('userId').value = usuario.id;
+                    document.getElementById('nome').value = usuario.nome;
+                    document.getElementById('email').value = usuario.email;
+                    document.getElementById('tipo').value = usuario.tipo;
+                }
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        // Editar usuário
+        function editarUsuario(id) {
+            openModal('edit', id);
+        }
+
+        // Submeter formulário
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const dados = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                tipo: document.getElementById('tipo').value
+            };
+
+            const senha = document.getElementById('senha').value;
+            if (senha) {
+                if (senha.length < 6) {
+                    alert('A senha deve ter no mínimo 6 caracteres');
+                    return;
+                }
+                dados.senha = senha;
+            }
+
+            try {
+                let response;
+                if (userId) {
+                    // Atualizar
+                    response = await fetch(`http://localhost:5000/api/admin/usuarios/${userId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(dados)
+                    });
+                } else {
+                    // Criar
+                    response = await fetch('http://localhost:5000/api/admin/usuarios', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(dados)
+                    });
+                }
+
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.erro || 'Erro ao salvar usuário');
+                }
+
+                alert(result.mensagem);
+                closeModal();
+                carregarUsuarios();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message);
+            }
+        });
+
+        // Deletar usuário
+        async function deletarUsuario(id, nome) {
+            if (!confirm(`Tem certeza que deseja deletar o usuário "${nome}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/admin/usuarios/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.erro || 'Erro ao deletar usuário');
+                }
+
+                alert('Usuário deletado com sucesso!');
+                carregarUsuarios();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message);
+            }
+        }
+
+        // Filtros
+        document.getElementById('tipoFilter').addEventListener('change', function() {
+            const tipo = this.value;
+            const filtrados = tipo === 'all' ? usuarios : usuarios.filter(u => u.tipo === tipo);
+            renderizarUsuarios(filtrados);
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const busca = this.value.toLowerCase();
+            const filtrados = usuarios.filter(u => 
+                u.nome.toLowerCase().includes(busca) ||
+                u.email.toLowerCase().includes(busca)
+            );
+            renderizarUsuarios(filtrados);
+        });
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Carregar ao iniciar
+        carregarUsuarios();
+    </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Cursos - Orchestra Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-placeholder">ORCHESTRA</div>
+            <span class="admin-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="admin-ebooks.html" class="sidebar-link active">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 4H17M3 10H17M3 16H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Cursos
+            </a>
+
+            <a href="admin-partituras.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Partituras
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Usuários
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Atividades
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Configurações
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ver Site
+            </a>
+            <button onclick="logout()" class="sidebar-link" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M13 3H16C16.55 3 17 3.45 17 4V16C17 16.55 16.55 17 16 17H13M8 14L3 10M3 10L8 6M3 10H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-header">
+            <div class="header-left">
+                <h1 class="page-title">Gerenciar Cursos</h1>
+                <p class="page-subtitle">Adicione, edite ou remova cursos</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" onclick="openModal()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Novo Curso
+                </button>
+            </div>
+        </header>
+
+        <!-- Search and Filter -->
+        <section class="admin-filters">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <input type="text" placeholder="Buscar cursos..." class="search-input">
+            </div>
+            <select class="filter-select-admin">
+                <option>Todas as categorias</option>
+                <option>Teoria Musical</option>
+                <option>Leitura de Partituras</option>
+                <option>Harmonia</option>
+                <option>Ritmo</option>
+                <option>Composição</option>
+            </select>
+            <select class="filter-select-admin">
+                <option>Todas as dificuldades</option>
+                <option>Iniciante</option>
+                <option>Intermediário</option>
+                <option>Avançado</option>
+            </select>
+        </section>
+
+        <!-- Courses Table -->
+        <section class="admin-table-section">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Curso</th>
+                        <th>Categoria</th>
+                        <th>Nível</th>
+                        <th>Aulas</th>
+                        <th>Alunos</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="table-course">
+                                <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=100&h=100&fit=crop" alt="">
+                                <div>
+                                    <strong>Fundamentos da Teoria Musical</strong>
+                                    <span>Atualizado há 2 dias</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="table-badge badge-blue">Teoria Musical</span></td>
+                        <td><span class="table-badge badge-green">Iniciante</span></td>
+                        <td>4 aulas</td>
+                        <td>234</td>
+                        <td><span class="status-badge status-published">Publicado</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn action-edit" title="Editar">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn action-delete" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="table-course">
+                                <img src="https://images.unsplash.com/photo-1460667262436-cf19894f4774?w=100&h=100&fit=crop" alt="">
+                                <div>
+                                    <strong>Leitura Avançada de Partituras</strong>
+                                    <span>Atualizado há 5 dias</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="table-badge badge-purple">Leitura</span></td>
+                        <td><span class="table-badge badge-orange">Avançado</span></td>
+                        <td>6 aulas</td>
+                        <td>189</td>
+                        <td><span class="status-badge status-published">Publicado</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn action-edit" title="Editar">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn action-delete" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="table-course">
+                                <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=100&h=100&fit=crop" alt="">
+                                <div>
+                                    <strong>Harmonia Funcional</strong>
+                                    <span>Atualizado há 1 semana</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="table-badge badge-teal">Harmonia</span></td>
+                        <td><span class="table-badge badge-yellow">Intermediário</span></td>
+                        <td>8 aulas</td>
+                        <td>156</td>
+                        <td><span class="status-badge status-published">Publicado</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn action-edit" title="Editar">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn action-delete" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="table-course">
+                                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop" alt="">
+                                <div>
+                                    <strong>Composição Musical</strong>
+                                    <span>Rascunho</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="table-badge badge-pink">Composição</span></td>
+                        <td><span class="table-badge badge-orange">Avançado</span></td>
+                        <td>10 aulas</td>
+                        <td>0</td>
+                        <td><span class="status-badge status-draft">Rascunho</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn action-edit" title="Editar">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn action-delete" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 class="modal-title">Novo Curso</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <form class="modal-form" id="courseForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Título do Curso</label>
+                        <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Teoria Musical" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Categoria</label>
+                        <select id="categoria" class="form-input" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Teoria Musical">Teoria Musical</option>
+                            <option value="Leitura de Partituras">Leitura de Partituras</option>
+                            <option value="Harmonia">Harmonia</option>
+                            <option value="Ritmo">Ritmo</option>
+                            <option value="Composição">Composição</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nível de Dificuldade</label>
+                        <select id="nivel" class="form-input" required>
+                            <option value="">Selecione o nível</option>
+                            <option value="Iniciante">Iniciante</option>
+                            <option value="Intermediário">Intermediário</option>
+                            <option value="Avançado">Avançado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea id="descricao" class="form-input" rows="4" placeholder="Descreva o que os alunos aprenderão neste curso..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Duração (semanas)</label>
+                        <input type="number" id="duracao" class="form-input" placeholder="Ex: 4" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Número de Aulas</label>
+                        <input type="number" id="numeroAulas" class="form-input" placeholder="Ex: 8" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL da Imagem de Capa</label>
+                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
+                    <small style="color: #666; font-size: 12px;">Cole a URL de uma imagem ou deixe em branco para usar padrão</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="status" class="form-input" required>
+                        <option value="Rascunho">Rascunho</option>
+                        <option value="Publicado">Publicado</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'admin-login.html';
+        }
+
+        function logout() {
+            api.logout();
+        }
+
+        // Carregar cursos do banco
+        async function carregarCursos() {
+            try {
+                const cursos = await api.getCursos();
+                renderizarCursos(cursos);
+            } catch (error) {
+                console.error('Erro ao carregar cursos:', error);
+                alert('Erro ao carregar cursos: ' + error.message);
+            }
+        }
+
+        // Renderizar cursos na tabela
+        function renderizarCursos(cursos) {
+            const tbody = document.querySelector('.admin-table tbody');
+            tbody.innerHTML = '';
+
+            if (cursos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">Nenhum curso cadastrado</td></tr>';
+                return;
+            }
+
+            cursos.forEach(curso => {
+                const tr = document.createElement('tr');
+                
+                // Badge de categoria
+                const categoriaColors = {
+                    'Teoria Musical': 'badge-blue',
+                    'Leitura de Partituras': 'badge-purple',
+                    'Harmonia': 'badge-teal',
+                    'Ritmo': 'badge-pink',
+                    'Composição': 'badge-orange'
+                };
+
+                // Badge de nível
+                const nivelColors = {
+                    'Iniciante': 'badge-green',
+                    'Intermediário': 'badge-yellow',
+                    'Avançado': 'badge-orange'
+                };
+
+                const dataAtualizacao = new Date(curso.ultima_atualizacao || curso.data_criacao);
+                const diasAtras = Math.floor((new Date() - dataAtualizacao) / (1000 * 60 * 60 * 24));
+                const textoAtualizacao = diasAtras === 0 ? 'hoje' : `há ${diasAtras} dia${diasAtras > 1 ? 's' : ''}`;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="table-course">
+                            <img src="${curso.imagem_capa || 'https://via.placeholder.com/100'}" alt="">
+                            <div>
+                                <strong>${curso.titulo}</strong>
+                                <span>Atualizado ${textoAtualizacao}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="table-badge ${categoriaColors[curso.categoria] || 'badge-blue'}">${curso.categoria}</span></td>
+                    <td><span class="table-badge ${nivelColors[curso.nivel] || 'badge-green'}">${curso.nivel}</span></td>
+                    <td>${curso.numero_aulas} aulas</td>
+                    <td>${curso.alunos ? curso.alunos.length : 0}</td>
+                    <td><span class="status-badge ${curso.status === 'Publicado' ? 'status-published' : 'status-draft'}">${curso.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="action-btn action-edit" onclick="editarCurso('${curso.id}')" title="Editar">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn action-delete" onclick="deletarCurso('${curso.id}', '${curso.titulo}')" title="Excluir">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Criar novo curso
+        async function criarCurso(event) {
+            event.preventDefault();
+
+            const formData = {
+                titulo: document.getElementById('titulo').value,
+                categoria: document.getElementById('categoria').value,
+                nivel: document.getElementById('nivel').value,
+                descricao: document.getElementById('descricao').value,
+                duracao: parseInt(document.getElementById('duracao').value),
+                numero_aulas: parseInt(document.getElementById('numeroAulas').value),
+                imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
+                status: document.getElementById('status').value,
+                aulas: [],
+                alunos: [],
+                avaliacoes: []
+            };
+
+            try {
+                await api.criarCurso(formData);
+                alert('✅ Curso criado com sucesso!');
+                closeModal();
+                document.getElementById('courseForm').reset();
+                carregarCursos(); // Recarrega a lista
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('❌ Erro ao criar curso: ' + error.message);
+            }
+        }
+
+        // Deletar curso
+        async function deletarCurso(id, titulo) {
+            if (!confirm(`Tem certeza que deseja deletar o curso "${titulo}"?`)) {
+                return;
+            }
+
+            try {
+                await api.deletarCurso(id);
+                alert('✅ Curso deletado com sucesso!');
+                carregarCursos(); // Recarrega a lista
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('❌ Erro ao deletar curso: ' + error.message);
+            }
+        }
+
+        // Editar curso (simplificado)
+        function editarCurso(id) {
+            alert('Funcionalidade de edição será implementada em breve!\nPor enquanto, edite diretamente no Supabase.');
+            // TODO: Implementar modal de edição
+        }
+
+        function openModal() {
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('courseModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // File upload
+        document.getElementById('courseImage').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Nenhum arquivo selecionado';
+            document.querySelector('.file-name').textContent = fileName;
+        });
+
+        // Submeter formulário
+        document.getElementById('courseForm').addEventListener('submit', criarCurso);
+
+        // Carregar cursos ao iniciar
+        carregarCursos();
+    </script>
+</body>
+</html>

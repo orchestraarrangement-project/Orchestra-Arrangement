@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partituras - Orchestra</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* HEADER FIXO NO TOPO */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* Compensar altura do header fixo */
+        body {
+            padding-top: 100px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 2rem;
+        }
+        
+        /* LOGO - TAMANHO FIXO SEM ESPAÇO BRANCO */
+        .logo-link {
+            display: block;
+            line-height: 0;
+        }
+        
+        .logo-link img {
+            height: 300px; /* Altura maior */
+            width: auto;
+            display: block;
+            margin: -120px 0; /* Remove espaço branco de cima e baixo */
+        }
+        
+        .nav {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: #5B4C9D;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: #f5f3ff;
+        }
+        
+        .nav-link.active {
+            background: #5B4C9D;
+            color: white;
+            border: 2px solid #5B4C9D;
+        }
+
+        /* SEÇÃO BIBLIOTECA */
+        .biblioteca-section {
+            background: #5B4C9D;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .biblioteca-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .biblioteca-section p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* FILTROS */
+        .filters-section {
+            background: #f5f5f5;
+            padding: 30px 0;
+        }
+
+        .filters {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .results-count {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo-link">
+                <img src="imagens/Logo  Branca.png" alt="Orchestra">
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Início</a>
+                <a href="partituras.html" class="nav-link active">Partituras</a>
+                <a href="ebooks.html" class="nav-link">Ebooks</a>
+            </nav>
+        </div>
+    </header>
+
+   <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Partituras Musicais</h1>
+            <p class="page-subtitle">Aprenda teoria musical, leitura de partituras e muito mais com nossos ebooks especializados</p>
+        </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters">
+                <select class="filter-select" id="instrumentoFilter">
+                    <option value="all">Todos os instrumentos</option>
+                    <option value="Piano">Piano</option>
+                    <option value="Violino">Violino</option>
+                    <option value="Violão">Violão</option>
+                    <option value="Guitarra">Guitarra</option>
+                    <option value="Flauta">Flauta</option>
+                    <option value="Saxofone">Saxofone</option>
+                    <option value="Trompete">Trompete</option>
+                    <option value="Bateria">Bateria</option>
+                    <option value="Clarinete">Clarinete</option>
+                    <option value="Baixo">Baixo</option>
+                </select>
+                
+                <select class="filter-select" id="dificuldadeFilter">
+                    <option value="all">Todas as Dificuldades</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Intermediário">Intermediário</option>
+                    <option value="Difícil">Difícil</option>
+                </select>
+            </div>
+            <p class="results-count" id="resultsCount">Carregando...</p>
+        </div>
+    </section>
+
+    <!-- Partituras Grid -->
+    <section class="content-section" style="padding: 40px 0;">
+        <div class="container">
+            <div class="cards-grid" id="partiturasGrid">
+                <!-- Será preenchido via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-placeholder">ORCHESTRA</div>
+                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Links Rápidos</h4>
+                        <ul class="footer-list">
+                            <li><a href="ebooks.html">Ebooks</a></li>
+                            <li><a href="partituras.html">Partituras</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Contato</h4>
+                        <ul class="footer-list">
+                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
+                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script>
+        let todasPartituras = [];
+
+        async function carregarPartituras() {
+            try {
+                const partituras = await api.getPartituras();
+                todasPartituras = partituras.filter(p => p.status === 'Publicado');
+                renderizarPartituras(todasPartituras);
+                atualizarContador(todasPartituras.length);
+            } catch (error) {
+                console.error('Erro:', error);
+                const grid = document.getElementById('partiturasGrid');
+                grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #f44336;">Erro ao carregar partituras.</p>';
+                document.getElementById('resultsCount').textContent = 'Erro ao carregar';
+            }
+        }
+
+        function renderizarPartituras(partituras) {
+    const grid = document.getElementById('partiturasGrid');
+
+    if (partituras.length === 0) {
+        grid.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                <h3 style="color: #666; margin-bottom: 10px;">Nenhuma partitura encontrada</h3>
+                <p style="color: #999;">Crie partituras no painel admin!</p>
+            </div>
+        `;
+        return;
+    }
+
+    const dificuldadeColors = {
+        'Fácil': 'badge-green',
+        'Intermediário': 'badge-yellow',
+        'Difícil': 'badge-red'
+    };
+
+    grid.innerHTML = partituras.map(partitura => `
+        <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
+            <div class="score-image">
+                <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" 
+                     alt="${partitura.titulo}">
+                <div class="score-badge ${dificuldadeColors[partitura.dificuldade] || 'badge-green'}">
+                    ${partitura.dificuldade}
+                </div>
+            </div>
+            <div class="score-content">
+                <h3 class="score-title">${partitura.titulo}</h3>
+                <p class="score-composer">${partitura.compositor}</p>
+                <div class="score-tags">
+                    <span class="tag">${partitura.instrumento}</span>
+                    ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+        function atualizarContador(count) {
+            const texto = count === 1 ? 'partitura encontrada' : 'partituras encontradas';
+            document.getElementById('resultsCount').textContent = `${count} ${texto}`;
+        }
+
+        document.getElementById('instrumentoFilter').addEventListener('change', function() {
+            const instrumento = this.value;
+            const dificuldade = document.getElementById('dificuldadeFilter').value;
+            
+            let filtradas = todasPartituras;
+            
+            if (instrumento !== 'all') {
+                filtradas = filtradas.filter(p => p.instrumento === instrumento);
+            }
+            
+            if (dificuldade !== 'all') {
+                filtradas = filtradas.filter(p => p.dificuldade === dificuldade);
+            }
+            
+            renderizarPartituras(filtradas);
+            atualizarContador(filtradas.length);
+        });
+
+        document.getElementById('dificuldadeFilter').addEventListener('change', function() {
+            const dificuldade = this.value;
+            const instrumento = document.getElementById('instrumentoFilter').value;
+            
+            let filtradas = todasPartituras;
+            
+            if (instrumento !== 'all') {
+                filtradas = filtradas.filter(p => p.instrumento === instrumento);
+            }
+            
+            if (dificuldade !== 'all') {
+                filtradas = filtradas.filter(p => p.dificuldade === dificuldade);
+            }
+            
+            renderizarPartituras(filtradas);
+            atualizarContador(filtradas.length);
+        });
+
+        document.addEventListener('DOMContentLoaded', carregarPartituras);
+    </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursos de Música - Orchestra</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-placeholder">ORCHESTRA</div>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 6L8 2L14 6V13C14 13.55 13.55 14 13 14H3C2.45 14 2 13.55 2 13V6Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Início
+                </a>
+                <a href="cursos.html" class="nav-link active">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 3H14M2 8H14M2 13H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Cursos
+                </a>
+                <a href="partituras.html" class="nav-link">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 2H13C13.55 2 14 2.45 14 3V13C14 13.55 13.55 14 13 14H3C2.45 14 2 13.55 2 13V3C2 2.45 2.45 2 3 2Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Partituras
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Cursos de Música</h1>
+            <p class="page-subtitle">Aprenda teoria musical, leitura de partituras e muito mais com nossos cursos especializados</p>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="teoria">Teoria Musical</button>
+                <button class="filter-btn" data-filter="leitura">Leitura de Partituras</button>
+                <button class="filter-btn" data-filter="harmonia">Harmonia</button>
+                <button class="filter-btn" data-filter="ritmo">Ritmo</button>
+                <button class="filter-btn" data-filter="composicao">Composição</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Grid -->
+    <section class="courses-section">
+        <div class="container">
+            <div class="cards-grid">
+                <div class="card" data-category="teoria">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=600&fit=crop" alt="Fundamentos da Teoria Musical">
+                        <span class="card-badge badge-green">Iniciante</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Teoria Musical</div>
+                        <h3 class="card-title">Fundamentos da Teoria Musical</h3>
+                        <p class="card-description">Aprenda os conceitos básicos da teoria musical, incluindo notas, escalas, acordes e como ler partituras. Perfeito para iniciantes!</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                4 semanas
+                            </span>
+                            <a href="curso-detalhes.html" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-category="leitura">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1460667262436-cf19894f4774?w=800&h=600&fit=crop" alt="Leitura Avançada de Partituras">
+                        <span class="card-badge badge-yellow">Avançado</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Leitura de Partituras</div>
+                        <h3 class="card-title">Leitura Avançada de Partituras</h3>
+                        <p class="card-description">Desenvolva habilidades avançadas de leitura musical, incluindo sight-reading, ornamentações e interpretação de dinâmicas.</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                6 semanas
+                            </span>
+                            <a href="#" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-category="harmonia">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&h=600&fit=crop" alt="Harmonia Funcional">
+                        <span class="card-badge badge-yellow">Intermediário</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Harmonia</div>
+                        <h3 class="card-title">Harmonia Funcional</h3>
+                        <p class="card-description">Estude progressões harmônicas, cadências e análise harmônica para composição e arranjo musical.</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                8 semanas
+                            </span>
+                            <a href="#" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-category="ritmo">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop" alt="Ritmo e Timing">
+                        <span class="card-badge badge-yellow">Intermediário</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Ritmo</div>
+                        <h3 class="card-title">Ritmo e Timing</h3>
+                        <p class="card-description">Desenvolva seu senso rítmico, aprenda diferentes compassos e melhore seu timing musical.</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                5 semanas
+                            </span>
+                            <a href="#" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-category="composicao">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=600&fit=crop" alt="Composição Musical">
+                        <span class="card-badge badge-red">Difícil</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Composição</div>
+                        <h3 class="card-title">Composição Musical</h3>
+                        <p class="card-description">Aprenda técnicas de composição, desenvolvimento de melodias e estruturação de obras musicais.</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                10 semanas
+                            </span>
+                            <a href="#" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" data-category="teoria">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800&h=600&fit=crop" alt="Análise Musical">
+                        <span class="card-badge badge-yellow">Intermediário</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">Teoria Musical</div>
+                        <h3 class="card-title">Análise Musical</h3>
+                        <p class="card-description">Aprenda a analisar obras musicais, identificando estruturas, harmonias e técnicas composicionais.</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                7 semanas
+                            </span>
+                            <a href="#" class="card-link">
+                                Ver curso
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2 class="cta-title">Pronto Para Começar?</h2>
+                <p class="cta-subtitle">Explore nossos cursos e partituras agora mesmo!</p>
+                <a href="partituras.html" class="btn btn-primary btn-large">
+                    Começar Agora
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7 15L13 10L7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-placeholder">ORCHESTRA</div>
+                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Links Rápidos</h4>
+                        <ul class="footer-list">
+                            <li><a href="cursos.html">Cursos</a></li>
+                            <li><a href="partituras.html">Partituras</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Contato</h4>
+                        <ul class="footer-list">
+                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
+                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+
+                cards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

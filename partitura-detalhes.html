@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partitura - Orchestra</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* HEADER FIXO NO TOPO */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        body {
+            padding-top: 100px;
+            background: #fff;
+            margin: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 2rem;
+        }
+        
+        /* LOGO */
+        .logo-link {
+            display: block;
+            line-height: 0;
+        }
+        
+        .logo-link img {
+            height: 300px;
+            width: auto;
+            display: block;
+            margin: -120px 0;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: #5B4C9D;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: #f5f3ff;
+        }
+
+        /* BACK BUTTON */
+        .back-section {
+            padding: 20px 0;
+            background: #fff;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #5B4C9D;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+     /* HERO SECTION COM IMAGEM DO LADO */
+.course-hero {
+    background: linear-gradient(135deg, #4a4a7e 0%, #3a3a6e 100%);
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            padding: 60px 0;
+        }
+
+        .hero-container {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            gap: 60px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-content {
+            color: white;
+        }
+
+        .course-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .course-meta-info {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .meta-item svg {
+            flex-shrink: 0;
+        }
+
+        .course-description {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            opacity: 0.95;
+        }
+
+        .btn-comprar {
+            background: #FFC107;
+            color: #333;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-comprar:hover {
+            background: #FFD54F;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 193, 7, 0.5);
+        }
+
+        /* CONTENT SECTION */
+        .course-content-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .content-box {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .content-title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #5B4C9D;
+        }
+
+        .details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .detail-item {
+            display: flex;
+            gap: 25px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            transition: all 0.3s;
+            border-left: 5px solid #5B4C9D;
+        }
+
+        .detail-item:hover {
+            background: #e9ecef;
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(91, 76, 157, 0.15);
+        }
+
+        .detail-icon {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background: #5B4C9D;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .detail-content {
+            flex-grow: 1;
+        }
+
+        .detail-title {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .detail-description {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .hero-image {
+                height: 400px;
+            }
+
+            .course-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo-link">
+                <img src="imagens/Logo  Branca.png" alt="Orchestra">
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Início</a>
+                <a href="partituras.html" class="nav-link">Partituras</a>
+                <a href="ebooks.html" class="nav-link">Ebooks</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Back Button -->
+    <section class="back-section">
+        <div class="container">
+            <a href="partituras.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Voltar
+            </a>
+        </div>
+    </section>
+
+    <!-- Course Hero -->
+    <section class="course-hero">
+        <div class="hero-container">
+            <!-- Imagem da Partitura (Dinâmica) -->
+            <div class="hero-image" id="heroImage">
+                <div class="loading">Carregando...</div>
+            </div>
+
+            <!-- Informações da Partitura -->
+            <div class="hero-content">
+                <h1 class="course-title" id="courseTitle">Carregando...</h1>
+                
+                <div class="course-meta-info" id="courseMeta">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+
+                <p class="course-description" id="courseDescription">
+                    <!-- Preenchido via JavaScript -->
+                </p>
+
+                <button class="btn-comprar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 3H5L6 13H18L20 6H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        ircle cx="9" cy="20" r="1" fill="currentColor"/>
+                        ircle cx="16" cy="20" r="1" fill="currentColor"/>
+                    </svg>
+                    Comprar Partitura
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="course-content-section">
+        <div class="container">
+            <div class="content-box">
+                <h2 class="content-title">Detalhes da Partitura</h2>
+                
+                <div class="details-list" id="detailsList">
+                    <div class="loading">Carregando detalhes...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-placeholder">ORCHESTRA</div>
+                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Links Rápidos</h4>
+                        <ul class="footer-list">
+                            <li><a href="ebooks.html">Ebooks</a></li>
+                            <li><a href="partituras.html">Partituras</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Contato</h4>
+                        <ul class="footer-list">
+                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
+                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script>
+        // Pegar ID da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const partituraId = urlParams.get('id');
+
+        async function carregarPartitura() {
+            if (!partituraId) {
+                alert('Partitura não encontrada!');
+                window.location.href = 'partituras.html';
+                return;
+            }
+
+            try {
+                // Carregar dados da partitura
+                const partitura = await api.getPartitura(partituraId);
+
+                // Preencher IMAGEM
+                document.getElementById('heroImage').innerHTML = `
+                    <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800'}" alt="${partitura.titulo}">
+                `;
+
+                // Preencher título
+                document.getElementById('courseTitle').textContent = partitura.titulo;
+
+                // Preencher meta informações
+                document.getElementById('courseMeta').innerHTML = `
+                    <div class="meta-item">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 2L12 8L18 8L13 12L15 18L10 14L5 18L7 12L2 8L8 8L10 2Z" fill="currentColor"/>
+                        </svg>
+                        <span>${partitura.instrumento}</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            ircle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M10 5V10L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span>${partitura.dificuldade}</span>
+                    </div>
+                    ${partitura.genero ? `
+                    <div class="meta-item">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M4 6H16M4 10H16M4 14H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span>${partitura.genero}</span>
+                    </div>
+                    ` : ''}
+                `;
+
+                // Preencher descrição (compositor)
+                document.getElementById('courseDescription').textContent = `Compositor: ${partitura.compositor}`;
+
+                // Preencher detalhes
+                document.getElementById('detailsList').innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-icon">📝</div>
+                        <div class="detail-content">
+                            <h3 class="detail-title">Compositor</h3>
+                            <p class="detail-description">${partitura.compositor}</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">🎼</div>
+                        <div class="detail-content">
+                            <h3 class="detail-title">Instrumento</h3>
+                            <p class="detail-description">${partitura.instrumento}</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">⭐</div>
+                        <div class="detail-content">
+                            <h3 class="detail-title">Dificuldade</h3>
+                            <p class="detail-description">${partitura.dificuldade}</p>
+                        </div>
+                    </div>
+                    ${partitura.genero ? `
+                    <div class="detail-item">
+                        <div class="detail-icon">🎵</div>
+                        <div class="detail-content">
+                            <h3 class="detail-title">Gênero Musical</h3>
+                            <p class="detail-description">${partitura.genero}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${partitura.observacoes ? `
+                    <div class="detail-item">
+                        <div class="detail-icon">📖</div>
+                        <div class="detail-content">
+                            <h3 class="detail-title">Observações</h3>
+                            <p class="detail-description">${partitura.observacoes}</p>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                // Atualizar título da página
+                document.title = `${partitura.titulo} - Orchestra`;
+
+            } catch (error) {
+                console.error('Erro ao carregar partitura:', error);
+                alert('Erro ao carregar partitura! Tente novamente.');
+                window.location.href = 'partituras.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarPartitura);
+    </script>
+</body>
+</html>

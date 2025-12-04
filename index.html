@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orchestra - Plataforma Musical Completa</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+/* ===== ESTILOS PARA CARDS DE EBOOKS (IGUAL ÀS PARTITURAS) ===== */
+
+.course-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.course-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.course-card:hover .course-image img {
+    transform: scale(1.1) rotate(2deg);
+}
+
+.course-content {
+    padding: 20px;
+}
+
+.course-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d2d3d;
+    margin-bottom: 6px;
+    transition: all 0.3s ease;
+}
+
+.course-card:hover .course-title {
+    color: #3f3f73;
+}
+
+.course-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+/* Animação ao carregar */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Borda nos botões Ver Todas */
+.btn-primary {
+    border: 3px solid #5B4C9D;
+}
+
+.btn-primary:hover {
+    border-color: #FFC107;
+    background: #5B4C9D;
+    color: white;
+}
+
+.course-card {
+    animation: fadeInScale 0.5s ease;
+}
+
+        /* HEADER FIXO NO TOPO */
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* Compensar altura do header fixo */
+        body {
+            padding-top: 100px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 2rem;
+        }
+        
+        /* LOGO - TAMANHO FIXO SEM ESPAÇO BRANCO */
+        .logo-link {
+            display: block;
+            line-height: 0; /* Remove espaço vertical */
+        }
+        
+        .logo-link img {
+            height: 300px; /* Altura maior */
+            width: auto;
+            display: block;
+            margin: -120px 0; /* Remove espaço branco de cima e baixo */
+        }
+        
+        .nav {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-link {
+            color: #5B4C9D;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: #f5f3ff;
+        }
+        
+        .nav-link.active {
+            background: #5B4C9D;
+            color: white;
+            border: 2px solid #5B4C9D;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo-link">
+                <img src="imagens/Logo  Branca.png" alt="Orchestra">
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link active">Início</a>
+                <a href="partituras.html" class="nav-link">Partituras</a>
+                <a href="ebooks.html" class="nav-link">Ebooks</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 2L12.5 7.5L18 8.5L14 12.5L15 18L10 15L5 18L6 12.5L2 8.5L7.5 7.5L10 2Z" fill="currentColor"/>
+                </svg>
+                Plataforma Musical Completa
+            </div>
+            <h1 class="hero-title">
+                Aprenda Música do<br>
+                <span class="highlight">Seu Jeito</span>
+            </h1>
+            <p class="hero-subtitle">
+                Milhares de partituras para todos os instrumentos e ebooks<br>
+                educativos para aprimorar sua técnica musical.
+            </p>
+            <div class="hero-buttons">
+                <a href="partituras.html" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 2H13C13.55 2 14 2.45 14 3V13C14 13.55 13.55 14 13 14H3C2.45 14 2 13.55 2 13V3C2 2.45 2.45 2 3 2Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Explorar Partituras
+                </a>
+                <a href="ebooks.html" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Explorar Ebooks
+                </a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Partituras em Destaque -->
+    <section class="section scores-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Partituras em Destaque</h2>
+                <p class="section-subtitle">Explore nossa biblioteca musical</p>
+            </div>
+            <div class="cards-grid">
+                <!-- Será preenchido via JavaScript -->
+            </div>
+            <div style="text-align: center; margin-top: 40px;;">
+                <a href="partituras.html" class="btn btn-primary">Ver Todas as Partituras</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ebooks Musicais -->
+    <section class="section featured-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ebooks Musicais</h2>
+                <p class="section-subtitle">Aprenda com nossos materiais didáticos</p>
+            </div>
+            <div class="cards-grid">
+                <!-- Será preenchido via JavaScript -->
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="ebooks.html" class="btn btn-primary">Ver Todos os Ebooks</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo-placeholder">ORCHESTRA</div>
+                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Links Rápidos</h4>
+                        <ul class="footer-list">
+                            <li><a href="ebooks.html">Ebooks</a></li>
+                            <li><a href="partituras.html">Partituras</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Contato</h4>
+                        <ul class="footer-list">
+                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
+                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api.js"></script>
+    <script>
+       async function carregarPartituras() {
+    try {
+        const partituras = await api.getPartituras();
+        const container = document.querySelector('.scores-section .cards-grid');
+        
+        const partiturasPublicadas = partituras
+            .filter(p => p.status === 'Publicado')
+            .slice(0, 4);
+
+        if (partiturasPublicadas.length === 0) {
+            container.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">Nenhuma partitura publicada ainda.</p>';
+            return;
+        }
+
+        container.innerHTML = partiturasPublicadas.map(partitura => `
+            <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
+                <div class="score-image">
+                    <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${partitura.titulo}">
+                </div>
+                <div class="score-content">
+                    <h3 class="score-title">${partitura.titulo}</h3>
+                    <p class="score-composer">${partitura.compositor}</p>
+                    <div class="score-tags">
+                        <span class="tag">${partitura.instrumento}</span>
+                        ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+
+       async function carregarEbooks() {
+    try {
+        const ebooks = await api.getCursos();
+        const container = document.querySelector('.featured-section .cards-grid');
+        
+        const ebooksPublicados = ebooks
+            .filter(e => e.status === 'Publicado')
+            .slice(0, 3);
+
+        if (ebooksPublicados.length === 0) {
+            container.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">Nenhum ebook publicado ainda.</p>';
+            return;
+        }
+
+        container.innerHTML = ebooksPublicados.map(ebook => `
+            <div class="course-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
+                <div class="course-image">
+                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${ebook.titulo}">
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">${ebook.titulo}</h3>
+                    <p class="course-description">${(ebook.descricao || '').substring(0, 100)}...</p>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPartituras();
+            carregarEbooks();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Partituras - Orchestra Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-placeholder">ORCHESTRA</div>
+            <span class="admin-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="admin-ebooks.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ebooks
+            </a>
+
+            <a href="admin-partituras.html" class="sidebar-link active">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Partituras
+            </a>
+
+            <a href="admin-usuarios.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Usuários
+            </a>
+
+            <a href="admin-configuracoes.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Configurações
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ver Site
+            </a>
+            <button onclick="logout()" class="sidebar-link" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M13 3H16C16.55 3 17 3.45 17 4V16C17 16.55 16.55 17 16 17H13M8 14L3 10M3 10L8 6M3 10H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Top Bar -->
+        <header class="admin-header">
+            <div class="header-left">
+                <h1 class="page-title">Gerenciar Partituras</h1>
+                <p class="page-subtitle">Adicione, edite ou remova partituras</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" onclick="abrirModalCriar()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Nova Partitura
+                </button>
+            </div>
+        </header>
+
+        <!-- Search and Filter -->
+        <section class="admin-filters">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Buscar partituras..." class="search-input">
+            </div>
+            <select class="filter-select-admin" id="instrumentoFilter">
+                <option value="all">Todos os instrumentos</option>
+                <option value="Piano">Piano</option>
+                <option value="Violino">Violino</option>
+                <option value="Violão">Violão</option>
+                <option value="Guitarra">Guitarra</option>
+                <option value="Flauta">Flauta</option>
+                <option value="Saxofone">Saxofone</option>
+            </select>
+            <select class="filter-select-admin" id="dificuldadeFilter">
+                <option value="all">Todas as dificuldades</option>
+                <option value="Fácil">Fácil</option>
+                <option value="Intermediário">Intermediário</option>
+                <option value="Difícil">Difícil</option>
+            </select>
+        </section>
+
+        <!-- Partituras Table -->
+        <section class="admin-table-section">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Partitura</th>
+                        <th>Instrumento</th>
+                        <th>Dificuldade</th>
+                        <th>Gênero</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Será preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Nova Partitura</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <form class="modal-form" id="courseForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Título da Partitura*</label>
+                        <input type="text" id="titulo" class="form-input" placeholder="Ex: Canon em Ré" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Compositor*</label>
+                        <input type="text" id="compositor" class="form-input" placeholder="Ex: Johann Pachelbel" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instrumento*</label>
+                        <select id="instrumento" class="form-input" required>
+                            <option value="">Selecione o instrumento</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Violino">Violino</option>
+                            <option value="Violão">Violão</option>
+                            <option value="Guitarra">Guitarra</option>
+                            <option value="Flauta">Flauta</option>
+                            <option value="Saxofone">Saxofone</option>
+                            <option value="Trompete">Trompete</option>
+                            <option value="Bateria">Bateria</option>
+                            <option value="Clarinete">Clarinete</option>
+                            <option value="Baixo">Baixo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Dificuldade*</label>
+                        <select id="dificuldade" class="form-input" required>
+                            <option value="">Selecione a dificuldade</option>
+                            <option value="Fácil">Fácil</option>
+                            <option value="Intermediário">Intermediário</option>
+                            <option value="Difícil">Difícil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gênero Musical</label>
+                        <input type="text" id="genero" class="form-input" placeholder="Ex: Clássica, Jazz, Pop">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL da Imagem Preview</label>
+                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Cole a URL de uma imagem ou deixe em branco para usar padrão</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL do Arquivo PDF</label>
+                    <input type="url" id="pdfUrl" class="form-input" placeholder="https://exemplo.com/partitura.pdf">
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Link para download da partitura em PDF</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status*</label>
+                    <select id="status" class="form-input" required>
+                        <option value="Rascunho">Rascunho</option>
+                        <option value="Publicado">Publicado</option>
+                    </select>
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Apenas partituras "Publicado" aparecem no site</small>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Partitura</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'admin-login.html';
+        }
+
+        let partituras = [];
+        let editandoId = null; // IMPORTANTE: Armazena ID da partitura sendo editada
+
+        function logout() {
+            api.logout();
+        }
+
+        async function carregarPartituras() {
+            try {
+                partituras = await api.getPartituras();
+                renderizarPartituras(partituras);
+            } catch (error) {
+                console.error('Erro ao carregar partituras:', error);
+                alert('Erro ao carregar partituras: ' + error.message);
+            }
+        }
+
+        function renderizarPartituras(lista) {
+            const tbody = document.querySelector('.admin-table tbody');
+            tbody.innerHTML = '';
+
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #666;">Nenhuma partitura cadastrada</td></tr>';
+                return;
+            }
+
+            lista.forEach(partitura => {
+                const dificuldadeColors = {
+                    'Fácil': 'badge-green',
+                    'Intermediário': 'badge-yellow',
+                    'Difícil': 'badge-red'
+                };
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="table-course">
+                            <img src="${partitura.imagem_preview || 'https://via.placeholder.com/100'}" alt="${partitura.titulo}">
+                            <div>
+                                <strong>${partitura.titulo}</strong>
+                                <span>${partitura.compositor}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="table-badge badge-blue">${partitura.instrumento}</span></td>
+                    <td><span class="table-badge ${dificuldadeColors[partitura.dificuldade] || 'badge-green'}">${partitura.dificuldade}</span></td>
+                    <td>${partitura.genero || '-'}</td>
+                    <td><span class="status-badge ${partitura.status === 'Publicado' ? 'status-published' : 'status-draft'}">${partitura.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="action-btn action-edit" onclick="editarPartitura('${partitura.id}')" title="Editar">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn action-delete" onclick="deletarPartitura('${partitura.id}', '${partitura.titulo}')" title="Excluir">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ABRIR MODAL PARA CRIAR (limpa editandoId)
+        function abrirModalCriar() {
+            editandoId = null; // LIMPA O ID
+            document.getElementById('courseForm').reset();
+            document.getElementById('courseModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = 'Nova Partitura';
+            document.getElementById('submitBtn').textContent = 'Criar Partitura';
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+            editandoId = null;
+            document.getElementById('courseForm').reset();
+        }
+
+        // EDITAR - Define editandoId e preenche formulário
+        function editarPartitura(id) {
+            const partitura = partituras.find(p => p.id === id);
+            if (!partitura) return;
+
+            editandoId = id; // DEFINE O ID DA PARTITURA SENDO EDITADA
+            
+            document.getElementById('titulo').value = partitura.titulo;
+            document.getElementById('compositor').value = partitura.compositor;
+            document.getElementById('instrumento').value = partitura.instrumento;
+            document.getElementById('dificuldade').value = partitura.dificuldade;
+            document.getElementById('genero').value = partitura.genero || '';
+            document.getElementById('imagemUrl').value = partitura.imagem_preview || '';
+            document.getElementById('pdfUrl').value = partitura.arquivo_pdf || '';
+            document.getElementById('status').value = partitura.status;
+
+            document.getElementById('courseModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = 'Editar Partitura';
+            document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+        }
+
+        // SALVAR - Verifica editandoId para decidir se cria ou atualiza
+        async function salvarPartitura(event) {
+            event.preventDefault();
+
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                compositor: document.getElementById('compositor').value,
+                instrumento: document.getElementById('instrumento').value,
+                dificuldade: document.getElementById('dificuldade').value,
+                genero: document.getElementById('genero').value,
+                imagem_preview: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=600',
+                arquivo_pdf: document.getElementById('pdfUrl').value || '',
+                status: document.getElementById('status').value
+            };
+
+            try {
+                if (editandoId) {
+                    // ATUALIZAR - Se editandoId existe
+                    console.log('Atualizando partitura:', editandoId);
+                    await api.atualizarPartitura(editandoId, dados);
+                    alert('✅ Partitura atualizada com sucesso!');
+                } else {
+                    // CRIAR - Se editandoId é null
+                    console.log('Criando nova partitura');
+                    await api.criarPartitura(dados);
+                    alert('✅ Partitura criada com sucesso!');
+                }
+                
+                closeModal();
+                carregarPartituras();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('❌ Erro ao salvar partitura: ' + error.message);
+            }
+        }
+
+        async function deletarPartitura(id, titulo) {
+            if (!confirm(`Tem certeza que deseja deletar a partitura "${titulo}"?\n\nEsta ação não pode ser desfeita!`)) {
+                return;
+            }
+
+            try {
+                await api.deletarPartitura(id);
+                alert('✅ Partitura deletada com sucesso!');
+                carregarPartituras();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('❌ Erro ao deletar partitura: ' + error.message);
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const busca = this.value.toLowerCase();
+            const filtradas = partituras.filter(p => 
+                p.titulo.toLowerCase().includes(busca) || 
+                p.compositor.toLowerCase().includes(busca) ||
+                p.instrumento.toLowerCase().includes(busca)
+            );
+            renderizarPartituras(filtradas);
+        });
+
+        document.getElementById('instrumentoFilter').addEventListener('change', function() {
+            const instrumento = this.value;
+            const filtradas = instrumento === 'all' 
+                ? partituras 
+                : partituras.filter(p => p.instrumento === instrumento);
+            renderizarPartituras(filtradas);
+        });
+
+        document.getElementById('dificuldadeFilter').addEventListener('change', function() {
+            const dificuldade = this.value;
+            const filtradas = dificuldade === 'all' 
+                ? partituras 
+                : partituras.filter(p => p.dificuldade === dificuldade);
+            renderizarPartituras(filtradas);
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('courseModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        document.getElementById('courseForm').addEventListener('submit', salvarPartitura);
+
+        carregarPartituras();
+    </script>
+</body>
+</html>
