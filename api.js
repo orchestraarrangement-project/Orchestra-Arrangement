@@ -1,5 +1,9 @@
 // api.js - Cliente para consumir a API do backend
-const API_URL = 'http://localhost:5000/api';
+// Detectar automaticamente o ambiente
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api'
+    : 'https://orchestraarrangement.vercel.app/api';
+
 
 // Classe para gerenciar a API
 class OrchestraAPI {
