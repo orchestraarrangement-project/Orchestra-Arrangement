@@ -404,6 +404,8 @@
                 return;
             }
 
+            console.log('Carregando partitura ID:', id); // Debug
+
             // Buscar partitura no Supabase
             const { data: partitura, error } = await supabase
                 .from('partituras')
@@ -422,6 +424,8 @@
                 return;
             }
 
+            console.log('Partitura carregada:', partitura); // Debug
+
             // Exibir dados da partitura
             exibirPartitura(partitura);
         } catch (error) {
@@ -434,38 +438,180 @@
         // Atualizar título da página
         document.title = `${partitura.titulo} - Orchestra`;
 
-        // Atualizar elementos (ajuste os IDs conforme seu HTML)
-        const tituloEl = document.querySelector('h1') || document.getElementById('titulo');
-        const compositorEl = document.getElementById('compositor') || document.querySelector('.compositor');
-        const instrumentoEl = document.getElementById('instrumento');
-        const dificuldadeEl = document.getElementById('dificuldade');
-        const generoEl = document.getElementById('genero');
-        const imagemEl = document.getElementById('imagem') || document.querySelector('.partitura-image img');
-        const descricaoEl = document.getElementById('descricao') || document.querySelector('.descricao');
+        // 1. TÍTULO
+        const tituloEl = document.getElementById('courseTitle');
+        if (tituloEl) {
+            tituloEl.textContent = partitura.titulo;
+        }
 
-        if (tituloEl) tituloEl.textContent = partitura.titulo;
-        if (compositorEl) compositorEl.textContent = partitura.compositor;
-        if (instrumentoEl) instrumentoEl.textContent = partitura.instrumento;
-        if (dificuldadeEl) dificuldadeEl.textContent = partitura.dificuldade;
-        if (generoEl) generoEl.textContent = partitura.genero || 'N/A';
-        if (imagemEl) imagemEl.src = partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600';
-        if (descricaoEl) descricaoEl.textContent = partitura.descricao || 'Sem descrição disponível.';
+        // 2. IMAGEM
+        const heroImage = document.getElementById('heroImage');
+        if (heroImage) {
+            const imgUrl = partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+            heroImage.innerHTML = `<img src="${imgUrl}" alt="${partitura.titulo}">`;
+        }
 
-        // Botão de compra (se tiver)
-        const btnComprar = document.getElementById('btn-comprar');
-        if (btnComprar && partitura.link_compra) {
-            btnComprar.href = partitura.link_compra;
-            btnComprar.style.display = 'block';
+        // 3. META INFO (Compositor, Instrumento, Dificuldade)
+        const courseMeta = document.getElementById('courseMeta');
+        if (courseMeta) {
+            courseMeta.innerHTML = `
+                <div class="meta-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
+                    </svg>
+                    ${partitura.compositor}
+                </div>
+                <div class="meta-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                        <path d="M4 4h12v12H4z"/>
+                    </svg>
+                    ${partitura.instrumento}
+                </div>
+                <div class="meta-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                        <path d="M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/>
+                    </svg>
+                    ${partitura.dificuldade}
+                </div>
+            `;
+        }
+
+        // 4. DESCRIÇÃO
+        const descricaoEl = document.getElementById('courseDescription');
+        if (descricaoEl) {
+            descricaoEl.textContent = partitura.descricao || 'Partitura musical de alta qualidade para estudo e performance.';
+        }
+
+        // 5. DETALHES (Lista completa)
+        const detailsList = document.getElementById('detailsList');
+        if (detailsList) {
+            detailsList.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-icon">🎼</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Compositor</div>
+                        <div class="detail-description">${partitura.compositor}</div>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-icon">🎹</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Instrumento</div>
+                        <div class="detail-description">${partitura.instrumento}</div>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-icon">📊</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Nível de Dificuldade</div>
+                        <div class="detail-description">${partitura.dificuldade}</div>
+                    </div>
+                </div>
+
+                ${partitura.genero ? `
+                <div class="detail-item">
+                    <div class="detail-icon">🎵</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Gênero Musical</div>
+                        <div class="detail-description">${partitura.genero}</div>
+                    </div>
+                </div>
+                ` : ''}
+
+                ${partitura.duracao ? `
+                <div class="detail-item">
+                    <div class="detail-icon">⏱️</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Duração</div>
+                        <div class="detail-description">${partitura.duracao}</div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="detail-item">
+                    <div class="detail-icon">📝</div>
+                    <div class="detail-content">
+                        <div class="detail-title">Descrição Completa</div>
+                        <div class="detail-description">${partitura.descricao || 'Partitura de qualidade profissional, ideal para estudo e performance.'}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 6. BOTÃO DE COMPRA
+        const btnComprar = document.querySelector('.btn-comprar');
+        if (btnComprar) {
+            if (partitura.link_compra) {
+                btnComprar.onclick = () => window.open(partitura.link_compra, '_blank');
+            } else {
+                btnComprar.onclick = () => alert('Link de compra em breve! Contate-nos para adquirir esta partitura.');
+            }
         }
     }
 
     function mostrarErro(mensagem) {
-        const container = document.querySelector('.container') || document.body;
-        container.innerHTML = `
-            <div style="text-align: center; padding: 60px 20px;">
-                <h2 style="color: #e74c3c; margin-bottom: 20px;">${mensagem}</h2>
-                <a href="partituras.html" style="color: #5B4C9D; text-decoration: underline;">Voltar para Partituras</a>
-            </div>
+        document.body.innerHTML = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Erro - Orchestra</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        min-height: 100vh;
+                        margin: 0;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    }
+                    .error-box {
+                        background: white;
+                        padding: 60px 40px;
+                        border-radius: 20px;
+                        text-align: center;
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                        max-width: 500px;
+                    }
+                    h2 {
+                        color: #e74c3c;
+                        font-size: 2rem;
+                        margin-bottom: 20px;
+                    }
+                    p {
+                        color: #666;
+                        margin-bottom: 30px;
+                        font-size: 1.1rem;
+                    }
+                    a {
+                        background: #5B4C9D;
+                        color: white;
+                        padding: 15px 40px;
+                        border-radius: 50px;
+                        text-decoration: none;
+                        font-weight: 600;
+                        display: inline-block;
+                        transition: all 0.3s;
+                    }
+                    a:hover {
+                        background: #4a3a7e;
+                        transform: translateY(-2px);
+                        box-shadow: 0 10px 30px rgba(91, 76, 157, 0.4);
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="error-box">
+                    <h2>😔 ${mensagem}</h2>
+                    <p>Não foi possível carregar os detalhes desta partitura.</p>
+                    <a href="partituras.html">← Voltar para Partituras</a>
+                </div>
+            </body>
+            </html>
         `;
     }
 
