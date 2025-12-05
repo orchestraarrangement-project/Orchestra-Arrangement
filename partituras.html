@@ -226,7 +226,6 @@ async function carregarPartituras(filtros = {}) {
             .from('partituras')
             .select('*')
             .eq('status', 'Publicado')
-            .order('created_at', { ascending: false });
 
         // Aplicar filtros
         if (filtros.instrumento && filtros.instrumento !== 'todos') {
