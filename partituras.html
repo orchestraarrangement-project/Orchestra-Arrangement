@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+<!-- SDK do Supabase via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Arquivo de configuração -->
+<script src="supabase-config.js"></script>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -213,19 +219,71 @@
     <script>
         let todasPartituras = [];
 
-        async function carregarPartituras() {
-            try {
-                const partituras = await api.getPartituras();
-                todasPartituras = partituras.filter(p => p.status === 'Publicado');
-                renderizarPartituras(todasPartituras);
-                atualizarContador(todasPartituras.length);
-            } catch (error) {
-                console.error('Erro:', error);
-                const grid = document.getElementById('partiturasGrid');
-                grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #f44336;">Erro ao carregar partituras.</p>';
-                document.getElementById('resultsCount').textContent = 'Erro ao carregar';
-            }
+async function carregarPartituras(filtros = {}) {
+    try {
+        // Buscar partituras direto do Supabase
+        let query = supabase
+            .from('partituras')
+            .select('*')
+            .eq('status', 'Publicado')
+            .order('created_at', { ascending: false });
+
+        // Aplicar filtros
+        if (filtros.instrumento && filtros.instrumento !== 'todos') {
+            query = query.eq('instrumento', filtros.instrumento);
         }
+
+        if (filtros.dificuldade && filtros.dificuldade !== 'todas') {
+            query = query.eq('dificuldade', filtros.dificuldade);
+        }
+
+        if (filtros.busca) {
+            query = query.or(`titulo.ilike.%${filtros.busca}%,compositor.ilike.%${filtros.busca}%`);
+        }
+
+        const { data: partituras, error } = await query;
+
+        if (error) {
+            console.error('Erro ao carregar partituras:', error);
+            mostrarErro('Erro ao carregar partituras.');
+            return;
+        }
+
+        exibirPartituras(partituras);
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarErro('Erro ao carregar partituras.');
+    }
+}
+
+function exibirPartituras(partituras) {
+    const container = document.getElementById('partituras-container');
+    
+    if (!partituras || partituras.length === 0) {
+        container.innerHTML = '<p class="sem-resultados">Nenhuma partitura encontrada.</p>';
+        return;
+    }
+
+    container.innerHTML = partituras.map(partitura => `
+        <div class="partitura-card">
+            <img src="${partitura.imagem_preview || 'imagens/placeholder.jpg'}" alt="${partitura.titulo}">
+            <div class="partitura-info">
+                <h3>${partitura.titulo}</h3>
+                <p class="compositor">${partitura.compositor}</p>
+                <div class="tags">
+                    <span class="tag">${partitura.instrumento}</span>
+                    <span class="tag">${partitura.dificuldade}</span>
+                </div>
+                <a href="partitura-detalhes.html?id=${partitura.id}" class="btn-ver-mais">Ver Detalhes</a>
+            </div>
+        </div>
+    `).join('');
+}
+
+function mostrarErro(mensagem) {
+    const container = document.getElementById('partituras-container');
+    container.innerHTML = `<p class="erro">${mensagem}</p>`;
+}
 
         function renderizarPartituras(partituras) {
     const grid = document.getElementById('partiturasGrid');
