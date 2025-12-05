@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+    <!-- SDK do Supabase via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Arquivo de configuração -->
+<script src="supabase-config.js"></script>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,39 +86,65 @@
     </div>
 
     <script src="api.js"></script>
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('password').value;
-            const btnSubmit = e.target.querySelector('button[type="submit"]');
-            const btnText = btnSubmit.innerHTML;
+   <script>
+    const form = document.getElementById('loginForm');
+    const errorDiv = document.getElementById('error-message');
+    const btnEntrar = form.querySelector('button[type="submit"]');
 
-            try {
-                // Desabilitar botão e mostrar loading
-                btnSubmit.disabled = true;
-                btnSubmit.innerHTML = 'Entrando...';
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('password').value;
+        
+        // Desabilitar botão e mostrar loading
+        btnEntrar.disabled = true;
+        btnEntrar.textContent = 'Entrando...';
+        errorDiv.style.display = 'none';
+        
+        try {
+            // Login no Supabase
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: senha
+            });
 
-                // Fazer login via API
-                const resultado = await api.login(email, senha);
-
-                // Verificar se é admin
-                if (resultado.usuario.tipo !== 'admin') {
-                    throw new Error('Acesso negado. Apenas administradores podem acessar este painel.');
-                }
-
-                // Sucesso!
-                alert('✅ Login realizado com sucesso!');
-                window.location.href = 'admin-dashboard.html';
-                
-            } catch (error) {
-                console.error('Erro no login:', error);
-                alert('❌ ' + error.message);
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = btnText;
+            if (error) {
+                throw new Error(error.message);
             }
-        });
-    </script>
+
+            if (data.user) {
+                // Login bem-sucedido
+                console.log('Login bem-sucedido:', data.user);
+                
+                // Salvar sessão no localStorage (opcional)
+                localStorage.setItem('admin_user', JSON.stringify(data.user));
+                localStorage.setItem('admin_token', data.session.access_token);
+                
+                // Redirecionar para o dashboard
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                throw new Error('Email ou senha incorretos.');
+            }
+        } catch (error) {
+            console.error('Erro no login:', error);
+            errorDiv.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
+            errorDiv.style.display = 'block';
+            btnEntrar.disabled = false;
+            btnEntrar.textContent = 'Entrar no Painel →';
+        }
+    });
+
+    // Verificar se já está logado
+    async function verificarLogin() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            window.location.href = 'admin-dashboard.html';
+        }
+    }
+
+    verificarLogin();
+</script>
+
 </body>
 </html>
