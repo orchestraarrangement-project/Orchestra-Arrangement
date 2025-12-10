@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebook - Orchestra</title>
+    <!-- SDK do Supabase via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Arquivo de configuração -->
+<script src="supabase-config.js"></script>
+
     <link rel="stylesheet" href="styles.css">
     <style> 
         /* HEADER FIXO NO TOPO */
@@ -396,119 +402,171 @@
     </footer>
 
     <script src="api.js"></script>
-    <script>
-        // Pegar ID da URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const ebookId = urlParams.get('id');
+   <script>
+    let ebookAtual = null;
 
-        async function carregarEbook() {
-            if (!ebookId) {
-                alert('Ebook não encontrado!');
-                window.location.href = 'ebooks.html';
+    // Pegar ID do ebook da URL
+    function getEbookId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+
+    // Carregar dados do ebook
+    async function carregarEbook() {
+        const ebookId = getEbookId();
+        
+        if (!ebookId) {
+            mostrarErro('ID do ebook não encontrado na URL');
+            return;
+        }
+
+        try {
+            console.log('🔍 Buscando ebook ID:', ebookId);
+
+            // Buscar ebook direto do Supabase
+            const { data: ebook, error } = await supabase
+                .from('cursos')
+                .select('*')
+                .eq('id', ebookId)
+                .single();
+
+            if (error) {
+                console.error('Erro ao buscar ebook:', error);
+                mostrarErro('Ebook não encontrado');
                 return;
             }
 
+            if (!ebook) {
+                mostrarErro('Ebook não encontrado');
+                return;
+            }
+
+            console.log('✅ Ebook carregado:', ebook);
+            ebookAtual = ebook;
+            renderizarEbook(ebook);
+            
+        } catch (error) {
+            console.error('Erro:', error);
+            mostrarErro('Erro ao carregar ebook. Tente novamente.');
+        }
+    }
+
+    function renderizarEbook(ebook) {
+        // Atualizar título da página
+        document.title = `${ebook.titulo} - Orchestra`;
+
+        // Atualizar imagem
+        const imagemCapa = document.querySelector('.ebook-cover img');
+        if (imagemCapa) {
+            imagemCapa.src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+            imagemCapa.alt = ebook.titulo;
+        }
+
+        // Atualizar título
+        const titulo = document.querySelector('.ebook-title') || 
+                       document.querySelector('h1');
+        if (titulo) {
+            titulo.textContent = ebook.titulo;
+        }
+
+        // Atualizar categoria
+        const categoria = document.querySelector('.ebook-category');
+        if (categoria && ebook.categoria) {
+            categoria.textContent = ebook.categoria;
+        }
+
+        // Atualizar descrição
+        const descricao = document.querySelector('.ebook-description') ||
+                         document.querySelector('.description');
+        if (descricao) {
+            descricao.textContent = ebook.descricao || ebook.descricao_curta || '';
+        }
+
+        // Atualizar informações (duração, nível, etc)
+        const duracao = document.querySelector('.info-item:nth-child(1) .info-value');
+        if (duracao) {
+            duracao.textContent = ebook.duracao || 'Não informado';
+        }
+
+        const nivel = document.querySelector('.info-item:nth-child(2) .info-value');
+        if (nivel) {
+            nivel.textContent = ebook.nivel || 'Não informado';
+        }
+
+        const idioma = document.querySelector('.info-item:nth-child(3) .info-value');
+        if (idioma) {
+            idioma.textContent = ebook.idioma || 'Português';
+        }
+
+        // Atualizar conteúdo/tópicos se existir
+        const conteudo = document.querySelector('.ebook-content-list') ||
+                        document.querySelector('.topics-list');
+        if (conteudo && ebook.conteudo) {
             try {
-                // Carregar dados do ebook
-                const ebook = await api.getCurso(ebookId);
-
-                // Preencher IMAGEM DA CAPA (SUA URL)
-                document.getElementById('heroImage').innerHTML = `
-                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800'}" alt="${ebook.titulo}">
-                `;
-
-                // Preencher título
-                document.getElementById('courseTitle').textContent = ebook.titulo;
-
-                // Preencher meta informações
-                document.getElementById('courseMeta').innerHTML = `
-                    <div class="meta-item">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M4 6H16M4 10H16M4 14H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        <span>${ebook.categoria}</span>
-                    </div>
-                    <div class="meta-item">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M10 2L12 8L18 8L13 12L15 18L10 14L5 18L7 12L2 8L8 8L10 2Z" fill="currentColor"/>
-                        </svg>
-                        <span>${ebook.nivel}</span>
-                    </div>
-                    <div class="meta-item">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            ircle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M10 5V10L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        <span>${ebook.duracao} semanas</span>
-                    </div>
-                    <div class="meta-item">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M3 5V17C3 17.5 3.5 18 4 18H16C16.5 18 17 17.5 17 17V5M8 9H12M8 13H12M5 5V3C5 2.5 5.5 2 6 2H14C14.5 2 15 2.5 15 3V5" stroke="currentColor" stroke-width="1.5"/>
-                        </svg>
-                        <span>0 aulas</span>
-                    </div>
-                `;
-
-                // Preencher descrição
-                document.getElementById('courseDescription').textContent = ebook.descricao;
-
-                // Preencher aulas
-                document.getElementById('lessonsList').innerHTML = `
-                    <div class="lesson-item">
-                        <div class="lesson-number"><span>1</span></div>
-                        <div class="lesson-content">
-                            <h3 class="lesson-title">Módulo 1</h3>
-                            <p class="lesson-description">Conteúdo introdutório sobre ${ebook.categoria}</p>
-                            <div class="lesson-duration">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    ircle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                                30 min
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lesson-item">
-                        <div class="lesson-number"><span>2</span></div>
-                        <div class="lesson-content">
-                            <h3 class="lesson-title">Módulo 2</h3>
-                            <p class="lesson-description">Aprofundamento dos conceitos</p>
-                            <div class="lesson-duration">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    ircle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                                45 min
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lesson-item">
-                        <div class="lesson-number"><span>3</span></div>
-                        <div class="lesson-content">
-                            <h3 class="lesson-title">Módulo 3</h3>
-                            <p class="lesson-description">Prática e exercícios</p>
-                            <div class="lesson-duration">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    ircle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                                60 min
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Atualizar título da página
-                document.title = `${ebook.titulo} - Orchestra`;
-
-            } catch (error) {
-                console.error('Erro ao carregar ebook:', error);
-                alert('Erro ao carregar ebook! Tente novamente.');
-                window.location.href = 'ebooks.html';
+                const topicos = JSON.parse(ebook.conteudo);
+                if (Array.isArray(topicos)) {
+                    conteudo.innerHTML = topicos.map(topico => `
+                        <li>${topico}</li>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error('Erro ao parsear conteúdo:', e);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', carregarEbook);
-    </script>
+        // Ocultar loader e mostrar conteúdo
+        const loader = document.querySelector('.loading-container');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+
+        const mainContent = document.querySelector('.ebook-details-container') ||
+                           document.querySelector('main');
+        if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+        }
+    }
+
+    function mostrarErro(mensagem) {
+        const loader = document.querySelector('.loading-container');
+        if (loader) {
+            loader.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px;">
+                    <h3 style="color: #e74c3c; margin-bottom: 20px;">${mensagem}</h3>
+                    <button onclick="history.back()" style="padding: 12px 24px; background: #5f4bb6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        ← Voltar
+                    </button>
+                </div>
+            `;
+        } else {
+            alert(mensagem);
+            window.location.href = 'ebooks.html';
+        }
+    }
+
+    // Adicionar funcionalidade ao botão de compra
+    function configurarBotaoCompra() {
+        const btnComprar = document.querySelector('.btn-comprar') ||
+                          document.querySelector('.btn-buy');
+        
+        if (btnComprar) {
+            btnComprar.addEventListener('click', function() {
+                if (ebookAtual) {
+                    alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco || 'A definir'}`);
+                    // Futuramente: integrar com sistema de pagamento
+                }
+            });
+        }
+    }
+
+    // Carregar ao iniciar a página
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Carregando detalhes do ebook...');
+        carregarEbook();
+        configurarBotaoCompra();
+    });
+</script>
+
 </body>
 </html>
