@@ -6,6 +6,7 @@
 <!-- Arquivo de configuração -->
 <script src="supabase-config.js"></script>
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -356,161 +357,124 @@
 
     <script src="api.js"></script>
     <script>
-        let todosEbooks = [];
-        let categoriaAtual = 'all';
+    let todosEbooks = [];
 
-        async function carregarEbooks() {
-            try {
-                const ebooks = await api.getCursos();
-                todosEbooks = ebooks.filter(e => e.status === 'Publicado');
-                renderizarEbooks(todosEbooks);
-                atualizarContador(todosEbooks.length);
-            } catch (error) {
-                console.error('Erro ao carregar ebooks:', error);
-                document.getElementById('ebooksGrid').innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            ircle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <h3>Erro ao carregar ebooks</h3>
-                        <p>Não foi possível carregar os ebooks. Tente novamente mais tarde.</p>
-                    </div>
-                `;
-                document.getElementById('resultsCount').textContent = 'Erro ao carregar';
+    async function carregarEbooks(filtros = {}) {
+        try {
+            // Buscar ebooks direto do Supabase
+            let query = supabase
+                .from('cursos')
+                .select('*')
+                .eq('status', 'Publicado');
+
+            // Aplicar filtros
+            if (filtros.categoria && filtros.categoria !== 'all') {
+                query = query.eq('categoria', filtros.categoria);
             }
-        }
 
-        function renderizarEbooks(ebooks) {
-            const grid = document.getElementById('ebooksGrid');
-            
-            if (ebooks.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                        </svg>
-                        <h3>Nenhum ebook encontrado</h3>
-                        <p>Não encontramos ebooks ${categoriaAtual !== 'all' ? 'nesta categoria' : ''}.</p>
-                    </div>
-                `;
+            if (filtros.busca) {
+                query = query.or(`titulo.ilike.%${filtros.busca}%,descricao.ilike.%${filtros.busca}%`);
+            }
+
+            const { data: ebooks, error } = await query;
+
+            if (error) {
+                console.error('Erro ao carregar ebooks:', error);
+                mostrarErro('Erro ao carregar ebooks.');
                 return;
             }
 
-            grid.innerHTML = ebooks.map(ebook => `
-                <div class="ebook-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'">
-                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${ebook.titulo}" class="ebook-image">
-                    <div class="ebook-content">
-                        <div class="ebook-category">${ebook.categoria}</div>
-                        <h3 class="ebook-title">${ebook.titulo}</h3>
-                        <p class="ebook-description">${ebook.descricao ? ebook.descricao.substring(0, 100) + '...' : ''}</p>
-                        <div class="ebook-footer">
-                            <div class="ebook-tags">
-                                <span class="tag nivel-${ebook.nivel.toLowerCase().replace('á', 'a').replace('é', 'e').replace('ã', 'a')}">${ebook.nivel}</span>
-                                <span class="tag">${ebook.duracao} semanas</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            console.log('Ebooks carregados:', ebooks); // Debug
+            todosEbooks = ebooks;
+            renderizarEbooks(ebooks);
+            atualizarContador(ebooks.length);
+        } catch (error) {
+            console.error('Erro:', error);
+            mostrarErro('Erro ao carregar ebooks.');
         }
+    }
 
-        async function carregarPartituras(filtros = {}) {
-    try {
-        // Buscar partituras direto do Supabase
-        let query = supabase
-            .from('partituras')
-            .select('*')
-            .eq('status', 'Publicado')
-            .order('created_at', { ascending: false });
+    function renderizarEbooks(ebooks) {
+        const grid = document.getElementById('ebooksGrid') || 
+                     document.querySelector('.cards-grid') ||
+                     document.querySelector('#ebooks-container');
 
-        // Aplicar filtros
-        if (filtros.instrumento && filtros.instrumento !== 'todos') {
-            query = query.eq('instrumento', filtros.instrumento);
-        }
-
-        if (filtros.dificuldade && filtros.dificuldade !== 'todas') {
-            query = query.eq('dificuldade', filtros.dificuldade);
-        }
-
-        if (filtros.busca) {
-            query = query.or(`titulo.ilike.%${filtros.busca}%,compositor.ilike.%${filtros.busca}%`);
-        }
-
-        const { data: partituras, error } = await query;
-
-        if (error) {
-            console.error('Erro ao carregar partituras:', error);
-            mostrarErro('Erro ao carregar partituras.');
+        if (!grid) {
+            console.error('Container de ebooks não encontrado!');
             return;
         }
 
-        exibirPartituras(partituras);
-    } catch (error) {
-        console.error('Erro:', error);
-        mostrarErro('Erro ao carregar partituras.');
-    }
-}
-
-function exibirPartituras(partituras) {
-    const container = document.getElementById('partituras-container');
-    
-    if (!partituras || partituras.length === 0) {
-        container.innerHTML = '<p class="sem-resultados">Nenhuma partitura encontrada.</p>';
-        return;
-    }
-
-    container.innerHTML = partituras.map(partitura => `
-        <div class="partitura-card">
-            <img src="${partitura.imagem_preview || 'imagens/placeholder.jpg'}" alt="${partitura.titulo}">
-            <div class="partitura-info">
-                <h3>${partitura.titulo}</h3>
-                <p class="compositor">${partitura.compositor}</p>
-                <div class="tags">
-                    <span class="tag">${partitura.instrumento}</span>
-                    <span class="tag">${partitura.dificuldade}</span>
+        if (!ebooks || ebooks.length === 0) {
+            grid.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <h3 style="color: #666; margin-bottom: 10px;">Nenhum ebook encontrado</h3>
+                    <p style="color: #999;">Tente ajustar os filtros ou adicione ebooks no painel admin!</p>
                 </div>
-                <a href="partitura-detalhes.html?id=${partitura.id}" class="btn-ver-mais">Ver Detalhes</a>
-            </div>
-        </div>
-    `).join('');
-}
-
-function mostrarErro(mensagem) {
-    const container = document.getElementById('partituras-container');
-    container.innerHTML = `<p class="erro">${mensagem}</p>`;
-}
-
-        function atualizarContador(count) {
-            const texto = count === 1 ? 'ebook encontrado' : 'ebooks encontrados';
-            document.getElementById('resultsCount').textContent = `${count} ${texto}`;
+            `;
+            return;
         }
 
-        // Filtros com botões
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active de todos
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Adiciona active no clicado
-                btn.classList.add('active');
-                
-                const category = btn.dataset.category;
-                categoriaAtual = category;
-                
-                let filtrados = todosEbooks;
-                if (category !== 'all') {
-                    filtrados = todosEbooks.filter(e => e.categoria === category);
-                }
-                
-                renderizarEbooks(filtrados);
-                atualizarContador(filtrados.length);
-            });
-        });
+        grid.innerHTML = ebooks.map(ebook => `
+            <div class="ebook-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
+                <div class="ebook-image">
+                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
+                         alt="${ebook.titulo}">
+                </div>
+                <div class="ebook-content">
+                    <h3 class="ebook-title">${ebook.titulo}</h3>
+                    <p class="ebook-description">${ebook.descricao_curta || ebook.descricao || 'Ebook educativo de qualidade'}</p>
+                    <div class="ebook-tags">
+                        ${ebook.categoria ? `<span class="tag">${ebook.categoria}</span>` : ''}
+                        ${ebook.nivel ? `<span class="tag">${ebook.nivel}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 
-        document.addEventListener('DOMContentLoaded', carregarEbooks);
-    </script>
+    function mostrarErro(mensagem) {
+        const grid = document.getElementById('ebooksGrid') || 
+                     document.querySelector('.cards-grid');
+        if (grid) {
+            grid.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
+                    <h3 style="color: #e74c3c;">${mensagem}</h3>
+                </div>
+            `;
+        }
+    }
+
+    function atualizarContador(count) {
+        const contador = document.getElementById('resultsCount');
+        if (contador) {
+            const texto = count === 1 ? 'ebook encontrado' : 'ebooks encontrados';
+            contador.textContent = `${count} ${texto}`;
+        }
+    }
+
+    // Event Listeners para Filtros
+    const categoriaFilter = document.getElementById('categoriaFilter');
+    if (categoriaFilter) {
+        categoriaFilter.addEventListener('change', function() {
+            const categoria = this.value;
+            
+            let filtrados = todosEbooks;
+            
+            if (categoria !== 'all') {
+                filtrados = filtrados.filter(e => e.categoria === categoria);
+            }
+            
+            renderizarEbooks(filtrados);
+            atualizarContador(filtrados.length);
+        });
+    }
+
+    // Carregar ebooks ao iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Carregando ebooks...');
+        carregarEbooks();
+    });
+</script>
+
 </body>
 </html>
