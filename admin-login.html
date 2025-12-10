@@ -135,15 +135,45 @@
         }
     });
 
-    // Verificar se já está logado
-    async function verificarLogin() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+   async function fazerLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('password').value;
+    const btnEntrar = event.target.querySelector('button[type="submit"]');
+    
+    const textoOriginal = btnEntrar.textContent;
+    btnEntrar.disabled = true;
+    btnEntrar.textContent = 'Entrando...';
+    
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
+
+        if (error) throw new Error(error.message);
+
+        if (data.user) {
+            console.log('✅ Login bem-sucedido');
+            
+            localStorage.setItem('admin_user', JSON.stringify(data.user));
+            localStorage.setItem('admin_token', data.session.access_token);
+            
+            btnEntrar.textContent = '✓ Redirecionando...';
+            
+            // Redirecionar IMEDIATAMENTE
             window.location.href = 'admin-dashboard.html';
         }
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        alert('Erro: ' + error.message);
+        
+        btnEntrar.disabled = false;
+        btnEntrar.textContent = textoOriginal;
     }
+}
 
-    verificarLogin();
 </script>
 
 </body>
