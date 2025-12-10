@@ -444,6 +444,7 @@
             console.log('✅ Ebook carregado:', ebook);
             ebookAtual = ebook;
             renderizarEbook(ebook);
+            ocultarLoaders(); // NOVO: Ocultar todos os loaders de uma vez
             
         } catch (error) {
             console.error('Erro:', error);
@@ -455,19 +456,28 @@
         // Atualizar título da página
         document.title = `${ebook.titulo} - Orchestra`;
 
-        // Atualizar imagem
-        const imagemCapa = document.querySelector('.ebook-cover img');
-        if (imagemCapa) {
-            imagemCapa.src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
-            imagemCapa.alt = ebook.titulo;
-        }
+        // Atualizar TODOS os títulos possíveis
+        const titulos = [
+            document.querySelector('.ebook-title'),
+            document.querySelector('h1'),
+            document.querySelector('.hero-title')
+        ];
+        titulos.forEach(el => {
+            if (el) el.textContent = ebook.titulo;
+        });
 
-        // Atualizar título
-        const titulo = document.querySelector('.ebook-title') || 
-                       document.querySelector('h1');
-        if (titulo) {
-            titulo.textContent = ebook.titulo;
-        }
+        // Atualizar imagem
+        const imagens = [
+            document.querySelector('.ebook-cover img'),
+            document.querySelector('.hero-image img'),
+            document.querySelector('img[alt*="ebook"]')
+        ];
+        imagens.forEach(img => {
+            if (img) {
+                img.src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+                img.alt = ebook.titulo;
+            }
+        });
 
         // Atualizar categoria
         const categoria = document.querySelector('.ebook-category');
@@ -476,97 +486,147 @@
         }
 
         // Atualizar descrição
-        const descricao = document.querySelector('.ebook-description') ||
-                         document.querySelector('.description');
-        if (descricao) {
-            descricao.textContent = ebook.descricao || ebook.descricao_curta || '';
-        }
+        const descricoes = [
+            document.querySelector('.ebook-description'),
+            document.querySelector('.description'),
+            document.querySelector('p.subtitle')
+        ];
+        descricoes.forEach(desc => {
+            if (desc) {
+                desc.textContent = ebook.descricao || ebook.descricao_curta || '';
+            }
+        });
 
-        // Atualizar informações (duração, nível, etc)
-        const duracao = document.querySelector('.info-item:nth-child(1) .info-value');
-        if (duracao) {
-            duracao.textContent = ebook.duracao || 'Não informado';
-        }
+        // Atualizar informações
+        atualizarInfo('.info-item:nth-child(1) .info-value', ebook.duracao || '2-3 horas');
+        atualizarInfo('.info-item:nth-child(2) .info-value', ebook.nivel || 'Iniciante');
+        atualizarInfo('.info-item:nth-child(3) .info-value', ebook.idioma || 'Português');
 
-        const nivel = document.querySelector('.info-item:nth-child(2) .info-value');
-        if (nivel) {
-            nivel.textContent = ebook.nivel || 'Não informado';
-        }
+        // Atualizar conteúdo/tópicos
+        renderizarConteudo(ebook);
+    }
 
-        const idioma = document.querySelector('.info-item:nth-child(3) .info-value');
-        if (idioma) {
-            idioma.textContent = ebook.idioma || 'Português';
-        }
+    function atualizarInfo(selector, valor) {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = valor;
+    }
 
-        // Atualizar conteúdo/tópicos se existir
-        const conteudo = document.querySelector('.ebook-content-list') ||
-                        document.querySelector('.topics-list');
-        if (conteudo && ebook.conteudo) {
+    function renderizarConteudo(ebook) {
+        const containers = [
+            document.querySelector('.ebook-content-list'),
+            document.querySelector('.topics-list'),
+            document.querySelector('.modules-list'),
+            document.querySelector('ul')
+        ];
+
+        let conteudoHTML = '';
+
+        if (ebook.conteudo) {
             try {
                 const topicos = JSON.parse(ebook.conteudo);
                 if (Array.isArray(topicos)) {
-                    conteudo.innerHTML = topicos.map(topico => `
-                        <li>${topico}</li>
-                    `).join('');
+                    conteudoHTML = topicos.map(topico => `<li>${topico}</li>`).join('');
                 }
             } catch (e) {
                 console.error('Erro ao parsear conteúdo:', e);
             }
         }
 
-        // Ocultar loader e mostrar conteúdo
-        const loader = document.querySelector('.loading-container');
-        if (loader) {
-            loader.style.display = 'none';
+        // Se não tiver conteúdo, usar padrão
+        if (!conteudoHTML) {
+            conteudoHTML = `
+                <li>Introdução ao tema</li>
+                <li>Conceitos fundamentais</li>
+                <li>Exercícios práticos</li>
+                <li>Material complementar</li>
+            `;
         }
 
-        const mainContent = document.querySelector('.ebook-details-container') ||
-                           document.querySelector('main');
-        if (mainContent) {
-            mainContent.style.display = 'block';
-            mainContent.style.opacity = '1';
-        }
+        containers.forEach(container => {
+            if (container) {
+                container.innerHTML = conteudoHTML;
+            }
+        });
+    }
+
+    function ocultarLoaders() {
+        // OCULTAR TODOS OS LOADERS POSSÍVEIS
+        const loaders = [
+            ...document.querySelectorAll('.loading-container'),
+            ...document.querySelectorAll('[class*="loading"]'),
+            ...document.querySelectorAll('[class*="loader"]')
+        ];
+
+        loaders.forEach(loader => {
+            if (loader && loader.textContent.toLowerCase().includes('carregando')) {
+                loader.style.display = 'none';
+                loader.remove(); // Remover do DOM
+            }
+        });
+
+        // MOSTRAR TODO O CONTEÚDO
+        const conteudos = [
+            document.querySelector('.ebook-details-container'),
+            document.querySelector('main'),
+            document.querySelector('.container'),
+            document.body
+        ];
+
+        conteudos.forEach(el => {
+            if (el) {
+                el.style.display = 'block';
+                el.style.opacity = '1';
+                el.style.visibility = 'visible';
+            }
+        });
     }
 
     function mostrarErro(mensagem) {
-        const loader = document.querySelector('.loading-container');
-        if (loader) {
-            loader.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px;">
-                    <h3 style="color: #e74c3c; margin-bottom: 20px;">${mensagem}</h3>
-                    <button onclick="history.back()" style="padding: 12px 24px; background: #5f4bb6; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                        ← Voltar
-                    </button>
-                </div>
-            `;
-        } else {
-            alert(mensagem);
+        // Ocultar loaders primeiro
+        ocultarLoaders();
+
+        alert(mensagem);
+        setTimeout(() => {
             window.location.href = 'ebooks.html';
-        }
+        }, 1000);
     }
 
     // Adicionar funcionalidade ao botão de compra
     function configurarBotaoCompra() {
-        const btnComprar = document.querySelector('.btn-comprar') ||
-                          document.querySelector('.btn-buy');
+        const botoes = [
+            document.querySelector('.btn-comprar'),
+            document.querySelector('.btn-buy'),
+            document.querySelector('button[class*="buy"]')
+        ];
         
-        if (btnComprar) {
-            btnComprar.addEventListener('click', function() {
-                if (ebookAtual) {
-                    alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco || 'A definir'}`);
-                    // Futuramente: integrar com sistema de pagamento
-                }
-            });
-        }
+        botoes.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    if (ebookAtual) {
+                        alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco || 'R$ 29,90'}`);
+                    }
+                });
+            }
+        });
     }
 
-    // Carregar ao iniciar a página
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Carregando detalhes do ebook...');
-        carregarEbook();
+    // CARREGAR TUDO IMEDIATAMENTE
+    (async function inicializar() {
+        console.log('🚀 Iniciando carregamento do ebook...');
+        
+        // Ocultar loaders imediatamente se não houver ID
+        const ebookId = getEbookId();
+        if (!ebookId) {
+            mostrarErro('ID do ebook não encontrado');
+            return;
+        }
+
+        // Carregar dados
+        await carregarEbook();
         configurarBotaoCompra();
-    });
+    })();
 </script>
+
 
 </body>
 </html>
