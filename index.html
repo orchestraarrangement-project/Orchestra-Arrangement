@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orchestra - Plataforma Musical Completa</title>
+    <!-- SDK do Supabase via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Arquivo de configuração -->
+<script src="supabase-config.js"></script>
+
     <link rel="stylesheet" href="styles.css">
     <style>
 /* ===== ESTILOS PARA CARDS DE EBOOKS (IGUAL ÀS PARTITURAS) ===== */
@@ -273,76 +279,123 @@
 
     <script src="api.js"></script>
     <script>
-       async function carregarPartituras() {
-    try {
-        const partituras = await api.getPartituras();
-        const container = document.querySelector('.scores-section .cards-grid');
-        
-        const partiturasPublicadas = partituras
-            .filter(p => p.status === 'Publicado')
-            .slice(0, 4);
+    // Carregar partituras em destaque
+    async function carregarPartiturasDestaque() {
+        try {
+            const { data: partituras, error } = await supabase
+                .from('partituras')
+                .select('*')
+                .eq('status', 'Publicado')
+                .limit(3); // Apenas 3 partituras
 
-        if (partiturasPublicadas.length === 0) {
-            container.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">Nenhuma partitura publicada ainda.</p>';
-            return;
-        }
+            if (error) {
+                console.error('Erro ao carregar partituras:', error);
+                return;
+            }
 
-        container.innerHTML = partiturasPublicadas.map(partitura => `
-            <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
-                <div class="score-image">
-                    <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${partitura.titulo}">
-                </div>
-                <div class="score-content">
-                    <h3 class="score-title">${partitura.titulo}</h3>
-                    <p class="score-composer">${partitura.compositor}</p>
-                    <div class="score-tags">
-                        <span class="tag">${partitura.instrumento}</span>
-                        ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
+            console.log('Partituras carregadas:', partituras);
+
+            const container = document.querySelector('.partituras-destaque') || 
+                            document.querySelector('#partituras-container') ||
+                            document.querySelector('.cards-grid');
+
+            if (!container) {
+                console.error('Container de partituras não encontrado!');
+                return;
+            }
+
+            if (!partituras || partituras.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhuma partitura disponível no momento.</p>';
+                return;
+            }
+
+            const dificuldadeColors = {
+                'Fácil': 'badge-green',
+                'Intermediário': 'badge-yellow',
+                'Difícil': 'badge-red'
+            };
+
+            container.innerHTML = partituras.map(partitura => `
+                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
+                    <div class="score-image">
+                        <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" 
+                             alt="${partitura.titulo}">
+                        <div class="score-badge ${dificuldadeColors[partitura.dificuldade] || 'badge-green'}">
+                            ${partitura.dificuldade}
+                        </div>
+                    </div>
+                    <div class="score-content">
+                        <h3 class="score-title">${partitura.titulo}</h3>
+                        <p class="score-composer">${partitura.compositor}</p>
+                        <div class="score-tags">
+                            <span class="tag">${partitura.instrumento}</span>
+                            ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Erro:', error);
-    }
-}
-
-
-       async function carregarEbooks() {
-    try {
-        const ebooks = await api.getCursos();
-        const container = document.querySelector('.featured-section .cards-grid');
-        
-        const ebooksPublicados = ebooks
-            .filter(e => e.status === 'Publicado')
-            .slice(0, 3);
-
-        if (ebooksPublicados.length === 0) {
-            container.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">Nenhum ebook publicado ainda.</p>';
-            return;
+            `).join('');
+        } catch (error) {
+            console.error('Erro:', error);
         }
-
-        container.innerHTML = ebooksPublicados.map(ebook => `
-            <div class="course-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
-                <div class="course-image">
-                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${ebook.titulo}">
-                </div>
-                <div class="course-content">
-                    <h3 class="course-title">${ebook.titulo}</h3>
-                    <p class="course-description">${(ebook.descricao || '').substring(0, 100)}...</p>
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Erro:', error);
     }
-}
 
+    // Carregar ebooks em destaque
+    async function carregarEbooksDestaque() {
+        try {
+            const { data: ebooks, error } = await supabase
+                .from('cursos')
+                .select('*')
+                .eq('status', 'Publicado')
+                .limit(3); // Apenas 3 ebooks
 
-        document.addEventListener('DOMContentLoaded', () => {
-            carregarPartituras();
-            carregarEbooks();
-        });
-    </script>
+            if (error) {
+                console.error('Erro ao carregar ebooks:', error);
+                return;
+            }
+
+            console.log('Ebooks carregados:', ebooks);
+
+            const container = document.querySelector('.ebooks-destaque') || 
+                            document.querySelector('#ebooks-container') ||
+                            document.querySelectorAll('.cards-grid')[1]; // Segundo cards-grid
+
+            if (!container) {
+                console.error('Container de ebooks não encontrado!');
+                return;
+            }
+
+            if (!ebooks || ebooks.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum ebook disponível no momento.</p>';
+                return;
+            }
+
+            container.innerHTML = ebooks.map(ebook => `
+                <div class="ebook-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
+                    <div class="ebook-image">
+                        <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
+                             alt="${ebook.titulo}">
+                    </div>
+                    <div class="ebook-content">
+                        <h3 class="ebook-title">${ebook.titulo}</h3>
+                        <p class="ebook-description">${ebook.descricao_curta || ebook.descricao || 'Ebook educativo de qualidade'}</p>
+                        <div class="ebook-tags">
+                            ${ebook.categoria ? `<span class="tag">${ebook.categoria}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    }
+
+    // Carregar tudo ao iniciar
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Carregando partituras e ebooks...');
+        carregarPartiturasDestaque();
+        carregarEbooksDestaque();
+    });
+</script>
+
 </body>
 </html>
