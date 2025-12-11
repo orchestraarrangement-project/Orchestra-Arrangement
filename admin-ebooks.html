@@ -139,7 +139,7 @@
                 <p class="page-subtitle">Adicione, edite ou remova ebooks</p>
             </div>
             <div class="header-right">
-                <button class="btn btn-primary" onclick="abrirModalCriar()">
+                <button class="btn btn-primary" onclick="abrirModal()">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
@@ -170,74 +170,99 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="4" style="text-align: center; padding: 40px;">Carregando...</td></tr>
+                    <tr><td colspan="5" style="text-align: center; padding: 40px;">Carregando...</td></tr>
                 </tbody>
             </table>
         </section>
     </main>
 
+    <!-- MODAL -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Novo Ebook</h2>
-                <button class="modal-close" onclick="fecharModal()" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #666;">
-                    ×
-                </button>
+                <button class="modal-close" onclick="fecharModal()" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #666;">×</button>
             </div>
             
-            <form id="ebookForm" class="modal-form">
+            <form class="modal-form" id="ebookForm">
                 <div class="form-group">
                     <label class="form-label">Título*</label>
-                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Música" required>
+                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Teoria Musical" required>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Categoria*</label>
-                    <select id="categoria" class="form-input" required>
-                        <option value="">Selecione uma categoria</option>
-                        <option value="Teoria Musical">Teoria Musical</option>
-                        <option value="Leitura de Partituras">Leitura de Partituras</option>
-                        <option value="Harmonia">Harmonia</option>
-                        <option value="Ritmo">Ritmo</option>
-                        <option value="Composição">Composição</option>
-                        <option value="Análise Musical">Análise Musical</option>
-                    </select>
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Categoria*</label>
+                        <select id="categoria" class="form-input" required>
+                            <option value="Teoria Musical">Teoria Musical</option>
+                            <option value="Leitura de Partituras">Leitura de Partituras</option>
+                            <option value="Harmonia">Harmonia</option>
+                            <option value="Ritmo">Ritmo</option>
+                            <option value="Composição">Composição</option>
+                            <option value="Análise Musical">Análise Musical</option>
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label class="form-label">Nível*</label>
+                        <select id="nivel" class="form-input" required>
+                            <option value="Iniciante">Iniciante</option>
+                            <option value="Intermediário">Intermediário</option>
+                            <option value="Avançado">Avançado</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label class="form-label">Descrição*</label>
-                    <textarea id="descricao" class="form-input" rows="4" placeholder="Descreva o conteúdo do ebook..." required></textarea>
+                    <textarea id="descricao" class="form-input" rows="3" placeholder="Descrição curta do ebook..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Duração</label>
+                        <input type="text" id="duracao" class="form-input" placeholder="Ex: 2-3 horas">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Idioma</label>
+                        <input type="text" id="idioma" class="form-input" placeholder="Ex: Português" value="Português">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Conteúdo do Ebook (um por linha)*</label>
+                    <textarea id="conteudo" class="form-input" rows="6" placeholder="Digite cada tópico em uma linha:&#10;Introdução ao tema&#10;Conceitos fundamentais&#10;Exercícios práticos&#10;Material complementar" required></textarea>
+                    <small style="color: #666; font-size: 12px;">Cada linha será um item na lista de conteúdo</small>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">URL da Imagem de Capa</label>
-                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/capa.jpg">
-                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Cole a URL de uma imagem ou deixe em branco para usar padrão</small>
+                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
+                    <small style="color: #666; font-size: 12px;">Cole a URL de uma imagem ou deixe em branco</small>
                 </div>
 
-                <!-- Dentro do FORM, adicione este bloco ANTES do campo Status: -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Preço*</label>
+                        <input type="text" id="preco" class="form-input" placeholder="Ex: R$ 29,90 ou Grátis" required>
+                        <small style="color: #666; font-size: 12px;">Use formato: R$ 29,90 ou "Grátis"</small>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Preço*</label>
-                    <input type="text" id="preco" class="form-input" placeholder="Ex: R$ 29,90" value="R$ 29,90" required>
-                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Use formato: R$ 29,90 ou deixe "Grátis"</small>
+                    <div class="form-group">
+                        <label class="form-label">Status*</label>
+                        <select id="status" class="form-input" required>
+                            <option value="Rascunho">Rascunho</option>
+                            <option value="Publicado">Publicado</option>
+                        </select>
+                    </div>
                 </div>
 
-
-                <div class="form-group">
-                    <label class="form-label">Status*</label>
-                    <select id="status" class="form-input" required>
-                        <option value="Rascunho">Rascunho</option>
-                        <option value="Publicado">Publicado</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Ebook</button>
                 </div>
             </form>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="submitBtn" onclick="document.getElementById('ebookForm').requestSubmit()">Criar Ebook</button>
-            </div>
         </div>
     </div>
 
@@ -266,7 +291,8 @@
             try {
                 const { data, error } = await supabase
                     .from('cursos')
-                    .select('*');
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
@@ -284,7 +310,7 @@
             tbody.innerHTML = '';
 
             if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #666;">Nenhum ebook cadastrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #666;">Nenhum ebook cadastrado</td></tr>';
                 return;
             }
 
@@ -301,7 +327,7 @@
                         </div>
                     </td>
                     <td><span class="table-badge badge-blue">${ebook.categoria || '-'}</span></td>
-                    <td>${ebook.preco || 'Grátis'}</td> 
+                    <td>${ebook.preco || 'Grátis'}</td>
                     <td><span class="status-badge ${ebook.status === 'Publicado' ? 'status-published' : 'status-draft'}">${ebook.status}</span></td>
                     <td>
                         <div class="table-actions">
@@ -322,50 +348,98 @@
             });
         }
 
-        function abrirModalCriar() {
+        // ABRIR MODAL PARA CRIAR
+        function abrirModal() {
             editandoId = null;
             document.getElementById('ebookForm').reset();
-            document.getElementById('modal').style.display = 'flex';
+            
+            // VALORES PADRÃO
+            document.getElementById('categoria').value = 'Teoria Musical';
+            document.getElementById('nivel').value = 'Iniciante';
+            document.getElementById('idioma').value = 'Português';
+            document.getElementById('preco').value = 'Grátis';
+            document.getElementById('status').value = 'Publicado';
+            
             document.getElementById('modalTitle').textContent = 'Novo Ebook';
             document.getElementById('submitBtn').textContent = 'Criar Ebook';
+            document.getElementById('modal').style.display = 'flex';
         }
 
+        // ABRIR MODAL PARA EDITAR
+        async function editarEbook(id) {
+            try {
+                const { data: ebook, error } = await supabase
+                    .from('cursos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                editandoId = id;
+                
+                document.getElementById('titulo').value = ebook.titulo;
+                document.getElementById('categoria').value = ebook.categoria || 'Teoria Musical';
+                document.getElementById('nivel').value = ebook.nivel || 'Iniciante';
+                document.getElementById('descricao').value = ebook.descricao || '';
+                document.getElementById('duracao').value = ebook.duracao || '';
+                document.getElementById('idioma').value = ebook.idioma || 'Português';
+                document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
+                document.getElementById('preco').value = ebook.preco || '';
+                document.getElementById('status').value = ebook.status || 'Publicado';
+                
+                // Preencher conteúdo
+                let conteudoTexto = '';
+                if (ebook.conteudo) {
+                    try {
+                        const conteudoArray = JSON.parse(ebook.conteudo);
+                        conteudoTexto = conteudoArray.join('\n');
+                    } catch (e) {
+                        conteudoTexto = ebook.conteudo;
+                    }
+                }
+                document.getElementById('conteudo').value = conteudoTexto;
+
+                document.getElementById('modalTitle').textContent = 'Editar Ebook';
+                document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+                document.getElementById('modal').style.display = 'flex';
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar ebook para edição');
+            }
+        }
+
+        // FECHAR MODAL
         function fecharModal() {
             document.getElementById('modal').style.display = 'none';
             editandoId = null;
             document.getElementById('ebookForm').reset();
         }
 
-        function editarEbook(id) {
-            const ebook = ebooks.find(e => e.id === id);
-            if (!ebook) return;
-
-            editandoId = id;
-            
-            document.getElementById('titulo').value = ebook.titulo || '';
-            document.getElementById('categoria').value = ebook.categoria || '';
-            document.getElementById('descricao').value = ebook.descricao || '';
-            document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
-            document.getElementById('status').value = ebook.status || 'Rascunho';
-            document.getElementById('preco').value = ebook.preco || 'R$ 29,90';
-
-
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('modalTitle').textContent = 'Editar Ebook';
-            document.getElementById('submitBtn').textContent = 'Salvar Alterações';
-         }
-
+        // SALVAR EBOOK (CRIAR OU EDITAR)
         async function salvarEbook(event) {
             event.preventDefault();
 
+            const conteudoTexto = document.getElementById('conteudo').value;
+            const conteudoArray = conteudoTexto.split('\n').filter(line => line.trim() !== '');
+
             const dados = {
                 titulo: document.getElementById('titulo').value,
-                categoria: document.getElementById('categoria').value || null,
-                descricao: document.getElementById('descricao').value,
-                imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800',
-                preco: document.getElementById('preco').value,
-                status: document.getElementById('status').value
+                categoria: document.getElementById('categoria').value || 'Teoria Musical',
+                nivel: document.getElementById('nivel').value || 'Iniciante',
+                descricao: document.getElementById('descricao').value || 'Descrição não disponível',
+                duracao: document.getElementById('duracao').value || '2-3 horas',
+                idioma: document.getElementById('idioma').value || 'Português',
+                conteudo: JSON.stringify(conteudoArray.length > 0 ? conteudoArray : ['Introdução', 'Conceitos fundamentais']),
+                imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
+                preco: document.getElementById('preco').value || 'Grátis',
+                status: document.getElementById('status').value || 'Publicado'
             };
+
+            if (!dados.titulo || dados.titulo.trim() === '') {
+                alert('❌ O título é obrigatório!');
+                return;
+            }
 
             try {
                 if (editandoId) {
@@ -388,11 +462,12 @@
                 fecharModal();
                 carregarEbooks();
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('Erro completo:', error);
                 alert('❌ Erro ao salvar: ' + error.message);
             }
         }
 
+        // DELETAR EBOOK
         async function deletarEbook(id, titulo) {
             if (!confirm(`Tem certeza que deseja deletar "${titulo}"?`)) return;
 
@@ -411,6 +486,7 @@
             }
         }
 
+        // BUSCA
         document.getElementById('searchInput').addEventListener('input', function() {
             const busca = this.value.toLowerCase();
             const filtrados = ebooks.filter(e => 
@@ -420,13 +496,17 @@
             renderizarEbooks(filtrados);
         });
 
+        // FECHAR MODAL AO CLICAR FORA
         window.onclick = function(event) {
             if (event.target == document.getElementById('modal')) {
                 fecharModal();
             }
         }
 
+        // SUBMETER FORMULÁRIO
         document.getElementById('ebookForm').addEventListener('submit', salvarEbook);
+
+        // CARREGAR EBOOKS AO INICIAR
         carregarEbooks();
     </script>
 </body>
