@@ -164,6 +164,7 @@
                     <tr>
                         <th>Ebook</th>
                         <th>Categoria</th>
+                        <th>Preço</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
@@ -205,6 +206,15 @@
                     <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/capa.jpg">
                     <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Cole a URL de uma imagem ou deixe em branco para usar padrão</small>
                 </div>
+
+                <!-- Dentro do FORM, adicione este bloco ANTES do campo Status: -->
+
+                <div class="form-group">
+                    <label class="form-label">Preço*</label>
+                    <input type="text" id="preco" class="form-input" placeholder="Ex: R$ 29,90" value="R$ 29,90" required>
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Use formato: R$ 29,90 ou deixe "Grátis"</small>
+                </div>
+
 
                 <div class="form-group">
                     <label class="form-label">Status*</label>
@@ -282,6 +292,7 @@
                         </div>
                     </td>
                     <td><span class="table-badge badge-blue">${ebook.categoria || '-'}</span></td>
+                    <td>${ebook.preco || 'Grátis'}</td> 
                     <td><span class="status-badge ${ebook.status === 'Publicado' ? 'status-published' : 'status-draft'}">${ebook.status}</span></td>
                     <td>
                         <div class="table-actions">
@@ -327,6 +338,8 @@
             document.getElementById('descricao').value = ebook.descricao || '';
             document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
             document.getElementById('status').value = ebook.status || 'Rascunho';
+            document.getElementById('preco').value = ebook.preco || 'R$ 29,90';
+
 
             document.getElementById('modal').style.display = 'flex';
             document.getElementById('modalTitle').textContent = 'Editar Ebook';
@@ -341,6 +354,7 @@
                 categoria: document.getElementById('categoria').value || null,
                 descricao: document.getElementById('descricao').value,
                 imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800',
+                preco: document.getElementById('preco').value,
                 status: document.getElementById('status').value
             };
 
