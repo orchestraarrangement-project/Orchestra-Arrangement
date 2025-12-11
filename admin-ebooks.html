@@ -10,6 +10,62 @@
     
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
+    
+    <style>
+        /* FIX: Modal com scroll e dimensões corretas */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            margin: auto;
+        }
+        
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        
+        .modal-form {
+            padding: 24px;
+        }
+        
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+    </style>
 </head>
 <body class="admin-body">
     <aside class="admin-sidebar">
@@ -121,23 +177,23 @@
         </section>
     </main>
 
+    <!-- MODAL CORRIGIDO -->
     <div id="modal" class="modal">
-        <div class="modal-content modal-large">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Novo Ebook</h2>
-                <button class="modal-close" onclick="fecharModal()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+                <button class="modal-close" onclick="fecharModal()" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #666;">
+                    ×
                 </button>
             </div>
-            <form id="ebookForm">
+            
+            <form id="ebookForm" class="modal-form">
                 <div class="form-group">
                     <label class="form-label">Título*</label>
-                    <input type="text" id="titulo" class="form-input" required>
+                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Música" required>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
                         <label class="form-label">Categoria*</label>
                         <input type="text" id="categoria" class="form-input" placeholder="Ex: Teoria Musical" required>
@@ -149,13 +205,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Descrição Curta*</label>
-                    <textarea id="descricao" class="form-input" rows="3" required></textarea>
+                    <label class="form-label">Descrição*</label>
+                    <textarea id="descricao" class="form-input" rows="4" placeholder="Descreva o conteúdo do ebook..." required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">URL da Imagem de Capa</label>
                     <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/capa.jpg">
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Cole a URL de uma imagem ou deixe em branco para usar padrão</small>
                 </div>
 
                 <div class="form-group">
@@ -165,12 +222,12 @@
                         <option value="Publicado">Publicado</option>
                     </select>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Ebook</button>
-                </div>
             </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="submitBtn" onclick="document.getElementById('ebookForm').requestSubmit()">Criar Ebook</button>
+            </div>
         </div>
     </div>
 
@@ -229,12 +286,12 @@
                             <img src="${ebook.imagem_capa || 'https://via.placeholder.com/100'}" alt="${ebook.titulo}">
                             <div>
                                 <strong>${ebook.titulo}</strong>
-                                <span>${ebook.descricao_curta || ''}</span>
+                                <span>${ebook.descricao || ''}</span>
                             </div>
                         </div>
                     </td>
                     <td><span class="table-badge badge-blue">${ebook.categoria || '-'}</span></td>
-                    <td>${ebook.preco || 'R$ 0,00'}</td>
+                    <td>${ebook.preco || 'Grátis'}</td>
                     <td><span class="status-badge ${ebook.status === 'Publicado' ? 'status-published' : 'status-draft'}">${ebook.status}</span></td>
                     <td>
                         <div class="table-actions">
@@ -278,7 +335,7 @@
             document.getElementById('titulo').value = ebook.titulo;
             document.getElementById('categoria').value = ebook.categoria || '';
             document.getElementById('preco').value = ebook.preco || '';
-            document.getElementById('descricao').value = ebook.descricao_curta || '';
+            document.getElementById('descricao').value = ebook.descricao || ''; // CORRIGIDO: usa 'descricao'
             document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
             document.getElementById('status').value = ebook.status;
 
@@ -294,7 +351,7 @@
                 titulo: document.getElementById('titulo').value,
                 categoria: document.getElementById('categoria').value,
                 preco: document.getElementById('preco').value,
-                descricao_curta: document.getElementById('descricao').value,
+                descricao: document.getElementById('descricao').value, // CORRIGIDO: usa 'descricao'
                 imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800',
                 status: document.getElementById('status').value
             };
@@ -326,7 +383,7 @@
         }
 
         async function deletarEbook(id, titulo) {
-            if (!confirm(`Deletar "${titulo}"?`)) return;
+            if (!confirm(`Tem certeza que deseja deletar "${titulo}"?`)) return;
 
             try {
                 const { error } = await supabase
@@ -335,7 +392,7 @@
                     .eq('id', id);
 
                 if (error) throw error;
-                alert('✅ Ebook deletado!');
+                alert('✅ Ebook deletado com sucesso!');
                 carregarEbooks();
             } catch (error) {
                 console.error('Erro:', error);
