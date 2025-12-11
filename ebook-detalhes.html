@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebook - Orchestra</title>
-    <!-- SDK do Supabase via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Arquivo de configuração -->
-<script src="supabase-config.js"></script>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
-    <style> 
-        /* HEADER FIXO NO TOPO */
+    
+    <style>
+        /* HEADER FIXO */
         .header {
             background: #fff;
             border-bottom: 1px solid #e0e0e0;
@@ -35,11 +34,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 0 2rem;
         }
         
-        /* LOGO */
         .logo-link {
             display: block;
             line-height: 0;
@@ -74,6 +73,9 @@
         .back-section {
             padding: 20px 0;
             background: #fff;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 2rem;
         }
 
         .back-link {
@@ -90,10 +92,10 @@
             gap: 12px;
         }
 
-        /* HERO SECTION COM IMAGEM DO LADO */
+        /* HERO SECTION */
         .course-hero {
-            background: linear-gradient(135deg, #3f3f73 0%, #3f3f73 100%);
-            min-height: 600px;
+            background: linear-gradient(135deg, #3f3f73 0%, #2d2d52 100%);
+            min-height: 500px;
             display: flex;
             align-items: center;
             padding: 60px 0;
@@ -101,9 +103,9 @@
 
         .hero-container {
             display: grid;
-            grid-template-columns: 45% 55%;
+            grid-template-columns: 400px 1fr;
             gap: 60px;
-            align-items: center;
+            align-items: start;
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
@@ -111,7 +113,6 @@
 
         .hero-image {
             width: 100%;
-            height: 400px;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -119,7 +120,7 @@
 
         .hero-image img {
             width: 100%;
-            height: 100%;
+            height: 500px;
             object-fit: cover;
             display: block;
         }
@@ -129,171 +130,181 @@
         }
 
         .course-title {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             margin-bottom: 20px;
-            line-height: 1.1;
-            text-transform: uppercase;
-        }
-
-        .course-meta-info {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1rem;
-            background: rgba(255,255,255,0.15);
-            padding: 10px 20px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        .meta-item svg {
-            flex-shrink: 0;
+            line-height: 1.2;
         }
 
         .course-description {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             line-height: 1.8;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             opacity: 0.95;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* BOTÃO + PREÇO AO LADO */
+        .action-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
         }
 
         .btn-comprar {
             background: #FFC107;
-            color: #333;
+            color: #1a1a1a;
             border: none;
-            padding: 20px 50px;
+            padding: 18px 40px;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
         }
 
         .btn-comprar:hover {
             background: #FFD54F;
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 193, 7, 0.5);
+            box-shadow: 0 15px 40px rgba(255, 193, 7, 0.6);
         }
 
-        /* CONTENT SECTION */
-        .course-content-section {
-            padding: 80px 0;
+        /* PREÇO AO LADO DO BOTÃO */
+        .price-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 35px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #FFC107;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            min-width: 150px;
+        }
+
+        /* INFORMAÇÕES EXTRAS */
+        .info-section {
+            padding: 60px 0;
             background: #f8f9fa;
         }
 
-        .content-box {
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
-            max-width: 900px;
+        .info-container {
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-weight: 700;
+            font-size: 24px;
+            color: #3f3f73;
+        }
+
+        /* CONTEÚDO DO EBOOK */
+        .content-section {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
         }
 
         .content-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #333;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 4px solid #5B4C9D;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3f3f73;
         }
 
-        .lessons-list {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+        .content-list {
+            list-style: none;
+            padding: 0;
         }
 
-        .lesson-item {
-            display: flex;
-            gap: 25px;
-            padding: 25px;
+        .content-list li {
+            padding: 20px;
             background: #f8f9fa;
-            border-radius: 15px;
-            transition: all 0.3s;
-            border-left: 5px solid #5B4C9D;
-        }
-
-        .lesson-item:hover {
-            background: #e9ecef;
-            transform: translateX(10px);
-            box-shadow: 0 5px 20px rgba(91, 76, 157, 0.15);
-        }
-
-        .lesson-number {
-            flex-shrink: 0;
-            width: 50px;
-            height: 50px;
-            background: #5B4C9D;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-
-        .lesson-content {
-            flex-grow: 1;
-        }
-
-        .lesson-title {
-            font-size: 1.4rem;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .lesson-description {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3f3f73;
+            font-size: 16px;
             line-height: 1.6;
+            transition: all 0.3s;
         }
 
-        .lesson-duration {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #5B4C9D;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* LOADING */
-        .loading {
-            text-align: center;
-            padding: 100px 20px;
-            color: #999;
-            font-size: 1.2rem;
+        .content-list li:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
         }
 
         /* RESPONSIVE */
         @media (max-width: 1024px) {
             .hero-container {
                 grid-template-columns: 1fr;
-                gap: 40px;
+                gap: 30px;
             }
 
-            .hero-image {
-                height: 400px;
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-area {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-comprar {
+                justify-content: center;
+            }
+
+            .price-badge {
+                text-align: center;
             }
 
             .course-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
         }
     </style>
@@ -315,57 +326,64 @@
 
     <!-- Back Button -->
     <section class="back-section">
-        <div class="container">
-            <a href="ebooks.html" class="back-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Voltar
-            </a>
-        </div>
+        <a href="ebooks.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12 16L6 10L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Voltar
+        </a>
     </section>
 
-    <!-- Course Hero -->
+    <!-- Hero -->
     <section class="course-hero">
         <div class="hero-container">
-            <!-- Imagem da Capa (Dinâmica) -->
-            <div class="hero-image" id="heroImage">
-                <div class="loading">Carregando...</div>
+            <div class="hero-image">
+                <img id="ebookImage" src="https://via.placeholder.com/400" alt="Capa do Ebook">
             </div>
 
-            <!-- Informações do Curso -->
             <div class="hero-content">
-                <h1 class="course-title" id="courseTitle">Carregando...</h1>
-                
-                <div class="course-meta-info" id="courseMeta">
-                    <!-- Preenchido via JavaScript -->
+                <div id="categoryBadge"></div>
+                <h1 class="course-title" id="ebookTitle">Carregando...</h1>
+                <p class="course-description" id="ebookDescription">Carregando descrição...</p>
+
+                <div class="action-area">
+                    <button class="btn-comprar" onclick="comprarEbook()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3H5L7 13H17L19 5H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="9" cy="17" r="1" fill="currentColor"/>
+                            <circle cx="16" cy="17" r="1" fill="currentColor"/>
+                        </svg>
+                        Comprar Ebook
+                    </button>
+                    <span class="price-badge" id="ebookPrice">R$ 0,00</span>
                 </div>
-
-                <p class="course-description" id="courseDescription">
-                    <!-- Preenchido via JavaScript -->
-                </p>
-
-                <button class="btn-comprar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 3H5L6 13H18L20 6H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        ircle cx="9" cy="20" r="1" fill="currentColor"/>
-                        ircle cx="16" cy="20" r="1" fill="currentColor"/>
-                    </svg>
-                    Comprar Ebook
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- Course Content -->
-    <section class="course-content-section">
-        <div class="container">
-            <div class="content-box">
-                <h2 class="content-title">Conteúdo do Ebook</h2>
-                
-                <div class="lessons-list" id="lessonsList">
-                    <div class="loading">Carregando aulas...</div>
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="info-container">
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">Duração</div>
+                    <div class="info-value" id="infoDuracao">2-3 horas</div>
                 </div>
+                <div class="info-card">
+                    <div class="info-label">Nível</div>
+                    <div class="info-value" id="infoNivel">Iniciante</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Idioma</div>
+                    <div class="info-value" id="infoIdioma">Português</div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2 class="content-title">Conteúdo do Ebook</h2>
+                <ul class="content-list" id="contentList">
+                    <li>Carregando conteúdo...</li>
+                </ul>
             </div>
         </div>
     </section>
@@ -376,21 +394,14 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="logo-placeholder">ORCHESTRA</div>
-                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                    <p class="footer-description">Sua plataforma completa para aprender música.</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-column">
-                        <h4 class="footer-title">Links Rápidos</h4>
+                        <h4 class="footer-title">Links</h4>
                         <ul class="footer-list">
                             <li><a href="ebooks.html">Ebooks</a></li>
                             <li><a href="partituras.html">Partituras</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4 class="footer-title">Contato</h4>
-                        <ul class="footer-list">
-                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
-                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
                         </ul>
                     </div>
                 </div>
@@ -400,260 +411,92 @@
             </div>
         </div>
     </footer>
-    <!-- Seção de Informações do Ebook (adicione após o hero) -->
-<section class="ebook-info-section" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; margin-bottom: 40px;">
-        <div class="info-item">
-            <div class="info-label" style="color: #666; margin-bottom: 5px;">Duração</div>
-            <div class="info-value" style="font-weight: bold; font-size: 18px;">Carregando...</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label" style="color: #666; margin-bottom: 5px;">Nível</div>
-            <div class="info-value" style="font-weight: bold; font-size: 18px;">Carregando...</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label" style="color: #666; margin-bottom: 5px;">Idioma</div>
-            <div class="info-value" style="font-weight: bold; font-size: 18px;">Carregando...</div>
-        </div>
-    </div>
-    
-    <div class="ebook-description" style="margin-bottom: 40px; font-size: 16px; line-height: 1.8; color: #555;">
-        Carregando descrição...
-    </div>
 
-    <h2 style="margin-bottom: 20px;">Conteúdo do Ebook</h2>
-    <ul class="ebook-content-list" style="list-style: none; padding: 0;">
-        <li style="padding: 15px; background: #f5f5f5; margin-bottom: 10px; border-radius: 8px;">Carregando conteúdo...</li>
-    </ul>
-</section>
+    <script>
+        let ebookAtual = null;
 
+        async function carregarEbook() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
 
-    <script src="api.js"></script>
-   <script>
-    let ebookAtual = null;
-
-    // Pegar ID do ebook da URL
-    function getEbookId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id');
-    }
-
-    // Carregar dados do ebook
-    async function carregarEbook() {
-        const ebookId = getEbookId();
-        
-        if (!ebookId) {
-            mostrarErro('ID do ebook não encontrado na URL');
-            return;
-        }
-
-        try {
-            console.log('🔍 Buscando ebook ID:', ebookId);
-
-            // Buscar ebook direto do Supabase
-            const { data: ebook, error } = await supabase
-                .from('cursos')
-                .select('*')
-                .eq('id', ebookId)
-                .single();
-
-            if (error) {
-                console.error('Erro ao buscar ebook:', error);
-                mostrarErro('Ebook não encontrado');
+            if (!id) {
+                alert('ID do ebook não encontrado');
+                window.location.href = 'ebooks.html';
                 return;
             }
 
-            if (!ebook) {
-                mostrarErro('Ebook não encontrado');
-                return;
-            }
-
-            console.log('✅ Ebook carregado:', ebook);
-            ebookAtual = ebook;
-            renderizarEbook(ebook);
-            ocultarLoaders(); // NOVO: Ocultar todos os loaders de uma vez
-            
-        } catch (error) {
-            console.error('Erro:', error);
-            mostrarErro('Erro ao carregar ebook. Tente novamente.');
-        }
-    }
-
-    function renderizarEbook(ebook) {
-        // Atualizar título da página
-        document.title = `${ebook.titulo} - Orchestra`;
-
-        // Atualizar TODOS os títulos possíveis
-        const titulos = [
-            document.querySelector('.ebook-title'),
-            document.querySelector('h1'),
-            document.querySelector('.hero-title')
-        ];
-        titulos.forEach(el => {
-            if (el) el.textContent = ebook.titulo;
-        });
-
-        // Atualizar imagem
-        const imagens = [
-            document.querySelector('.ebook-cover img'),
-            document.querySelector('.hero-image img'),
-            document.querySelector('img[alt*="ebook"]')
-        ];
-        imagens.forEach(img => {
-            if (img) {
-                img.src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
-                img.alt = ebook.titulo;
-            }
-        });
-
-        // Atualizar categoria
-        const categoria = document.querySelector('.ebook-category');
-        if (categoria && ebook.categoria) {
-            categoria.textContent = ebook.categoria;
-        }
-
-        // Atualizar descrição
-        const descricoes = [
-            document.querySelector('.ebook-description'),
-            document.querySelector('.description'),
-            document.querySelector('p.subtitle')
-        ];
-        descricoes.forEach(desc => {
-            if (desc) {
-                desc.textContent = ebook.descricao || ebook.descricao_curta || '';
-            }
-        });
-
-        // Atualizar informações
-        atualizarInfo('.info-item:nth-child(1) .info-value', ebook.duracao || '2-3 horas');
-        atualizarInfo('.info-item:nth-child(2) .info-value', ebook.nivel || 'Iniciante');
-        atualizarInfo('.info-item:nth-child(3) .info-value', ebook.idioma || 'Português');
-
-        // Atualizar conteúdo/tópicos
-        renderizarConteudo(ebook);
-    }
-
-    function atualizarInfo(selector, valor) {
-        const el = document.querySelector(selector);
-        if (el) el.textContent = valor;
-    }
-
-    function renderizarConteudo(ebook) {
-        const containers = [
-            document.querySelector('.ebook-content-list'),
-            document.querySelector('.topics-list'),
-            document.querySelector('.modules-list'),
-            document.querySelector('ul')
-        ];
-
-        let conteudoHTML = '';
-
-        if (ebook.conteudo) {
             try {
-                const topicos = JSON.parse(ebook.conteudo);
-                if (Array.isArray(topicos)) {
-                    conteudoHTML = topicos.map(topico => `<li>${topico}</li>`).join('');
+                const { data, error } = await supabase
+                    .from('cursos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                ebookAtual = data;
+                renderizarEbook(data);
+                console.log('✅ Ebook carregado:', data);
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar ebook');
+                window.location.href = 'ebooks.html';
+            }
+        }
+
+        function renderizarEbook(ebook) {
+            document.title = `${ebook.titulo} - Orchestra`;
+            
+            document.getElementById('ebookTitle').textContent = ebook.titulo;
+            document.getElementById('ebookDescription').textContent = ebook.descricao || 'Sem descrição disponível';
+            document.getElementById('ebookImage').src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+            document.getElementById('ebookPrice').textContent = ebook.preco || 'Grátis';
+
+            // Categoria
+            if (ebook.categoria) {
+                document.getElementById('categoryBadge').innerHTML = `<span class="category-badge">${ebook.categoria}</span>`;
+            }
+
+            // Informações extras
+            document.getElementById('infoDuracao').textContent = ebook.duracao || '2-3 horas';
+            document.getElementById('infoNivel').textContent = ebook.nivel || 'Iniciante';
+            document.getElementById('infoIdioma').textContent = ebook.idioma || 'Português';
+
+            // Conteúdo
+            renderizarConteudo(ebook);
+        }
+
+        function renderizarConteudo(ebook) {
+            const lista = document.getElementById('contentList');
+            
+            let conteudo = [];
+            
+            if (ebook.conteudo) {
+                try {
+                    conteudo = JSON.parse(ebook.conteudo);
+                } catch (e) {
+                    conteudo = [ebook.descricao];
                 }
-            } catch (e) {
-                console.error('Erro ao parsear conteúdo:', e);
             }
+
+            if (conteudo.length === 0) {
+                conteudo = [
+                    'Introdução ao tema',
+                    'Conceitos fundamentais',
+                    'Exercícios práticos',
+                    'Material complementar'
+                ];
+            }
+
+            lista.innerHTML = conteudo.map(item => `<li>${item}</li>`).join('');
         }
 
-        // Se não tiver conteúdo, usar padrão
-        if (!conteudoHTML) {
-            conteudoHTML = `
-                <li>Introdução ao tema</li>
-                <li>Conceitos fundamentais</li>
-                <li>Exercícios práticos</li>
-                <li>Material complementar</li>
-            `;
+        function comprarEbook() {
+            if (!ebookAtual) return;
+            alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco || 'Grátis'}`);
         }
 
-        containers.forEach(container => {
-            if (container) {
-                container.innerHTML = conteudoHTML;
-            }
-        });
-    }
-
-    function ocultarLoaders() {
-        // OCULTAR TODOS OS LOADERS POSSÍVEIS
-        const loaders = [
-            ...document.querySelectorAll('.loading-container'),
-            ...document.querySelectorAll('[class*="loading"]'),
-            ...document.querySelectorAll('[class*="loader"]')
-        ];
-
-        loaders.forEach(loader => {
-            if (loader && loader.textContent.toLowerCase().includes('carregando')) {
-                loader.style.display = 'none';
-                loader.remove(); // Remover do DOM
-            }
-        });
-
-        // MOSTRAR TODO O CONTEÚDO
-        const conteudos = [
-            document.querySelector('.ebook-details-container'),
-            document.querySelector('main'),
-            document.querySelector('.container'),
-            document.body
-        ];
-
-        conteudos.forEach(el => {
-            if (el) {
-                el.style.display = 'block';
-                el.style.opacity = '1';
-                el.style.visibility = 'visible';
-            }
-        });
-    }
-
-    function mostrarErro(mensagem) {
-        // Ocultar loaders primeiro
-        ocultarLoaders();
-
-        alert(mensagem);
-        setTimeout(() => {
-            window.location.href = 'ebooks.html';
-        }, 1000);
-    }
-
-    // Adicionar funcionalidade ao botão de compra
-    function configurarBotaoCompra() {
-        const botoes = [
-            document.querySelector('.btn-comprar'),
-            document.querySelector('.btn-buy'),
-            document.querySelector('button[class*="buy"]')
-        ];
-        
-        botoes.forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', function() {
-                    if (ebookAtual) {
-                        alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco || 'R$ 29,90'}`);
-                    }
-                });
-            }
-        });
-    }
-
-    // CARREGAR TUDO IMEDIATAMENTE
-    (async function inicializar() {
-        console.log('🚀 Iniciando carregamento do ebook...');
-        
-        // Ocultar loaders imediatamente se não houver ID
-        const ebookId = getEbookId();
-        if (!ebookId) {
-            mostrarErro('ID do ebook não encontrado');
-            return;
-        }
-
-        // Carregar dados
-        await carregarEbook();
-        configurarBotaoCompra();
-    })();
-</script>
-
-
+        carregarEbook();
+    </script>
 </body>
 </html>
