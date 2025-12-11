@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Partituras - Orchestra Admin</title>
+    
+    <!-- SDK do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
 </head>
@@ -132,7 +137,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Será preenchido via JavaScript -->
+                    <tr><td colspan="6" style="text-align: center; padding: 40px;">Carregando...</td></tr>
                 </tbody>
             </table>
         </section>
@@ -225,29 +230,64 @@
         </div>
     </div>
 
-    <script src="api.js"></script>
     <script>
-        if (!localStorage.getItem('token')) {
+        // ========================================
+        // VERIFICAR AUTENTICAÇÃO
+        // ========================================
+        async function verificarAutenticacao() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                console.log('❌ Não autenticado');
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            
+            console.log('✅ Autenticado:', session.user.email);
+            return true;
+        }
+
+        // ========================================
+        // VARIÁVEIS GLOBAIS
+        // ========================================
+        let partituras = [];
+        let editandoId = null;
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        async function logout() {
+            await supabase.auth.signOut();
+            localStorage.clear();
             window.location.href = 'admin-login.html';
         }
 
-        let partituras = [];
-        let editandoId = null; // IMPORTANTE: Armazena ID da partitura sendo editada
-
-        function logout() {
-            api.logout();
-        }
-
+        // ========================================
+        // CARREGAR PARTITURAS
+        // ========================================
         async function carregarPartituras() {
+            const autenticado = await verificarAutenticacao();
+            if (!autenticado) return;
+
             try {
-                partituras = await api.getPartituras();
+                const { data, error } = await supabase
+                    .from('partituras')
+                    .select('*');
+
+                if (error) throw error;
+
+                partituras = data || [];
                 renderizarPartituras(partituras);
+                console.log('✅ Partituras carregadas:', partituras.length);
             } catch (error) {
                 console.error('Erro ao carregar partituras:', error);
                 alert('Erro ao carregar partituras: ' + error.message);
             }
         }
 
+        // ========================================
+        // RENDERIZAR PARTITURAS
+        // ========================================
         function renderizarPartituras(lista) {
             const tbody = document.querySelector('.admin-table tbody');
             tbody.innerHTML = '';
@@ -257,13 +297,13 @@
                 return;
             }
 
-            lista.forEach(partitura => {
-                const dificuldadeColors = {
-                    'Fácil': 'badge-green',
-                    'Intermediário': 'badge-yellow',
-                    'Difícil': 'badge-red'
-                };
+            const dificuldadeColors = {
+                'Fácil': 'badge-green',
+                'Intermediário': 'badge-yellow',
+                'Difícil': 'badge-red'
+            };
 
+            lista.forEach(partitura => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
@@ -298,9 +338,11 @@
             });
         }
 
-        // ABRIR MODAL PARA CRIAR (limpa editandoId)
+        // ========================================
+        // MODAL
+        // ========================================
         function abrirModalCriar() {
-            editandoId = null; // LIMPA O ID
+            editandoId = null;
             document.getElementById('courseForm').reset();
             document.getElementById('courseModal').style.display = 'flex';
             document.getElementById('modalTitle').textContent = 'Nova Partitura';
@@ -313,12 +355,11 @@
             document.getElementById('courseForm').reset();
         }
 
-        // EDITAR - Define editandoId e preenche formulário
         function editarPartitura(id) {
             const partitura = partituras.find(p => p.id === id);
             if (!partitura) return;
 
-            editandoId = id; // DEFINE O ID DA PARTITURA SENDO EDITADA
+            editandoId = id;
             
             document.getElementById('titulo').value = partitura.titulo;
             document.getElementById('compositor').value = partitura.compositor;
@@ -334,7 +375,9 @@
             document.getElementById('submitBtn').textContent = 'Salvar Alterações';
         }
 
-        // SALVAR - Verifica editandoId para decidir se cria ou atualiza
+        // ========================================
+        // SALVAR PARTITURA
+        // ========================================
         async function salvarPartitura(event) {
             event.preventDefault();
 
@@ -351,14 +394,19 @@
 
             try {
                 if (editandoId) {
-                    // ATUALIZAR - Se editandoId existe
-                    console.log('Atualizando partitura:', editandoId);
-                    await api.atualizarPartitura(editandoId, dados);
+                    const { error } = await supabase
+                        .from('partituras')
+                        .update(dados)
+                        .eq('id', editandoId);
+
+                    if (error) throw error;
                     alert('✅ Partitura atualizada com sucesso!');
                 } else {
-                    // CRIAR - Se editandoId é null
-                    console.log('Criando nova partitura');
-                    await api.criarPartitura(dados);
+                    const { error } = await supabase
+                        .from('partituras')
+                        .insert([dados]);
+
+                    if (error) throw error;
                     alert('✅ Partitura criada com sucesso!');
                 }
                 
@@ -366,25 +414,34 @@
                 carregarPartituras();
             } catch (error) {
                 console.error('Erro:', error);
-                alert('❌ Erro ao salvar partitura: ' + error.message);
+                alert('❌ Erro ao salvar: ' + error.message);
             }
         }
 
+        // ========================================
+        // DELETAR PARTITURA
+        // ========================================
         async function deletarPartitura(id, titulo) {
-            if (!confirm(`Tem certeza que deseja deletar a partitura "${titulo}"?\n\nEsta ação não pode ser desfeita!`)) {
-                return;
-            }
+            if (!confirm(`Deletar "${titulo}"?`)) return;
 
             try {
-                await api.deletarPartitura(id);
-                alert('✅ Partitura deletada com sucesso!');
+                const { error } = await supabase
+                    .from('partituras')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                alert('✅ Partitura deletada!');
                 carregarPartituras();
             } catch (error) {
                 console.error('Erro:', error);
-                alert('❌ Erro ao deletar partitura: ' + error.message);
+                alert('❌ Erro ao deletar: ' + error.message);
             }
         }
 
+        // ========================================
+        // FILTROS
+        // ========================================
         document.getElementById('searchInput').addEventListener('input', function() {
             const busca = this.value.toLowerCase();
             const filtradas = partituras.filter(p => 
@@ -412,14 +469,15 @@
         });
 
         window.onclick = function(event) {
-            const modal = document.getElementById('courseModal');
-            if (event.target == modal) {
+            if (event.target == document.getElementById('courseModal')) {
                 closeModal();
             }
         }
 
+        // ========================================
+        // INICIALIZAR
+        // ========================================
         document.getElementById('courseForm').addEventListener('submit', salvarPartitura);
-
         carregarPartituras();
     </script>
 </body>
