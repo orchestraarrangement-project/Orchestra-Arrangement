@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="admin-styles.css">
     
     <style>
-        /* FIX: Modal com scroll e dimensões corretas */
         .modal {
             position: fixed;
             top: 0;
@@ -165,19 +164,17 @@
                     <tr>
                         <th>Ebook</th>
                         <th>Categoria</th>
-                        <th>Preço</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td colspan="5" style="text-align: center; padding: 40px;">Carregando...</td></tr>
+                    <tr><td colspan="4" style="text-align: center; padding: 40px;">Carregando...</td></tr>
                 </tbody>
             </table>
         </section>
     </main>
 
-    <!-- MODAL CORRIGIDO -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -193,15 +190,9 @@
                     <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Música" required>
                 </div>
 
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group">
-                        <label class="form-label">Categoria*</label>
-                        <input type="text" id="categoria" class="form-input" placeholder="Ex: Teoria Musical" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Preço*</label>
-                        <input type="text" id="preco" class="form-input" placeholder="R$ 29,90" required>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Categoria</label>
+                    <input type="text" id="categoria" class="form-input" placeholder="Ex: Teoria Musical">
                 </div>
 
                 <div class="form-group">
@@ -274,7 +265,7 @@
             tbody.innerHTML = '';
 
             if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #666;">Nenhum ebook cadastrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #666;">Nenhum ebook cadastrado</td></tr>';
                 return;
             }
 
@@ -286,12 +277,11 @@
                             <img src="${ebook.imagem_capa || 'https://via.placeholder.com/100'}" alt="${ebook.titulo}">
                             <div>
                                 <strong>${ebook.titulo}</strong>
-                                <span>${ebook.descricao || ''}</span>
+                                <span>${ebook.descricao ? ebook.descricao.substring(0, 60) + '...' : ''}</span>
                             </div>
                         </div>
                     </td>
                     <td><span class="table-badge badge-blue">${ebook.categoria || '-'}</span></td>
-                    <td>${ebook.preco || 'Grátis'}</td>
                     <td><span class="status-badge ${ebook.status === 'Publicado' ? 'status-published' : 'status-draft'}">${ebook.status}</span></td>
                     <td>
                         <div class="table-actions">
@@ -332,12 +322,11 @@
 
             editandoId = id;
             
-            document.getElementById('titulo').value = ebook.titulo;
+            document.getElementById('titulo').value = ebook.titulo || '';
             document.getElementById('categoria').value = ebook.categoria || '';
-            document.getElementById('preco').value = ebook.preco || '';
-            document.getElementById('descricao').value = ebook.descricao || ''; // CORRIGIDO: usa 'descricao'
+            document.getElementById('descricao').value = ebook.descricao || '';
             document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
-            document.getElementById('status').value = ebook.status;
+            document.getElementById('status').value = ebook.status || 'Rascunho';
 
             document.getElementById('modal').style.display = 'flex';
             document.getElementById('modalTitle').textContent = 'Editar Ebook';
@@ -349,9 +338,8 @@
 
             const dados = {
                 titulo: document.getElementById('titulo').value,
-                categoria: document.getElementById('categoria').value,
-                preco: document.getElementById('preco').value,
-                descricao: document.getElementById('descricao').value, // CORRIGIDO: usa 'descricao'
+                categoria: document.getElementById('categoria').value || null,
+                descricao: document.getElementById('descricao').value,
                 imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800',
                 status: document.getElementById('status').value
             };
