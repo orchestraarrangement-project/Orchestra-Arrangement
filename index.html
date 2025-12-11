@@ -158,6 +158,141 @@
             color: white;
             border: 2px solid #5B4C9D;
         }
+        /* ===== CARDS DE EBOOKS (USAR AS CLASSES DO STYLES.CSS) ===== */
+.card {
+    background: var(--white, #fff);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.card-image {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.card:hover .card-image img {
+    transform: scale(1.1);
+}
+
+.card-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.badge-green {
+    background: rgba(52, 211, 153, 0.9);
+    color: #fff;
+}
+
+.badge-yellow {
+    background: rgba(251, 191, 36, 0.9);
+    color: #fff;
+}
+
+.badge-red {
+    background: rgba(239, 68, 68, 0.9);
+    color: #fff;
+}
+
+.card-content {
+    padding: 24px;
+}
+
+.card-category {
+    color: #5B4C9D;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d2d3d;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.card:hover .card-title {
+    color: #5B4C9D;
+}
+
+.card-description {
+    color: #666;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.card-duration {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #999;
+    font-size: 14px;
+}
+
+.card-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #5B4C9D;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.card:hover .card-link {
+    gap: 10px;
+}
+
+/* ===== GRID DE CARDS ===== */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 32px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -218,7 +353,7 @@
     <section class="section scores-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Partituras em Destaque</h2>
+                <h2 class="section-title">CONHEÇA NOSSAS PARTITURAS</h2>
                 <p class="section-subtitle">Explore nossa biblioteca musical</p>
             </div>
             <div class="cards-grid">
@@ -286,26 +421,24 @@
                 .from('partituras')
                 .select('*')
                 .eq('status', 'Publicado')
-                .limit(3); // Apenas 3 partituras
+                .limit(3);
 
             if (error) {
                 console.error('Erro ao carregar partituras:', error);
                 return;
             }
 
-            console.log('Partituras carregadas:', partituras);
+            console.log('✅ Partituras carregadas:', partituras);
 
-            const container = document.querySelector('.partituras-destaque') || 
-                            document.querySelector('#partituras-container') ||
-                            document.querySelector('.cards-grid');
+            const container = document.querySelector('.scores-section .cards-grid');
 
             if (!container) {
-                console.error('Container de partituras não encontrado!');
+                console.error('❌ Container de partituras não encontrado!');
                 return;
             }
 
             if (!partituras || partituras.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhuma partitura disponível no momento.</p>';
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhuma partitura disponível.</p>';
                 return;
             }
 
@@ -316,7 +449,7 @@
             };
 
             container.innerHTML = partituras.map(partitura => `
-                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
+                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'">
                     <div class="score-image">
                         <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" 
                              alt="${partitura.titulo}">
@@ -335,7 +468,7 @@
                 </div>
             `).join('');
         } catch (error) {
-            console.error('Erro:', error);
+            console.error('❌ Erro:', error);
         }
     }
 
@@ -346,56 +479,75 @@
                 .from('cursos')
                 .select('*')
                 .eq('status', 'Publicado')
-                .limit(3); // Apenas 3 ebooks
+                .limit(3);
 
             if (error) {
                 console.error('Erro ao carregar ebooks:', error);
                 return;
             }
 
-            console.log('Ebooks carregados:', ebooks);
+            console.log('✅ Ebooks carregados:', ebooks);
 
-            const container = document.querySelector('.ebooks-destaque') || 
-                            document.querySelector('#ebooks-container') ||
-                            document.querySelectorAll('.cards-grid')[1]; // Segundo cards-grid
+            const container = document.querySelector('.featured-section .cards-grid');
 
             if (!container) {
-                console.error('Container de ebooks não encontrado!');
+                console.error('❌ Container de ebooks não encontrado!');
                 return;
             }
 
             if (!ebooks || ebooks.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum ebook disponível no momento.</p>';
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum ebook disponível.</p>';
                 return;
             }
 
+            const nivelColors = {
+                'Iniciante': 'badge-green',
+                'Intermediário': 'badge-yellow',
+                'Avançado': 'badge-red'
+            };
+
             container.innerHTML = ebooks.map(ebook => `
-                <div class="ebook-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
-                    <div class="ebook-image">
+                <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'">
+                    <div class="card-image">
                         <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
                              alt="${ebook.titulo}">
+                        <span class="card-badge ${nivelColors[ebook.nivel] || 'badge-green'}">${ebook.nivel}</span>
                     </div>
-                    <div class="ebook-content">
-                        <h3 class="ebook-title">${ebook.titulo}</h3>
-                        <p class="ebook-description">${ebook.descricao_curta || ebook.descricao || 'Ebook educativo de qualidade'}</p>
-                        <div class="ebook-tags">
-                            ${ebook.categoria ? `<span class="tag">${ebook.categoria}</span>` : ''}
+                    <div class="card-content">
+                        <div class="card-category">${ebook.categoria || 'Ebook'}</div>
+                        <h3 class="card-title">${ebook.titulo}</h3>
+                        <p class="card-description">${ebook.descricao || 'Ebook educativo de qualidade'}</p>
+                        <div class="card-footer">
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                ${ebook.duracao || '2-3 horas'}
+                            </span>
+                            <span class="card-link">
+                                Ver detalhes
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
                         </div>
                     </div>
                 </div>
             `).join('');
         } catch (error) {
-            console.error('Erro:', error);
+            console.error('❌ Erro:', error);
         }
     }
 
     // Carregar tudo ao iniciar
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Carregando partituras e ebooks...');
+        console.log('🚀 Iniciando Orchestra...');
         carregarPartiturasDestaque();
         carregarEbooksDestaque();
     });
 </script>
+
 
 </body>
 </html>
