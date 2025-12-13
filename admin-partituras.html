@@ -17,28 +17,28 @@
 <body class="admin-body">
         <script>
         // Verificação de autenticação
-        const token = localStorage.getItem('adminToken');
-        const userId = localStorage.getItem('adminUserId');
+        const isLogged = localStorage.getItem('admin_logged');
+        const userEmail = localStorage.getItem('admin_email');
         
-        if (!token || !userId) {
+        console.log('🔐 Verificando auth:', { isLogged, userEmail });
+        
+        if (!isLogged || !userEmail) {
+            console.log('❌ Não autenticado - redirecionando...');
             window.location.replace('admin-login.html');
+        } else {
+            console.log('✅ Usuário autenticado:', userEmail);
         }
         
         // Função de logout
         function fazerLogout() {
             if (confirm('Deseja realmente sair?')) {
                 localStorage.clear();
+                console.log('🚪 Logout realizado');
                 window.location.href = 'admin-login.html';
             }
         }
-        
-        // Carregar nome do usuário
-        const userName = localStorage.getItem('adminUserName') || 'Usuário';
-        document.addEventListener('DOMContentLoaded', function() {
-            const userNameEl = document.querySelector('.user-name');
-            if (userNameEl) userNameEl.textContent = userName;
-        });
     </script>
+
 
     
     <!-- Sidebar -->
@@ -260,59 +260,32 @@
     </div>
 
     <script>
-        // ========================================
-        // VERIFICAR AUTENTICAÇÃO
-        // ========================================
-        async function verificarAutenticacao() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (!session) {
-                console.log('❌ Não autenticado');
-                window.location.href = 'admin-login.html';
-                return false;
-            }
-            
-            console.log('✅ Autenticado:', session.user.email);
-            return true;
-        }
-
-        // ========================================
+                // ========================================
         // VARIÁVEIS GLOBAIS
         // ========================================
         let partituras = [];
         let editandoId = null;
 
         // ========================================
-        // LOGOUT
-        // ========================================
-        async function logout() {
-            await supabase.auth.signOut();
-            localStorage.clear();
-            window.location.href = 'admin-login.html';
-        }
-
-        // ========================================
         // CARREGAR PARTITURAS
         // ========================================
-        async function carregarPartituras() {
-            const autenticado = await verificarAutenticacao();
-            if (!autenticado) return;
+      async function carregarPartituras() {
+    try {
+        const { data, error } = await supabase
+            .from('partituras')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-            try {
-                const { data, error } = await supabase
-                    .from('partituras')
-                    .select('*');
+        if (error) throw error;
 
-                if (error) throw error;
-
-                partituras = data || [];
-                renderizarPartituras(partituras);
-                console.log('✅ Partituras carregadas:', partituras.length);
-            } catch (error) {
-                console.error('Erro ao carregar partituras:', error);
-                alert('Erro ao carregar partituras: ' + error.message);
-            }
-        }
+        partituras = data || [];
+        renderizarPartituras(partituras);
+        console.log('✅ Partituras carregadas:', partituras.length);
+    } catch (error) {
+        console.error('Erro ao carregar partituras:', error);
+        alert('Erro ao carregar partituras: ' + error.message);
+    }
+}
 
         // ========================================
         // RENDERIZAR PARTITURAS

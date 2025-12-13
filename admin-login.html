@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Orchestra Admin</title>
+    <title>Admin Login - Orchestra</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
@@ -114,32 +114,12 @@
             border: 1px solid #fcc;
         }
         
-        .alert-info {
-            background: #e3f2fd;
-            color: #1976d2;
-            border: 1px solid #90caf9;
-        }
-        
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffc107;
-        }
-        
         .hidden {
             display: none;
-        }
-        
-        small {
-            color: #666;
-            font-size: 12px;
-            margin-top: 4px;
-            display: block;
         }
     </style>
 </head>
 <body>
-    
     <div class="login-container">
         <div class="logo">
             <h1>ORCHESTRA</h1>
@@ -151,175 +131,94 @@
         <form id="loginForm">
             <div class="form-group">
                 <label class="form-label">Email</label>
-                <input type="email" id="email" class="form-input" placeholder="seu@email.com" required autofocus>
+                <input type="email" id="email" class="form-input" placeholder="admin@orchestra.com" required>
             </div>
             
-            <div class="form-group" id="senhaGroup">
+            <div class="form-group">
                 <label class="form-label">Senha</label>
-                <input type="password" id="senha" class="form-input" placeholder="Digite sua senha">
-                <small>Deixe em branco no primeiro acesso</small>
+                <input type="password" id="senha" class="form-input" placeholder="Digite sua senha" required>
             </div>
             
-            <div id="novaSenhaGroup" class="form-group hidden">
-                <label class="form-label">Defina sua senha</label>
-                <input type="password" id="novaSenha" class="form-input" placeholder="Mínimo 6 caracteres">
-            </div>
-            
-            <div id="confirmarSenhaGroup" class="form-group hidden">
-                <label class="form-label">Confirme sua senha</label>
-                <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite novamente">
-            </div>
-            
-            <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+            <button type="submit" class="btn-login">Entrar</button>
         </form>
     </div>
 
-    <script>
-        const form = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const senhaInput = document.getElementById('senha');
-        const senhaGroup = document.getElementById('senhaGroup');
-        const novaSenhaInput = document.getElementById('novaSenha');
-        const confirmarSenhaInput = document.getElementById('confirmarSenha');
-        const novaSenhaGroup = document.getElementById('novaSenhaGroup');
-        const confirmarSenhaGroup = document.getElementById('confirmarSenhaGroup');
-        const btnLogin = document.getElementById('btnLogin');
-        const alertBox = document.getElementById('alertBox');
-        
-        let usuarioAtual = null;
+   <script>
+    const form = document.getElementById('loginForm');
+    const alertBox = document.getElementById('alertBox');
+    
+    function mostrarAlerta(mensagem) {
+        alertBox.textContent = mensagem;
+        alertBox.classList.remove('hidden');
+        setTimeout(() => alertBox.classList.add('hidden'), 5000);
+    }
 
-        async function hashSenha(senha) {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const senha = document.getElementById('senha').value.trim();
+        
+        if (!email || !senha) {
+            mostrarAlerta('Preencha email e senha');
+            return;
+        }
+        
+        try {
+            // Hash da senha
             const encoder = new TextEncoder();
             const data = encoder.encode(senha);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function mostrarAlerta(mensagem, tipo = 'error') {
-            alertBox.className = `alert alert-${tipo}`;
-            alertBox.textContent = mensagem;
-            alertBox.classList.remove('hidden');
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            btnLogin.disabled = true;
-            btnLogin.textContent = 'Aguarde...';
+            const senhaHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             
-            try {
-                const email = emailInput.value.trim();
-                const senha = senhaInput.value.trim();
-                
-                if (!usuarioAtual) {
-                    const { data: usuario, error } = await supabase
-                        .from('users')
-                        .select('*')
-                        .eq('email', email)
-                        .single();
+            // Buscar usuário
+            const { data: usuarios, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .single();
 
-                    if (error || !usuario) {
-                        mostrarAlerta('Usuário não encontrado');
-                        btnLogin.disabled = false;
-                        btnLogin.textContent = 'Entrar';
-                        return;
-                    }
-
-                    usuarioAtual = usuario;
-
-                    // Primeiro acesso
-                    if (!usuario.senha) {
-                        senhaGroup.classList.add('hidden');
-                        novaSenhaGroup.classList.remove('hidden');
-                        confirmarSenhaGroup.classList.remove('hidden');
-                        btnLogin.textContent = 'Criar Senha';
-                        btnLogin.disabled = false;
-                        mostrarAlerta('Primeiro acesso! Defina sua senha', 'info');
-                        return;
-                    }
-
-                    // Senha temporária
-                    if (usuario.senha_temporaria) {
-                        const senhaHash = await hashSenha(senha);
-                        if (senhaHash !== usuario.senha) {
-                            mostrarAlerta('Senha temporária incorreta');
-                            usuarioAtual = null;
-                            btnLogin.disabled = false;
-                            btnLogin.textContent = 'Entrar';
-                            return;
-                        }
-                        senhaGroup.classList.add('hidden');
-                        novaSenhaGroup.classList.remove('hidden');
-                        confirmarSenhaGroup.classList.remove('hidden');
-                        btnLogin.textContent = 'Criar Nova Senha';
-                        btnLogin.disabled = false;
-                        mostrarAlerta('Crie uma nova senha', 'warning');
-                        return;
-                    }
-
-                    // Login normal
-                    const senhaHash = await hashSenha(senha);
-                    if (senhaHash !== usuario.senha) {
-                        mostrarAlerta('Senha incorreta');
-                        usuarioAtual = null;
-                        btnLogin.disabled = false;
-                        btnLogin.textContent = 'Entrar';
-                        return;
-                    }
-
-                    fazerLogin(usuario);
-                    return;
-                }
-
-                // Criar nova senha
-                const novaSenha = novaSenhaInput.value;
-                const confirmarSenha = confirmarSenhaInput.value;
-
-                if (novaSenha.length < 6) {
-                    mostrarAlerta('Senha deve ter no mínimo 6 caracteres');
-                    btnLogin.disabled = false;
-                    return;
-                }
-
-                if (novaSenha !== confirmarSenha) {
-                    mostrarAlerta('As senhas não coincidem');
-                    btnLogin.disabled = false;
-                    return;
-                }
-
-                const senhaHash = await hashSenha(novaSenha);
-                await supabase
-                    .from('users')
-                    .update({ senha: senhaHash, senha_temporaria: false })
-                    .eq('id', usuarioAtual.id);
-
-                mostrarAlerta('Senha criada! Entrando...', 'info');
-                setTimeout(() => fazerLogin(usuarioAtual), 1000);
-
-            } catch (error) {
-                console.error(error);
-                mostrarAlerta('Erro: ' + error.message);
-                btnLogin.disabled = false;
+            if (error || !usuarios) {
+                mostrarAlerta('Email não encontrado');
+                return;
             }
-        });
-
-        function fazerLogin(usuario) {
-    // Salvar dados com chaves corretas
-    localStorage.setItem('adminToken', 'logged-' + Date.now());
-    localStorage.setItem('adminUserId', usuario.id);
-    localStorage.setItem('adminUserEmail', usuario.email);
-    localStorage.setItem('adminUserName', usuario.nome || usuario.email);
-    localStorage.setItem('adminUserRole', usuario.role || 'user');
-    
-    console.log('✅ Login salvo no localStorage:', {
-        token: localStorage.getItem('adminToken'),
-        userId: localStorage.getItem('adminUserId')
+            
+            // Verificar se tem senha cadastrada
+            if (!usuarios.senha) {
+                mostrarAlerta('Usuário sem senha cadastrada. Entre em contato com o administrador.');
+                return;
+            }
+            
+            // Verificar senha
+            if (usuarios.senha !== senhaHash) {
+                mostrarAlerta('Senha incorreta');
+                return;
+            }
+            
+            // Login bem-sucedido - salvar no localStorage
+            localStorage.setItem('admin_logged', 'true');
+            localStorage.setItem('admin_email', usuarios.email);
+            localStorage.setItem('admin_user_id', usuarios.id);
+            localStorage.setItem('admin_user_name', usuarios.nome);
+            localStorage.setItem('admin_user_role', usuarios.role);
+            
+            console.log('✅ Login realizado com sucesso!');
+            console.log('Dados salvos:', {
+                logged: localStorage.getItem('admin_logged'),
+                email: localStorage.getItem('admin_email'),
+                id: localStorage.getItem('admin_user_id')
+            });
+            
+            // Redirecionar
+            window.location.href = 'admin-dashboard.html';
+            
+        } catch (error) {
+            console.error('Erro no login:', error);
+            mostrarAlerta('Erro ao fazer login: ' + error.message);
+        }
     });
-    
-    // Redirecionar
-    window.location.href = 'admin-dashboard.html';
-}
+</script>
 
-    </script>
 </body>
 </html>
