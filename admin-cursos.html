@@ -4,39 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Cursos - Orchestra Admin</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
 </head>
+
 <body class="admin-body">
-      <script>
-        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
-        (function() {
-            const token = localStorage.getItem('adminToken');
-            const userId = localStorage.getItem('adminUserId');
-            
-            console.log('🔐 Verificando auth:', { token, userId });
-            
-            if (!token || !userId) {
-                console.log('❌ Não autenticado - redirecionando...');
-                window.location.replace('admin-login.html');
-                return;
-            }
-            
-            console.log('✅ Usuário autenticado!');
-        })();
+        <script>
+        // Verificação de autenticação
+        const isLogged = localStorage.getItem('admin_logged');
+        const userEmail = localStorage.getItem('admin_email');
         
-        // ===== FUNÇÃO DE LOGOUT =====
+        console.log('🔐 Verificando auth:', { isLogged, userEmail });
+        
+        if (!isLogged || !userEmail) {
+            console.log('❌ Não autenticado - redirecionando...');
+            window.location.replace('admin-login.html');
+        } else {
+            console.log('✅ Usuário autenticado:', userEmail);
+        }
+        
+        // Função de logout
         function fazerLogout() {
             if (confirm('Deseja realmente sair?')) {
-                localStorage.removeItem('adminToken');
-                localStorage.removeItem('adminUserId');
-                localStorage.removeItem('adminUserEmail');
-                localStorage.removeItem('adminUserName');
-                localStorage.removeItem('adminUserRole');
+                localStorage.clear();
+                console.log('🚪 Logout realizado');
                 window.location.href = 'admin-login.html';
             }
         }
     </script>
+
     
     <!-- Sidebar -->
     <aside class="admin-sidebar">
@@ -380,172 +380,223 @@
     </div>
 
     <script src="api.js"></script>
-    <script>
-        if (!localStorage.getItem('token')) {
-            window.location.href = 'admin-login.html';
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<script>
+    let cursos = [];
+    let editandoId = null;
+
+    // ========================================
+    // CARREGAR CURSOS DO SUPABASE
+    // ========================================
+    async function carregarCursos() {
+        try {
+            const { data, error } = await supabase
+                .from('cursos')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            cursos = data || [];
+            renderizarCursos(cursos);
+            console.log('✅ Cursos carregados:', cursos.length);
+        } catch (error) {
+            console.error('Erro ao carregar cursos:', error);
+            alert('Erro ao carregar cursos: ' + error.message);
+        }
+    }
+
+    // ========================================
+    // RENDERIZAR CURSOS NA TABELA
+    // ========================================
+    function renderizarCursos(lista) {
+        const tbody = document.querySelector('.admin-table tbody');
+        tbody.innerHTML = '';
+
+        if (lista.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #666;">Nenhum curso cadastrado</td></tr>';
+            return;
         }
 
-        function logout() {
-            api.logout();
-        }
+        const categoriaColors = {
+            'Teoria Musical': 'badge-blue',
+            'Leitura de Partituras': 'badge-purple',
+            'Harmonia': 'badge-teal',
+            'Ritmo': 'badge-pink',
+            'Composição': 'badge-orange'
+        };
 
-        // Carregar cursos do banco
-        async function carregarCursos() {
-            try {
-                const cursos = await api.getCursos();
-                renderizarCursos(cursos);
-            } catch (error) {
-                console.error('Erro ao carregar cursos:', error);
-                alert('Erro ao carregar cursos: ' + error.message);
-            }
-        }
+        const nivelColors = {
+            'Iniciante': 'badge-green',
+            'Intermediário': 'badge-yellow',
+            'Avançado': 'badge-orange'
+        };
 
-        // Renderizar cursos na tabela
-        function renderizarCursos(cursos) {
-            const tbody = document.querySelector('.admin-table tbody');
-            tbody.innerHTML = '';
-
-            if (cursos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">Nenhum curso cadastrado</td></tr>';
-                return;
-            }
-
-            cursos.forEach(curso => {
-                const tr = document.createElement('tr');
-                
-                // Badge de categoria
-                const categoriaColors = {
-                    'Teoria Musical': 'badge-blue',
-                    'Leitura de Partituras': 'badge-purple',
-                    'Harmonia': 'badge-teal',
-                    'Ritmo': 'badge-pink',
-                    'Composição': 'badge-orange'
-                };
-
-                // Badge de nível
-                const nivelColors = {
-                    'Iniciante': 'badge-green',
-                    'Intermediário': 'badge-yellow',
-                    'Avançado': 'badge-orange'
-                };
-
-                const dataAtualizacao = new Date(curso.ultima_atualizacao || curso.data_criacao);
-                const diasAtras = Math.floor((new Date() - dataAtualizacao) / (1000 * 60 * 60 * 24));
-                const textoAtualizacao = diasAtras === 0 ? 'hoje' : `há ${diasAtras} dia${diasAtras > 1 ? 's' : ''}`;
-
-                tr.innerHTML = `
-                    <td>
-                        <div class="table-course">
-                            <img src="${curso.imagem_capa || 'https://via.placeholder.com/100'}" alt="">
-                            <div>
-                                <strong>${curso.titulo}</strong>
-                                <span>Atualizado ${textoAtualizacao}</span>
-                            </div>
+        lista.forEach(curso => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="table-course">
+                        <img src="${curso.imagem_capa || 'https://via.placeholder.com/100'}" alt="${curso.titulo}">
+                        <div>
+                            <strong>${curso.titulo}</strong>
+                            <span>Atualizado recentemente</span>
                         </div>
-                    </td>
-                    <td><span class="table-badge ${categoriaColors[curso.categoria] || 'badge-blue'}">${curso.categoria}</span></td>
-                    <td><span class="table-badge ${nivelColors[curso.nivel] || 'badge-green'}">${curso.nivel}</span></td>
-                    <td>${curso.numero_aulas} aulas</td>
-                    <td>${curso.alunos ? curso.alunos.length : 0}</td>
-                    <td><span class="status-badge ${curso.status === 'Publicado' ? 'status-published' : 'status-draft'}">${curso.status}</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="action-btn action-edit" onclick="editarCurso('${curso.id}')" title="Editar">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
-                                </svg>
-                            </button>
-                            <button class="action-btn action-delete" onclick="deletarCurso('${curso.id}', '${curso.titulo}')" title="Excluir">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M3 4H13M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4M6 7V11M10 7V11M4 4L5 13C5 13.55 5.45 14 6 14H10C10.55 14 11 13.55 11 13L12 4" stroke="currentColor" stroke-width="1.5"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Criar novo curso
-        async function criarCurso(event) {
-            event.preventDefault();
-
-            const formData = {
-                titulo: document.getElementById('titulo').value,
-                categoria: document.getElementById('categoria').value,
-                nivel: document.getElementById('nivel').value,
-                descricao: document.getElementById('descricao').value,
-                duracao: parseInt(document.getElementById('duracao').value),
-                numero_aulas: parseInt(document.getElementById('numeroAulas').value),
-                imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
-                status: document.getElementById('status').value,
-                aulas: [],
-                alunos: [],
-                avaliacoes: []
-            };
-
-            try {
-                await api.criarCurso(formData);
-                alert('✅ Curso criado com sucesso!');
-                closeModal();
-                document.getElementById('courseForm').reset();
-                carregarCursos(); // Recarrega a lista
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ Erro ao criar curso: ' + error.message);
-            }
-        }
-
-        // Deletar curso
-        async function deletarCurso(id, titulo) {
-            if (!confirm(`Tem certeza que deseja deletar o curso "${titulo}"?`)) {
-                return;
-            }
-
-            try {
-                await api.deletarCurso(id);
-                alert('✅ Curso deletado com sucesso!');
-                carregarCursos(); // Recarrega a lista
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ Erro ao deletar curso: ' + error.message);
-            }
-        }
-
-        // Editar curso (simplificado)
-        function editarCurso(id) {
-            alert('Funcionalidade de edição será implementada em breve!\nPor enquanto, edite diretamente no Supabase.');
-            // TODO: Implementar modal de edição
-        }
-
-        function openModal() {
-            document.getElementById('courseModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('courseModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('courseModal');
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
-
-        // File upload
-        document.getElementById('courseImage').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || 'Nenhum arquivo selecionado';
-            document.querySelector('.file-name').textContent = fileName;
+                    </div>
+                </td>
+                <td><span class="table-badge ${categoriaColors[curso.categoria] || 'badge-blue'}">${curso.categoria}</span></td>
+                <td><span class="table-badge ${nivelColors[curso.nivel] || 'badge-green'}">${curso.nivel}</span></td>
+                <td>${curso.numero_aulas || 0} aulas</td>
+                <td>0</td>
+                <td><span class="status-badge ${curso.status === 'Publicado' ? 'status-published' : 'status-draft'}">${curso.status}</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button class="action-btn action-edit" onclick="editarCurso('${curso.id}')" title="Editar">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn action-delete" onclick="deletarCurso('${curso.id}', '${curso.titulo}')" title="Excluir">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
         });
+    }
 
-        // Submeter formulário
-        document.getElementById('courseForm').addEventListener('submit', criarCurso);
+    // ========================================
+    // ABRIR/FECHAR MODAL
+    // ========================================
+    function openModal(modo = 'criar') {
+        editandoId = null;
+        document.getElementById('courseModal').style.display = 'flex';
+        document.querySelector('.modal-title').textContent = modo === 'criar' ? 'Novo Curso' : 'Editar Curso';
+        
+        if (modo === 'criar') {
+            document.getElementById('courseForm').reset();
+        }
+    }
 
-        // Carregar cursos ao iniciar
-        carregarCursos();
-    </script>
+    function closeModal() {
+        document.getElementById('courseModal').style.display = 'none';
+        editandoId = null;
+        document.getElementById('courseForm').reset();
+    }
+
+    // ========================================
+    // EDITAR CURSO
+    // ========================================
+    function editarCurso(id) {
+        const curso = cursos.find(c => c.id === id);
+        if (!curso) return;
+
+        editandoId = id;
+        
+        document.getElementById('titulo').value = curso.titulo;
+        document.getElementById('categoria').value = curso.categoria;
+        document.getElementById('nivel').value = curso.nivel;
+        document.getElementById('descricao').value = curso.descricao || '';
+        document.getElementById('duracao').value = curso.duracao || '';
+        document.getElementById('numeroAulas').value = curso.numero_aulas || '';
+        document.getElementById('imagemUrl').value = curso.imagem_capa || '';
+        document.getElementById('status').value = curso.status;
+
+        openModal('editar');
+    }
+
+    // ========================================
+    // SALVAR CURSO (CRIAR OU ATUALIZAR)
+    // ========================================
+    async function salvarCurso(event) {
+        event.preventDefault();
+
+        const dados = {
+            titulo: document.getElementById('titulo').value,
+            categoria: document.getElementById('categoria').value,
+            nivel: document.getElementById('nivel').value,
+            descricao: document.getElementById('descricao').value,
+            duracao: parseInt(document.getElementById('duracao').value) || 0,
+            numero_aulas: parseInt(document.getElementById('numeroAulas').value) || 0,
+            imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
+            status: document.getElementById('status').value
+        };
+
+        try {
+            if (editandoId) {
+                // ATUALIZAR
+                const { error } = await supabase
+                    .from('cursos')
+                    .update(dados)
+                    .eq('id', editandoId);
+
+                if (error) throw error;
+                alert('✅ Curso atualizado com sucesso!');
+            } else {
+                // CRIAR
+                const { error } = await supabase
+                    .from('cursos')
+                    .insert([dados]);
+
+                if (error) throw error;
+                alert('✅ Curso criado com sucesso!');
+            }
+            
+            closeModal();
+            carregarCursos();
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao salvar curso: ' + error.message);
+        }
+    }
+
+    // ========================================
+    // DELETAR CURSO
+    // ========================================
+    async function deletarCurso(id, titulo) {
+        if (!confirm(`Tem certeza que deseja deletar o curso "${titulo}"?\n\nEsta ação não pode ser desfeita!`)) {
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('cursos')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            alert('✅ Curso deletado com sucesso!');
+            carregarCursos();
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao deletar curso: ' + error.message);
+        }
+    }
+
+    // ========================================
+    // FECHAR MODAL AO CLICAR FORA
+    // ========================================
+    window.onclick = function(event) {
+        const modal = document.getElementById('courseModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // ========================================
+    // INICIALIZAR
+    // ========================================
+    document.getElementById('courseForm').addEventListener('submit', salvarCurso);
+
+    // Carregar cursos ao iniciar
+    document.addEventListener('DOMContentLoaded', carregarCursos);
+</script>
+
 </body>
 </html>
