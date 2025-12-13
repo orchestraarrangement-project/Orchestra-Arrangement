@@ -17,36 +17,31 @@
     <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body class="admin-body">
-     <script>
-        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
-        (function() {
-            const token = localStorage.getItem('adminToken');
-            const userId = localStorage.getItem('adminUserId');
-            
-            console.log('🔐 Verificando auth:', { token, userId });
-            
-            if (!token || !userId) {
-                console.log('❌ Não autenticado - redirecionando...');
-                window.location.replace('admin-login.html');
-                return;
-            }
-            
-            console.log('✅ Usuário autenticado!');
-        })();
+         <script>
+        // Verificação de autenticação
+        const isLogged = localStorage.getItem('admin_logged');
+        const userEmail = localStorage.getItem('admin_email');
         
-        // ===== FUNÇÃO DE LOGOUT =====
+        console.log('🔐 Verificando auth:', { isLogged, userEmail });
+        
+        if (!isLogged || !userEmail) {
+            console.log('❌ Não autenticado - redirecionando...');
+            window.location.replace('admin-login.html');
+        } else {
+            console.log('✅ Usuário autenticado:', userEmail);
+        }
+        
+        // Função de logout
         function fazerLogout() {
             if (confirm('Deseja realmente sair?')) {
-                localStorage.removeItem('adminToken');
-                localStorage.removeItem('adminUserId');
-                localStorage.removeItem('adminUserEmail');
-                localStorage.removeItem('adminUserName');
-                localStorage.removeItem('adminUserRole');
+                localStorage.clear();
+                console.log('🚪 Logout realizado');
                 window.location.href = 'admin-login.html';
             }
         }
     </script>
-    
+
+
 
     <!-- Sidebar -->
     <aside class="admin-sidebar">
@@ -269,44 +264,15 @@
     <script src="api.js"></script>
     <script>
     // ========================================
-    // VERIFICAR AUTENTICAÇÃO COM SUPABASE
-    // ========================================
-    async function verificarAutenticacao() {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-            console.log('❌ Não autenticado, redirecionando...');
-            window.location.href = 'admin-login.html';
-            return false;
-        }
-        
-        console.log('✅ Usuário autenticado:', session.user.email);
-        return true;
-    }
-
-    // ========================================
     // VARIÁVEIS GLOBAIS
     // ========================================
     let partituras = [];
     let editandoId = null;
 
     // ========================================
-    // LOGOUT
-    // ========================================
-    async function logout() {
-        await supabase.auth.signOut();
-        localStorage.removeItem('admin_user');
-        localStorage.removeItem('admin_token');
-        window.location.href = 'admin-login.html';
-    }
-
-    // ========================================
     // CARREGAR PARTITURAS DO SUPABASE
     // ========================================
     async function carregarPartituras() {
-        const autenticado = await verificarAutenticacao();
-        if (!autenticado) return;
-
         try {
             const { data, error } = await supabase
                 .from('partituras')
@@ -534,6 +500,7 @@
     // Carregar partituras ao iniciar
     document.addEventListener('DOMContentLoaded', carregarPartituras);
 </script>
+
 
 </body>
 </html>
