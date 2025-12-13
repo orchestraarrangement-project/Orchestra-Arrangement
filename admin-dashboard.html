@@ -1,3 +1,28 @@
+// ADICIONAR NO INÍCIO DE: admin-dashboard.html, admin-ebooks.html, admin-partituras.html, admin-usuarios.html
+
+<script>
+// Verificar autenticação
+function verificarAuth() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
+        window.location.href = 'admin-login.html';
+        return false;
+    }
+    return true;
+}
+
+// Executar ao carregar a página
+if (!verificarAuth()) {
+    // Impedir carregamento do restante da página
+    document.write('<p style="text-align:center; padding:40px;">Redirecionando...</p>');
+}
+</script>
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

@@ -111,6 +111,11 @@
             transform: translateY(0);
         }
         
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
@@ -128,6 +133,12 @@
             background: #e3f2fd;
             color: #1976d2;
             border: 1px solid #90caf9;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
         }
         
         .hidden {
@@ -157,18 +168,17 @@
                 <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
             </div>
             
-            <!-- Campo de senha (sempre visível) -->
-            <div class="form-group">
+            <div class="form-group" id="senhaGroup">
                 <label class="form-label">Senha</label>
                 <input type="password" id="senha" class="form-input" placeholder="Digite sua senha">
-                <small id="senhaHint" class="hidden">Deixe em branco se for seu primeiro acesso</small>
+                <small id="senhaHint">Deixe em branco se for seu primeiro acesso</small>
             </div>
             
             <!-- Campo de nova senha (aparece só no primeiro acesso) -->
-            <div id="primeiroAcessoGroup" class="form-group hidden">
-                <label class="form-label">Defina sua senha</label>
+            <div id="novaSenhaGroup" class="form-group hidden">
+                <label class="form-label">Defina sua nova senha</label>
                 <input type="password" id="novaSenha" class="form-input" placeholder="Mínimo 6 caracteres">
-                <small>Crie uma senha para acessar o sistema</small>
+                <small>Crie uma senha segura para acessar o sistema</small>
             </div>
             
             <div id="confirmarSenhaGroup" class="form-group hidden">
@@ -181,19 +191,25 @@
     </div>
 
     <script>
+        // Redirecionar se já estiver logado
+        if (localStorage.getItem('token') && localStorage.getItem('userId')) {
+            window.location.href = 'admin-dashboard.html';
+        }
+
         const form = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const senhaInput = document.getElementById('senha');
+        const senhaGroup = document.getElementById('senhaGroup');
         const novaSenhaInput = document.getElementById('novaSenha');
         const confirmarSenhaInput = document.getElementById('confirmarSenha');
-        const primeiroAcessoGroup = document.getElementById('primeiroAcessoGroup');
+        const novaSenhaGroup = document.getElementById('novaSenhaGroup');
         const confirmarSenhaGroup = document.getElementById('confirmarSenhaGroup');
         const btnLogin = document.getElementById('btnLogin');
         const alertBox = document.getElementById('alertBox');
         
-        let primeiroAcesso = false;
+        let usuarioAtual = null;
+        let modoRedefinicao = false;
 
-        // Hash simples usando Web Crypto API
         async function hashSenha(senha) {
             const encoder = new TextEncoder();
             const data = encoder.encode(senha);
@@ -203,7 +219,9 @@
         }
 
         function mostrarAlerta(mensagem, tipo = 'error') {
-            alertBox.className = tipo === 'error' ? 'alert alert-error' : 'alert alert-info';
+            alertBox.className = tipo === 'error' ? 'alert alert-error' : 
+                                 tipo === 'info' ? 'alert alert-info' : 
+                                 'alert alert-warning';
             alertBox.textContent = mensagem;
             alertBox.classList.remove('hidden');
             
@@ -214,106 +232,158 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Aguarde...';
             
-            const email = emailInput.value.trim();
-            const senha = senhaInput.value.trim();
-            
-            if (!email) {
-                mostrarAlerta('Por favor, digite seu email');
-                return;
-            }
-
             try {
-                // Buscar usuário pelo email
-                const { data: usuarios, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('email', email)
-                    .single();
-
-                if (error || !usuarios) {
-                    mostrarAlerta('Usuário não encontrado');
+                const email = emailInput.value.trim();
+                const senha = senhaInput.value.trim();
+                
+                if (!email) {
+                    mostrarAlerta('Por favor, digite seu email');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Entrar';
                     return;
                 }
 
-                // Verificar se é primeiro acesso
-                if (!usuarios.senha) {
-                    if (!primeiroAcesso) {
-                        // Mostrar campos de primeiro acesso
-                        primeiroAcesso = true;
-                        primeiroAcessoGroup.classList.remove('hidden');
-                        confirmarSenhaGroup.classList.remove('hidden');
-                        senhaInput.style.display = 'none';
-                        btnLogin.textContent = 'Criar Senha e Entrar';
-                        mostrarAlerta('Primeiro acesso! Defina sua senha abaixo', 'info');
+                // Se ainda não buscou o usuário, buscar
+                if (!usuarioAtual) {
+                    const { data: usuario, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('email', email)
+                        .single();
+
+                    if (error || !usuario) {
+                        mostrarAlerta('Usuário não encontrado');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = 'Entrar';
                         return;
-                    } else {
-                        // Criar senha no primeiro acesso
-                        const novaSenha = novaSenhaInput.value;
-                        const confirmarSenha = confirmarSenhaInput.value;
-
-                        if (!novaSenha || novaSenha.length < 6) {
-                            mostrarAlerta('A senha deve ter no mínimo 6 caracteres');
-                            return;
-                        }
-
-                        if (novaSenha !== confirmarSenha) {
-                            mostrarAlerta('As senhas não coincidem');
-                            return;
-                        }
-
-                        // Hash da senha
-                        const senhaHash = await hashSenha(novaSenha);
-
-                        // Salvar senha no banco
-                        const { error: updateError } = await supabase
-                            .from('users')
-                            .update({ senha: senhaHash })
-                            .eq('id', usuarios.id);
-
-                        if (updateError) {
-                            mostrarAlerta('Erro ao criar senha: ' + updateError.message);
-                            return;
-                        }
-
-                        // Login bem-sucedido
-                        localStorage.setItem('token', 'admin-authenticated');
-                        localStorage.setItem('userEmail', email);
-                        localStorage.setItem('userName', usuarios.nome);
-                        localStorage.setItem('userRole', usuarios.role);
-                        
-                        mostrarAlerta('Senha criada! Redirecionando...', 'info');
-                        setTimeout(() => {
-                            window.location.href = 'admin-dashboard.html';
-                        }, 1500);
                     }
-                } else {
-                    // Usuário já tem senha - fazer login normal
+
+                    usuarioAtual = usuario;
+
+                    // PRIMEIRO ACESSO (sem senha)
+                    if (!usuario.senha) {
+                        senhaGroup.classList.add('hidden');
+                        novaSenhaGroup.classList.remove('hidden');
+                        confirmarSenhaGroup.classList.remove('hidden');
+                        btnLogin.textContent = 'Criar Senha';
+                        btnLogin.disabled = false;
+                        mostrarAlerta('🎉 Primeiro acesso! Defina sua senha abaixo', 'info');
+                        return;
+                    }
+
+                    // SENHA TEMPORÁRIA (admin resetou)
+                    if (usuario.senha_temporaria) {
+                        if (!senha) {
+                            mostrarAlerta('Digite a senha temporária fornecida pelo administrador');
+                            btnLogin.disabled = false;
+                            btnLogin.textContent = 'Entrar';
+                            return;
+                        }
+
+                        const senhaHash = await hashSenha(senha);
+                        if (senhaHash !== usuario.senha) {
+                            mostrarAlerta('Senha temporária incorreta');
+                            btnLogin.disabled = false;
+                            btnLogin.textContent = 'Entrar';
+                            return;
+                        }
+
+                        // Senha temporária correta - pedir nova senha
+                        modoRedefinicao = true;
+                        senhaGroup.classList.add('hidden');
+                        novaSenhaGroup.classList.remove('hidden');
+                        confirmarSenhaGroup.classList.remove('hidden');
+                        btnLogin.textContent = 'Redefinir Senha';
+                        btnLogin.disabled = false;
+                        mostrarAlerta('⚠️ Você precisa criar uma nova senha', 'warning');
+                        return;
+                    }
+
+                    // LOGIN NORMAL - pedir senha
                     if (!senha) {
-                        mostrarAlerta('Por favor, digite sua senha');
+                        mostrarAlerta('Digite sua senha');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = 'Entrar';
                         return;
                     }
 
                     const senhaHash = await hashSenha(senha);
-
-                    if (senhaHash !== usuarios.senha) {
+                    if (senhaHash !== usuario.senha) {
                         mostrarAlerta('Senha incorreta');
+                        usuarioAtual = null;
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = 'Entrar';
                         return;
                     }
 
-                    // Login bem-sucedido
-                    localStorage.setItem('token', 'admin-authenticated');
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('userName', usuarios.nome);
-                    localStorage.setItem('userRole', usuarios.role);
-                    
-                    window.location.href = 'admin-dashboard.html';
+                    // LOGIN BEM-SUCEDIDO
+                    fazerLogin(usuario);
+                    return;
                 }
+
+                // CRIAR NOVA SENHA (primeiro acesso ou redefinição)
+                const novaSenha = novaSenhaInput.value;
+                const confirmarSenha = confirmarSenhaInput.value;
+
+                if (!novaSenha || novaSenha.length < 6) {
+                    mostrarAlerta('A senha deve ter no mínimo 6 caracteres');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = modoRedefinicao ? 'Redefinir Senha' : 'Criar Senha';
+                    return;
+                }
+
+                if (novaSenha !== confirmarSenha) {
+                    mostrarAlerta('As senhas não coincidem');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = modoRedefinicao ? 'Redefinir Senha' : 'Criar Senha';
+                    return;
+                }
+
+                const senhaHash = await hashSenha(novaSenha);
+
+                const { error: updateError } = await supabase
+                    .from('users')
+                    .update({ 
+                        senha: senhaHash,
+                        senha_temporaria: false
+                    })
+                    .eq('id', usuarioAtual.id);
+
+                if (updateError) {
+                    mostrarAlerta('Erro ao salvar senha: ' + updateError.message);
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Tentar Novamente';
+                    return;
+                }
+
+                mostrarAlerta('✅ Senha criada com sucesso! Redirecionando...', 'info');
+                usuarioAtual.senha = senhaHash;
+                usuarioAtual.senha_temporaria = false;
+                
+                setTimeout(() => {
+                    fazerLogin(usuarioAtual);
+                }, 1500);
+
             } catch (error) {
                 console.error('Erro no login:', error);
                 mostrarAlerta('Erro ao fazer login: ' + error.message);
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Tentar Novamente';
             }
         });
+
+        function fazerLogin(usuario) {
+            localStorage.setItem('token', 'admin-authenticated-' + Date.now());
+            localStorage.setItem('userId', usuario.id);
+            localStorage.setItem('userEmail', usuario.email);
+            localStorage.setItem('userName', usuario.nome || usuario.email);
+            localStorage.setItem('userRole', usuario.role || 'user');
+            
+            window.location.href = 'admin-dashboard.html';
+        }
     </script>
 </body>
 </html>

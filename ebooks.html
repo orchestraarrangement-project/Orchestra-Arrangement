@@ -1,480 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<!-- SDK do Supabase via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Arquivo de configuração -->
-<script src="supabase-config.js"></script>
-
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ebooks - Orchestra</title>
+    <title>Detalhes do Ebook - Orchestra</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* HEADER FIXO NO TOPO */
-        .header {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 1rem 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        /* Compensar altura do header fixo */
-        body {
-            padding-top: 100px;
-            background: #fff;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 0 2rem;
-        }
-        
-        /* LOGO - TAMANHO FIXO SEM ESPAÇO BRANCO */
-        .logo-link {
-            display: block;
-            line-height: 0;
-        }
-        
-        .logo-link img {
-            height: 300px;
-            width: auto;
-            display: block;
-            margin: -120px 0;
-        }
-        
-        .nav {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .nav-link {
-            color: #5B4C9D;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        
-        .nav-link:hover {
-            background: #f5f3ff;
-        }
-        
-        .nav-link.active {
-            background: #5B4C9D;
-            color: white;
-            border: 2px solid #5B4C9D;
-        }
-
-        /* SEÇÃO BIBLIOTECA */
-        .biblioteca-section {
-            background: #3f3f73;
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-        }
-
-        .biblioteca-section h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .biblioteca-section p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* FILTROS MODERNOS - BOTÕES */
-        .filters-section {
-            background: #fff;
-            padding: 40px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .filters-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .filters {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-
-        .filter-btn {
-            padding: 12px 28px;
-            border: 2px solid #ddd;
-            border-radius: 30px;
-            background: white;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 600;
-            color: #555;
-            transition: all 0.3s;
-        }
-
-        .filter-btn:hover {
-            border-color: #5B4C9D;
-            color: #5B4C9D;
-            transform: translateY(-2px);
-        }
-
-        .filter-btn.active {
-            background: #5B4C9D;
-            color: white;
-            border-color: #5B4C9D;
-            box-shadow: 0 4px 12px rgba(91, 76, 157, 0.3);
-        }
-
-        .results-count {
-            text-align: center;
-            color: #666;
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        /* CONTENT SECTION */
-        .content-section {
-            background: #fff;
-            padding: 40px 0;
-        }
-
-        /* CARDS */
-        .ebooks-grid {
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .ebook-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .ebook-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(91, 76, 157, 0.2);
-        }
-
-        .ebook-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-
-        .ebook-content {
-            padding: 20px;
-        }
-
-        .ebook-category {
-            font-size: 12px;
-            color: #5B4C9D;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .ebook-title {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .ebook-description {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .ebook-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .ebook-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: #f0f0f0;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #666;
-            font-weight: 600;
-        }
-
-        .tag.nivel-iniciante {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .tag.nivel-intermediario {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .tag.nivel-avancado {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* LOADING */
-        .loading {
-            text-align: center;
-            padding: 100px 20px;
-            color: #999;
-        }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 100px 20px;
-            color: #999;
-            grid-column: 1/-1;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            color: #555;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="index.html" class="logo-link">
-                <img src="imagens/Logo  Branca.png" alt="Orchestra">
-            </a>
-            <nav class="nav">
-                <a href="index.html" class="nav-link">Início</a>
-                <a href="partituras.html" class="nav-link">Partituras</a>
-                <a href="ebooks.html" class="nav-link active">Ebooks</a>
-            </nav>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">ORCHESTRA</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="partituras.html">Partituras</a></li>
+                <li><a href="ebooks.html" class="active">Ebooks</a></li>
+            </ul>
         </div>
-    </header>
+    </nav>
 
-    <!-- Page Header -->
-    <section class="biblioteca-section">
+    <section class="back-button-section">
         <div class="container">
-            <h1>Ebooks de Música</h1>
-            <p>Aprenda teoria musical, leitura de partituras e muito mais com nossos ebooks especializados</p>
+            <a href="ebooks.html" class="back-button">← Voltar</a>
         </div>
     </section>
 
-    <!-- Filtros Modernos -->
-    <section class="filters-section">
-        <div class="filters-container">
-            <div class="filters">
-                <button class="filter-btn active" data-category="all">Todos</button>
-                <button class="filter-btn" data-category="Teoria Musical">Teoria Musical</button>
-                <button class="filter-btn" data-category="Leitura de Partituras">Leitura de Partituras</button>
-                <button class="filter-btn" data-category="Harmonia">Harmonia</button>
-                <button class="filter-btn" data-category="Ritmo">Ritmo</button>
-                <button class="filter-btn" data-category="Composição">Composição</button>
+    <section class="ebook-hero">
+        <div class="container">
+            <div class="ebook-hero-grid">
+                <div class="ebook-image-container">
+                    <img id="ebookImage" src="https://via.placeholder.com/400" alt="Capa do Ebook">
+                </div>
+                <div class="ebook-info">
+                    <h1 id="ebookTitle">Carregando...</h1>
+                    <p id="ebookDescription">Carregando descrição...</p>
+                    <div id="ebookCategoria"></div>
+                    
+                    <!-- PREÇO E BOTÃO JUNTOS -->
+                    <div class="ebook-purchase-section">
+                        <span class="ebook-price" id="ebookPrice">R$ 0,00</span>
+                        <button class="btn-purchase" onclick="comprarEbook()">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="margin-right: 8px;">
+                                <path d="M3 3H5L7 13H17L19 5H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="8" cy="17" r="1" fill="currentColor"/>
+                                <circle cx="16" cy="17" r="1" fill="currentColor"/>
+                            </svg>
+                            Comprar Ebook
+                        </button>
+                    </div>
+                </div>
             </div>
-            <p class="results-count" id="resultsCount">Carregando...</p>
         </div>
     </section>
 
-    <!-- Ebooks Grid -->
-    <section class="content-section">
-        <div class="ebooks-grid" id="ebooksGrid">
-            <div class="loading">Carregando ebooks...</div>
+    <section class="ebook-content-section">
+        <div class="container">
+            <h2>Conteúdo do Ebook</h2>
+            <div class="ebook-content-box" id="ebookConteudo">
+                <p>Carregando conteúdo...</p>
+            </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo-placeholder">ORCHESTRA</div>
-                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h4 class="footer-title">Links Rápidos</h4>
-                        <ul class="footer-list">
-                            <li><a href="ebooks.html">Ebooks</a></li>
-                            <li><a href="partituras.html">Partituras</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h4 class="footer-title">Contato</h4>
-                        <ul class="footer-list">
-                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
-                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
-            </div>
+            <p>&copy; 2025 Orchestra Arrangement. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <script src="api.js"></script>
     <script>
-    let todosEbooks = [];
+        let ebookAtual = null;
 
-    async function carregarEbooks(filtros = {}) {
-        try {
-            // Buscar ebooks direto do Supabase
-            let query = supabase
-                .from('cursos')
-                .select('*')
-                .eq('status', 'Publicado');
+        async function carregarEbook() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
 
-            // Aplicar filtros
-            if (filtros.categoria && filtros.categoria !== 'all') {
-                query = query.eq('categoria', filtros.categoria);
-            }
-
-            if (filtros.busca) {
-                query = query.or(`titulo.ilike.%${filtros.busca}%,descricao.ilike.%${filtros.busca}%`);
-            }
-
-            const { data: ebooks, error } = await query;
-
-            if (error) {
-                console.error('Erro ao carregar ebooks:', error);
-                mostrarErro('Erro ao carregar ebooks.');
+            if (!id) {
+                window.location.href = 'ebooks.html';
                 return;
             }
 
-            console.log('Ebooks carregados:', ebooks); // Debug
-            todosEbooks = ebooks;
-            renderizarEbooks(ebooks);
-            atualizarContador(ebooks.length);
-        } catch (error) {
-            console.error('Erro:', error);
-            mostrarErro('Erro ao carregar ebooks.');
-        }
-    }
+            try {
+                const { data, error } = await supabase
+                    .from('cursos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
 
-    function renderizarEbooks(ebooks) {
-        const grid = document.getElementById('ebooksGrid') || 
-                     document.querySelector('.cards-grid') ||
-                     document.querySelector('#ebooks-container');
+                if (error) throw error;
 
-        if (!grid) {
-            console.error('Container de ebooks não encontrado!');
-            return;
+                ebookAtual = data;
+                renderizarEbook(data);
+            } catch (error) {
+                console.error('Erro ao carregar ebook:', error);
+                alert('Erro ao carregar ebook');
+                window.location.href = 'ebooks.html';
+            }
         }
 
-        if (!ebooks || ebooks.length === 0) {
-            grid.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
-                    <h3 style="color: #666; margin-bottom: 10px;">Nenhum ebook encontrado</h3>
-                    <p style="color: #999;">Tente ajustar os filtros ou adicione ebooks no painel admin!</p>
-                </div>
-            `;
-            return;
-        }
-
-        grid.innerHTML = ebooks.map(ebook => `
-            <div class="ebook-card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'" style="cursor: pointer;">
-                <div class="ebook-image">
-                    <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
-                         alt="${ebook.titulo}">
-                </div>
-                <div class="ebook-content">
-                    <h3 class="ebook-title">${ebook.titulo}</h3>
-                    <p class="ebook-description">${ebook.descricao_curta || ebook.descricao || 'Ebook educativo de qualidade'}</p>
-                    <div class="ebook-tags">
-                        ${ebook.categoria ? `<span class="tag">${ebook.categoria}</span>` : ''}
-                        ${ebook.nivel ? `<span class="tag">${ebook.nivel}</span>` : ''}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function mostrarErro(mensagem) {
-        const grid = document.getElementById('ebooksGrid') || 
-                     document.querySelector('.cards-grid');
-        if (grid) {
-            grid.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
-                    <h3 style="color: #e74c3c;">${mensagem}</h3>
-                </div>
-            `;
-        }
-    }
-
-    function atualizarContador(count) {
-        const contador = document.getElementById('resultsCount');
-        if (contador) {
-            const texto = count === 1 ? 'ebook encontrado' : 'ebooks encontrados';
-            contador.textContent = `${count} ${texto}`;
-        }
-    }
-
-    // Event Listeners para Filtros
-    const categoriaFilter = document.getElementById('categoriaFilter');
-    if (categoriaFilter) {
-        categoriaFilter.addEventListener('change', function() {
-            const categoria = this.value;
+        function renderizarEbook(ebook) {
+            document.getElementById('ebookTitle').textContent = ebook.titulo;
+            document.getElementById('ebookDescription').textContent = ebook.descricao || 'Sem descrição disponível';
+            document.getElementById('ebookImage').src = ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
             
-            let filtrados = todosEbooks;
+            // EXIBIR PREÇO
+            document.getElementById('ebookPrice').textContent = ebook.preco || 'Grátis';
             
-            if (categoria !== 'all') {
-                filtrados = filtrados.filter(e => e.categoria === categoria);
+            // EXIBIR CATEGORIA
+            if (ebook.categoria) {
+                document.getElementById('ebookCategoria').innerHTML = `<span class="category-badge">${ebook.categoria}</span>`;
             }
             
-            renderizarEbooks(filtrados);
-            atualizarContador(filtrados.length);
-        });
-    }
+            // EXIBIR DESCRIÇÃO NO CONTEÚDO
+            document.getElementById('ebookConteudo').innerHTML = `
+                <p style="white-space: pre-wrap; line-height: 1.8;">${ebook.descricao || 'Conteúdo não disponível no momento.'}</p>
+            `;
 
-    // Carregar ebooks ao iniciar
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Carregando ebooks...');
-        carregarEbooks();
-    });
-</script>
+            document.title = `${ebook.titulo} - Orchestra`;
+        }
 
+        function comprarEbook() {
+            if (!ebookAtual) return;
+            
+            alert(`Funcionalidade de compra em desenvolvimento!\n\nEbook: ${ebookAtual.titulo}\nPreço: ${ebookAtual.preco}`);
+        }
+
+        carregarEbook();
+    </script>
+
+    <style>
+        .ebook-purchase-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .ebook-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: #F4B627;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-purchase {
+            display: flex;
+            align-items: center;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #F4B627 0%, #e69500 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(244, 182, 39, 0.3);
+        }
+
+        .btn-purchase:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 182, 39, 0.4);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #E8E4F3;
+            color: #5B4E9D;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .ebook-content-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+    </style>
 </body>
 </html>

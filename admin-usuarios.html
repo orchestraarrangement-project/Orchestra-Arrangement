@@ -1,3 +1,28 @@
+// ADICIONAR NO INÍCIO DE: admin-dashboard.html, admin-ebooks.html, admin-partituras.html, admin-usuarios.html
+
+<script>
+// Verificar autenticação
+function verificarAuth() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
+        window.location.href = 'admin-login.html';
+        return false;
+    }
+    return true;
+}
+
+// Executar ao carregar a página
+if (!verificarAuth()) {
+    // Impedir carregamento do restante da página
+    document.write('<p style="text-align:center; padding:40px;">Redirecionando...</p>');
+}
+</script>
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -278,18 +303,29 @@
                     <td><span class="table-badge ${user.role === 'admin' ? 'badge-purple' : 'badge-blue'}">${user.role === 'admin' ? 'Admin' : 'Usuário'}</span></td>
                     <td><span class="status-badge ${user.status === 'Ativo' ? 'status-published' : 'status-draft'}">${user.status}</span></td>
                     <td>
-                        <div class="table-actions">
-                            <button class="action-btn action-edit" onclick="editarUsuario('${user.id}')" title="Editar">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
-                                </svg>
-                            </button>
-                            <button class="action-btn action-delete" onclick="deletarUsuario('${user.id}', '${user.nome}')" title="Excluir">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
+                      // Dentro da função renderizarUsuarios(), na parte dos botões:
+
+<div class="table-actions">
+    <button class="action-btn action-edit" onclick="editarUsuario('${usuario.id}')" title="Editar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+    </button>
+    
+    <!-- BOTÃO REDEFINIR SENHA -->
+    <button class="action-btn action-reset" onclick="redefinirSenha('${usuario.id}', '${usuario.email}')" title="Redefinir Senha" style="background: #ffc107;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 3V1M8 3C6.34 3 5 4.34 5 6V8H11V6C11 4.34 9.66 3 8 3ZM4 8H12C12.55 8 13 8.45 13 9V14C13 14.55 12.55 15 12 15H4C3.45 15 3 14.55 3 14V9C3 8.45 3.45 8 4 8Z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+    </button>
+    
+    <button class="action-btn action-delete" onclick="deletarUsuario('${usuario.id}', '${usuario.email}')" title="Excluir">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+</div>
+
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -339,12 +375,14 @@
         async function salvarUsuario(event) {
             event.preventDefault();
 
-            const dados = {
-                nome: document.getElementById('nome').value,
-                email: document.getElementById('email').value,
-                role: document.getElementById('role').value || 'user',
-                status: document.getElementById('status').value || 'Ativo'
+          const dados = {
+            email: document.getElementById('email').value,
+            nome: document.getElementById('nome').value,
+            role: funcaoSelecionada,
+            status: statusSelecionado
+            // NÃO ENVIAR SENHA
             };
+
 
             try {
                 if (editandoId) {
@@ -407,6 +445,48 @@
 
         document.getElementById('userForm').addEventListener('submit', salvarUsuario);
         carregarUsuarios();
+
+
+        // ADICIONAR ESTA FUNÇÃO NO admin-usuarios.html
+
+async function redefinirSenha(userId, email) {
+    const senhaTemp = prompt(`Redefinir senha para ${email}?\n\nDigite a senha TEMPORÁRIA que será enviada ao usuário:`);
+    
+    if (!senhaTemp || senhaTemp.length < 6) {
+        alert('❌ Senha deve ter no mínimo 6 caracteres');
+        return;
+    }
+
+    if (!confirm(`Confirma redefinição de senha para ${email}?\n\nSenha temporária: ${senhaTemp}`)) {
+        return;
+    }
+
+    try {
+        // Hash da senha temporária
+        const encoder = new TextEncoder();
+        const data = encoder.encode(senhaTemp);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const senhaHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        const { error } = await supabase
+            .from('users')
+            .update({ 
+                senha: senhaHash,
+                senha_temporaria: true
+            })
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        alert(`✅ Senha redefinida!\n\nEnvie esta senha para o usuário:\n${senhaTemp}\n\nEle será obrigado a trocar no próximo login.`);
+        carregarUsuarios();
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao redefinir senha: ' + error.message);
+    }
+}
+
     </script>
 </body>
 </html>
