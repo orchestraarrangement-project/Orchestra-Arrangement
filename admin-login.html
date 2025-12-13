@@ -8,7 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     
+    <!-- ADICIONAR AQUI -->
+    <script src="auth.js"></script>
+    
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -191,11 +195,6 @@
     </div>
 
     <script>
-        // Redirecionar se já estiver logado
-        if (localStorage.getItem('token') && localStorage.getItem('userId')) {
-            window.location.href = 'admin-dashboard.html';
-        }
-
         const form = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const senhaInput = document.getElementById('senha');
