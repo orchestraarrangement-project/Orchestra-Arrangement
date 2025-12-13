@@ -54,13 +54,36 @@
     </style>
 </head>
 <body class="admin-body">
-    <script>
-        // Verificar login (APENAS 1 VEZ)
-        const adminUser = localStorage.getItem('adminUser');
-        if (!adminUser) {
-            window.location.replace('admin-login.html');
+      <script>
+        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
+        (function() {
+            const token = localStorage.getItem('adminToken');
+            const userId = localStorage.getItem('adminUserId');
+            
+            console.log('🔐 Verificando auth:', { token, userId });
+            
+            if (!token || !userId) {
+                console.log('❌ Não autenticado - redirecionando...');
+                window.location.replace('admin-login.html');
+                return;
+            }
+            
+            console.log('✅ Usuário autenticado!');
+        })();
+        
+        // ===== FUNÇÃO DE LOGOUT =====
+        function fazerLogout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUserId');
+                localStorage.removeItem('adminUserEmail');
+                localStorage.removeItem('adminUserName');
+                localStorage.removeItem('adminUserRole');
+                window.location.href = 'admin-login.html';
+            }
         }
     </script>
+    
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">

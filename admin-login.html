@@ -139,6 +139,7 @@
     </style>
 </head>
 <body>
+    
     <div class="login-container">
         <div class="logo">
             <h1>ORCHESTRA</h1>
@@ -303,15 +304,22 @@
         });
 
         function fazerLogin(usuario) {
-            localStorage.setItem('adminToken', Date.now().toString());
-            localStorage.setItem('adminUser', JSON.stringify({
-                id: usuario.id,
-                email: usuario.email,
-                nome: usuario.nome,
-                role: usuario.role
-            }));
-            window.location.href = 'admin-dashboard.html';
-        }
+    // Salvar dados com chaves corretas
+    localStorage.setItem('adminToken', 'logged-' + Date.now());
+    localStorage.setItem('adminUserId', usuario.id);
+    localStorage.setItem('adminUserEmail', usuario.email);
+    localStorage.setItem('adminUserName', usuario.nome || usuario.email);
+    localStorage.setItem('adminUserRole', usuario.role || 'user');
+    
+    console.log('✅ Login salvo no localStorage:', {
+        token: localStorage.getItem('adminToken'),
+        userId: localStorage.getItem('adminUserId')
+    });
+    
+    // Redirecionar
+    window.location.href = 'admin-dashboard.html';
+}
+
     </script>
 </body>
 </html>

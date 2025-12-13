@@ -15,13 +15,36 @@
     <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body class="admin-body">
-    <script>
-        // Verificar login (APENAS 1 VEZ)
-        const adminUser = localStorage.getItem('adminUser');
-        if (!adminUser) {
-            window.location.replace('admin-login.html');
+     <script>
+        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
+        (function() {
+            const token = localStorage.getItem('adminToken');
+            const userId = localStorage.getItem('adminUserId');
+            
+            console.log('🔐 Verificando auth:', { token, userId });
+            
+            if (!token || !userId) {
+                console.log('❌ Não autenticado - redirecionando...');
+                window.location.replace('admin-login.html');
+                return;
+            }
+            
+            console.log('✅ Usuário autenticado!');
+        })();
+        
+        // ===== FUNÇÃO DE LOGOUT =====
+        function fazerLogout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUserId');
+                localStorage.removeItem('adminUserEmail');
+                localStorage.removeItem('adminUserName');
+                localStorage.removeItem('adminUserRole');
+                window.location.href = 'admin-login.html';
+            }
         }
     </script>
+    
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">
@@ -79,12 +102,13 @@
                 </svg>
                 Ver Site
             </a>
-            <button onclick="logout()" class="sidebar-link" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M13 3H16C16.55 3 17 3.45 17 4V16C17 16.55 16.55 17 16 17H13M8 14L3 10M3 10L8 6M3 10H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                Sair
-            </button>
+         <a href="javascript:void(0)" class="nav-link" onclick="fazerLogout()">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M7 3H3V17H7M13 13L17 10L13 7M17 10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Sair
+</a>
+
         </div>
     </aside>
 
