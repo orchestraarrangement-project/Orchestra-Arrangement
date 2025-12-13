@@ -296,11 +296,10 @@
     <script>
         let ebooks = [];
         let editandoId = null;
-        
+
 
         async function carregarEbooks() {
-            if (!await verificarAuth()) return;
-
+          
             try {
                 const { data, error } = await supabase
                     .from('cursos')
