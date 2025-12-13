@@ -3,123 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Orchestra</title>
+    <title>Login - Orchestra Admin</title>
     
-    <!-- SDK do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="admin-styles.css">
-    
     <style>
-        .login-container {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
         }
         
-        .login-card {
+        .login-container {
             background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 48px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
+            animation: fadeIn 0.5s ease;
         }
         
-        .login-header {
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
         
-        .login-logo {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #5f4bb6;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
+        .logo h1 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 8px;
         }
         
-        .login-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2d3748;
-            margin: 20px 0 10px;
-        }
-        
-        .login-subtitle {
-            color: #718096;
+        .logo p {
+            color: #666;
             font-size: 14px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .form-label {
             display: block;
+            font-weight: 600;
             margin-bottom: 8px;
-            color: #2d3748;
-            font-weight: 500;
+            color: #333;
             font-size: 14px;
         }
         
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
             transition: all 0.3s;
-            box-sizing: border-box;
         }
         
         .form-input:focus {
             outline: none;
-            border-color: #5f4bb6;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
         
         .btn-login {
             width: 100%;
-            padding: 14px;
-            background: #5f4bb6;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .btn-login:hover {
-            background: #4c3d99;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(95, 75, 182, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .login-footer a {
-            color: #5f4bb6;
-            text-decoration: none;
-            font-size: 14px;
+        .btn-login:active {
+            transform: translateY(0);
         }
         
         .alert {
@@ -130,192 +119,201 @@
         }
         
         .alert-error {
-            background: #fed7d7;
-            color: #c53030;
-            border: 1px solid #fc8181;
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
         }
         
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #68d391;
+        .alert-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #90caf9;
         }
         
         .hidden {
             display: none;
         }
+        
+        small {
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-logo">ORCHESTRA</div>
-                <h1 class="login-title">Painel Administrativo</h1>
-                <p class="login-subtitle">Faça login para gerenciar seu site</p>
-            </div>
-            
-            <!-- Alert de erro/sucesso -->
-            <div id="alertBox" class="alert alert-error hidden"></div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label class="form-label" for="email">
-                        📧 Email
-                    </label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        class="form-input" 
-                        placeholder="admin@orchestra.com"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="password">
-                        🔒 Senha
-                    </label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        class="form-input" 
-                        placeholder="••••••••"
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
-                
-                <button type="submit" id="btnLogin" class="btn-login">
-                    Entrar no Painel →
-                </button>
-            </form>
-            
-            <div class="login-footer">
-                <a href="index.html">← Voltar ao site</a>
-            </div>
+        <div class="logo">
+            <h1>ORCHESTRA</h1>
+            <p>Painel Administrativo</p>
         </div>
+        
+        <div id="alertBox" class="hidden"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+            </div>
+            
+            <!-- Campo de senha (sempre visível) -->
+            <div class="form-group">
+                <label class="form-label">Senha</label>
+                <input type="password" id="senha" class="form-input" placeholder="Digite sua senha">
+                <small id="senhaHint" class="hidden">Deixe em branco se for seu primeiro acesso</small>
+            </div>
+            
+            <!-- Campo de nova senha (aparece só no primeiro acesso) -->
+            <div id="primeiroAcessoGroup" class="form-group hidden">
+                <label class="form-label">Defina sua senha</label>
+                <input type="password" id="novaSenha" class="form-input" placeholder="Mínimo 6 caracteres">
+                <small>Crie uma senha para acessar o sistema</small>
+            </div>
+            
+            <div id="confirmarSenhaGroup" class="form-group hidden">
+                <label class="form-label">Confirme sua senha</label>
+                <input type="password" id="confirmarSenha" class="form-input" placeholder="Digite novamente">
+            </div>
+            
+            <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+        </form>
     </div>
-    
+
     <script>
-        // ========================================
-        // VERIFICAR SE JÁ ESTÁ LOGADO
-        // ========================================
-        async function verificarSeJaEstaLogado() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    console.log('✅ Já está logado, redirecionando...');
-                    window.location.href = 'admin-dashboard.html';
-                }
-            } catch (error) {
-                console.error('Erro ao verificar sessão:', error);
-            }
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const senhaInput = document.getElementById('senha');
+        const novaSenhaInput = document.getElementById('novaSenha');
+        const confirmarSenhaInput = document.getElementById('confirmarSenha');
+        const primeiroAcessoGroup = document.getElementById('primeiroAcessoGroup');
+        const confirmarSenhaGroup = document.getElementById('confirmarSenhaGroup');
+        const btnLogin = document.getElementById('btnLogin');
+        const alertBox = document.getElementById('alertBox');
+        
+        let primeiroAcesso = false;
+
+        // Hash simples usando Web Crypto API
+        async function hashSenha(senha) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(senha);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // ========================================
-        // MOSTRAR ALERT
-        // ========================================
-        function mostrarAlert(mensagem, tipo = 'error') {
-            const alertBox = document.getElementById('alertBox');
+        function mostrarAlerta(mensagem, tipo = 'error') {
+            alertBox.className = tipo === 'error' ? 'alert alert-error' : 'alert alert-info';
             alertBox.textContent = mensagem;
-            alertBox.className = `alert alert-${tipo}`;
             alertBox.classList.remove('hidden');
             
-            // Esconder após 5 segundos
             setTimeout(() => {
                 alertBox.classList.add('hidden');
             }, 5000);
         }
 
-        // ========================================
-        // FAZER LOGIN
-        // ========================================
-        async function fazerLogin(event) {
-            event.preventDefault();
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            const email = document.getElementById('email').value.trim();
-            const senha = document.getElementById('password').value;
-            const btnLogin = document.getElementById('btnLogin');
-            const alertBox = document.getElementById('alertBox');
+            const email = emailInput.value.trim();
+            const senha = senhaInput.value.trim();
             
-            // Validação básica
-            if (!email || !senha) {
-                mostrarAlert('Por favor, preencha todos os campos');
+            if (!email) {
+                mostrarAlerta('Por favor, digite seu email');
                 return;
             }
-            
-            // Desabilitar botão
-            const textoOriginal = btnLogin.textContent;
-            btnLogin.disabled = true;
-            btnLogin.textContent = 'Entrando...';
-            alertBox.classList.add('hidden');
-            
-            try {
-                console.log('🔄 Tentando fazer login com:', email);
-                
-                // Login no Supabase
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: senha
-                });
 
-                if (error) {
-                    console.error('❌ Erro do Supabase:', error);
-                    throw new Error(error.message);
+            try {
+                // Buscar usuário pelo email
+                const { data: usuarios, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+
+                if (error || !usuarios) {
+                    mostrarAlerta('Usuário não encontrado');
+                    return;
                 }
 
-                if (data.user) {
-                    console.log('✅ Login bem-sucedido:', data.user.email);
-                    
-                    // Salvar no localStorage
-                    localStorage.setItem('admin_user', JSON.stringify(data.user));
-                    localStorage.setItem('admin_token', data.session.access_token);
-                    
-                    // Feedback visual
-                    btnLogin.textContent = '✓ Sucesso! Redirecionando...';
-                    btnLogin.style.background = '#48bb78';
-                    mostrarAlert('Login realizado com sucesso!', 'success');
-                    
-                    // Redirecionar
-                    setTimeout(() => {
-                        window.location.href = 'admin-dashboard.html';
-                    }, 1000);
+                // Verificar se é primeiro acesso
+                if (!usuarios.senha) {
+                    if (!primeiroAcesso) {
+                        // Mostrar campos de primeiro acesso
+                        primeiroAcesso = true;
+                        primeiroAcessoGroup.classList.remove('hidden');
+                        confirmarSenhaGroup.classList.remove('hidden');
+                        senhaInput.style.display = 'none';
+                        btnLogin.textContent = 'Criar Senha e Entrar';
+                        mostrarAlerta('Primeiro acesso! Defina sua senha abaixo', 'info');
+                        return;
+                    } else {
+                        // Criar senha no primeiro acesso
+                        const novaSenha = novaSenhaInput.value;
+                        const confirmarSenha = confirmarSenhaInput.value;
+
+                        if (!novaSenha || novaSenha.length < 6) {
+                            mostrarAlerta('A senha deve ter no mínimo 6 caracteres');
+                            return;
+                        }
+
+                        if (novaSenha !== confirmarSenha) {
+                            mostrarAlerta('As senhas não coincidem');
+                            return;
+                        }
+
+                        // Hash da senha
+                        const senhaHash = await hashSenha(novaSenha);
+
+                        // Salvar senha no banco
+                        const { error: updateError } = await supabase
+                            .from('users')
+                            .update({ senha: senhaHash })
+                            .eq('id', usuarios.id);
+
+                        if (updateError) {
+                            mostrarAlerta('Erro ao criar senha: ' + updateError.message);
+                            return;
+                        }
+
+                        // Login bem-sucedido
+                        localStorage.setItem('token', 'admin-authenticated');
+                        localStorage.setItem('userEmail', email);
+                        localStorage.setItem('userName', usuarios.nome);
+                        localStorage.setItem('userRole', usuarios.role);
+                        
+                        mostrarAlerta('Senha criada! Redirecionando...', 'info');
+                        setTimeout(() => {
+                            window.location.href = 'admin-dashboard.html';
+                        }, 1500);
+                    }
                 } else {
-                    throw new Error('Dados de login inválidos');
+                    // Usuário já tem senha - fazer login normal
+                    if (!senha) {
+                        mostrarAlerta('Por favor, digite sua senha');
+                        return;
+                    }
+
+                    const senhaHash = await hashSenha(senha);
+
+                    if (senhaHash !== usuarios.senha) {
+                        mostrarAlerta('Senha incorreta');
+                        return;
+                    }
+
+                    // Login bem-sucedido
+                    localStorage.setItem('token', 'admin-authenticated');
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userName', usuarios.nome);
+                    localStorage.setItem('userRole', usuarios.role);
+                    
+                    window.location.href = 'admin-dashboard.html';
                 }
             } catch (error) {
-                console.error('❌ Erro no login:', error);
-                
-                let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
-                
-                if (error.message.includes('Invalid login credentials')) {
-                    mensagemErro = 'Email ou senha incorretos';
-                } else if (error.message.includes('Email not confirmed')) {
-                    mensagemErro = 'Email não confirmado';
-                } else if (error.message) {
-                    mensagemErro = error.message;
-                }
-                
-                mostrarAlert(mensagemErro);
-                
-                // Restaurar botão
-                btnLogin.disabled = false;
-                btnLogin.textContent = textoOriginal;
-                btnLogin.style.background = '';
+                console.error('Erro no login:', error);
+                mostrarAlerta('Erro ao fazer login: ' + error.message);
             }
-        }
-
-        // ========================================
-        // EVENT LISTENERS
-        // ========================================
-        document.getElementById('loginForm').addEventListener('submit', fazerLogin);
-        
-        // Verificar se já está logado ao carregar
-        verificarSeJaEstaLogado();
-        
-        console.log('🚀 Página de login carregada');
+        });
     </script>
 </body>
 </html>
