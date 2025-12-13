@@ -54,35 +54,19 @@
     </style>
 </head>
 <body class="admin-body">
-      <script>
-        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
-        (function() {
-            const token = localStorage.getItem('adminToken');
-            const userId = localStorage.getItem('adminUserId');
-            
-            console.log('🔐 Verificando auth:', { token, userId });
-            
-            if (!token || !userId) {
-                console.log('❌ Não autenticado - redirecionando...');
-                window.location.replace('admin-login.html');
-                return;
-            }
-            
-            console.log('✅ Usuário autenticado!');
-        })();
+        <script>
+        // Verificação simples
+        if (!localStorage.getItem('admin_logged')) {
+            window.location.href = 'admin-login.html';
+        }
         
-        // ===== FUNÇÃO DE LOGOUT =====
         function fazerLogout() {
-            if (confirm('Deseja realmente sair?')) {
-                localStorage.removeItem('adminToken');
-                localStorage.removeItem('adminUserId');
-                localStorage.removeItem('adminUserEmail');
-                localStorage.removeItem('adminUserName');
-                localStorage.removeItem('adminUserRole');
-                window.location.href = 'admin-login.html';
-            }
+            localStorage.removeItem('admin_logged');
+            localStorage.removeItem('admin_email');
+            window.location.href = 'admin-login.html';
         }
     </script>
+
     
     <!-- Sidebar -->
     <aside class="admin-sidebar">
@@ -217,11 +201,12 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Senha*</label>
-                    <input type="password" id="senha" class="form-input" placeholder="Digite a senha" required>
-                    <small style="color: #666; font-size: 12px;">Mínimo 6 caracteres</small>
+                    <label class="form-label">Senha<span id="senhaObrigatoria">*</span></label>
+                    <input type="password" id="senha" class="form-input" placeholder="Digite a senha">
+                    <small style="color: #666; font-size: 12px;">
+                        <span id="senhaHint">Mínimo 6 caracteres</span>
+                    </small>
                 </div>
-
 
                 <div class="form-row">
                     <div class="form-group">
@@ -313,27 +298,25 @@
                     <td><span class="status-badge ${user.status === 'Ativo' ? 'status-published' : 'status-draft'}">${user.status}</span></td>
                     <td>
                       // Dentro da função renderizarUsuarios(), na parte dos botões:
-
-<div class="table-actions">
-    <button class="action-btn action-edit" onclick="editarUsuario('${usuario.id}')" title="Editar">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-    </button>
-    
-    <!-- BOTÃO REDEFINIR SENHA -->
-    <button class="action-btn action-reset" onclick="redefinirSenha('${usuario.id}', '${usuario.email}')" title="Redefinir Senha" style="background: #ffc107;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3V1M8 3C6.34 3 5 4.34 5 6V8H11V6C11 4.34 9.66 3 8 3ZM4 8H12C12.55 8 13 8.45 13 9V14C13 14.55 12.55 15 12 15H4C3.45 15 3 14.55 3 14V9C3 8.45 3.45 8 4 8Z" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-    </button>
-    
-    <button class="action-btn action-delete" onclick="deletarUsuario('${usuario.id}', '${usuario.email}')" title="Excluir">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-    </button>
-</div>
+ <div class="table-actions">
+        <button class="action-btn action-edit" onclick="editarUsuario('${user.id}')" title="Editar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+        </button>
+        
+        <button class="action-btn action-reset" onclick="redefinirSenha('${user.id}', '${user.email}')" title="Redefinir Senha" style="background: #ffc107;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3V1M8 3C6.34 3 5 4.34 5 6V8H11V6C11 4.34 9.66 3 8 3ZM4 8H12C12.55 8 13 8.45 13 9V14C13 14.55 12.55 15 12 15H4C3.45 15 3 14.55 3 14V9C3 8.45 3.45 8 4 8Z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+        </button>
+        
+        <button class="action-btn action-delete" onclick="deletarUsuario('${user.id}', '${user.nome}')" title="Excluir">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
 
                     </td>
                 `;
@@ -341,39 +324,55 @@
             });
         }
 
-        function abrirModal() {
-            editandoId = null;
-            document.getElementById('userForm').reset();
-            document.getElementById('role').value = 'user';
-            document.getElementById('status').value = 'Ativo';
-            document.getElementById('modalTitle').textContent = 'Novo Usuário';
-            document.getElementById('submitBtn').textContent = 'Criar Usuário';
-            document.getElementById('modal').style.display = 'flex';
-        }
+       function abrirModal() {
+    editandoId = null;
+    document.getElementById('userForm').reset();
+    document.getElementById('role').value = 'user';
+    document.getElementById('status').value = 'Ativo';
+    
+    // Tornar senha obrigatória ao criar
+    document.getElementById('senha').required = true;
+    document.getElementById('senha').placeholder = 'Digite a senha';
+    document.getElementById('senhaObrigatoria').style.display = 'inline';
+    document.getElementById('senhaHint').textContent = 'Mínimo 6 caracteres';
+    
+    document.getElementById('modalTitle').textContent = 'Novo Usuário';
+    document.getElementById('submitBtn').textContent = 'Criar Usuário';
+    document.getElementById('modal').style.display = 'flex';
+}
+
 
         async function editarUsuario(id) {
-            try {
-                const { data: user, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
+    try {
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-                if (error) throw error;
+        if (error) throw error;
 
-                editandoId = id;
-                document.getElementById('nome').value = user.nome;
-                document.getElementById('email').value = user.email;
-                document.getElementById('role').value = user.role || 'user';
-                document.getElementById('status').value = user.status || 'Ativo';
-                document.getElementById('modalTitle').textContent = 'Editar Usuário';
-                document.getElementById('submitBtn').textContent = 'Salvar Alterações';
-                document.getElementById('modal').style.display = 'flex';
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao carregar usuário');
-            }
-        }
+        editandoId = id;
+        document.getElementById('nome').value = user.nome;
+        document.getElementById('email').value = user.email;
+        document.getElementById('role').value = user.role || 'user';
+        document.getElementById('status').value = user.status || 'Ativo';
+        
+        // Tornar senha opcional ao editar
+        document.getElementById('senha').required = false;
+        document.getElementById('senha').placeholder = 'Deixe vazio para manter a senha atual';
+        document.getElementById('senhaObrigatoria').style.display = 'none';
+        document.getElementById('senhaHint').textContent = 'Deixe vazio para não alterar';
+        
+        document.getElementById('modalTitle').textContent = 'Editar Usuário';
+        document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+        document.getElementById('modal').style.display = 'flex';
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao carregar usuário');
+    }
+}
+
 
         function fecharModal() {
             document.getElementById('modal').style.display = 'none';
@@ -381,43 +380,65 @@
             document.getElementById('userForm').reset();
         }
 
-        async function salvarUsuario(event) {
-            event.preventDefault();
+       async function salvarUsuario(event) {
+    event.preventDefault();
 
-          const dados = {
-            email: document.getElementById('email').value,
-            nome: document.getElementById('nome').value,
-            role: funcaoSelecionada,
-            status: statusSelecionado
-            // NÃO ENVIAR SENHA
-            };
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+    const role = document.getElementById('role').value;
+    const status = document.getElementById('status').value;
 
+    // Hash da senha
+    const encoder = new TextEncoder();
+    const data = encoder.encode(senha);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const senhaHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            try {
-                if (editandoId) {
-                    const { error } = await supabase
-                        .from('users')
-                        .update(dados)
-                        .eq('id', editandoId);
+    const dados = {
+        nome: nome,
+        email: email,
+        senha: senhaHash,
+        role: role,
+        status: status,
+        senha_temporaria: false
+    };
 
-                    if (error) throw error;
-                    alert('✅ Usuário atualizado com sucesso!');
-                } else {
-                    const { error } = await supabase
-                        .from('users')
-                        .insert([dados]);
-
-                    if (error) throw error;
-                    alert('✅ Usuário criado com sucesso!');
-                }
-                
-                fecharModal();
-                carregarUsuarios();
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ Erro ao salvar: ' + error.message);
+    try {
+        if (editandoId) {
+            // EDITAR - não atualizar senha se campo estiver vazio
+            const dadosUpdate = { nome, email, role, status };
+            
+            if (senha) {
+                dadosUpdate.senha = senhaHash;
+                dadosUpdate.senha_temporaria = false;
             }
+
+            const { error } = await supabase
+                .from('users')
+                .update(dadosUpdate)
+                .eq('id', editandoId);
+
+            if (error) throw error;
+            alert('✅ Usuário atualizado com sucesso!');
+        } else {
+            // CRIAR NOVO
+            const { error } = await supabase
+                .from('users')
+                .insert([dados]);
+
+            if (error) throw error;
+            alert('✅ Usuário criado com sucesso!');
         }
+        
+        fecharModal();
+        carregarUsuarios();
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('❌ Erro ao salvar: ' + error.message);
+    }
+}
 
         async function deletarUsuario(id, nome) {
             if (!confirm(`Tem certeza que deseja deletar "${nome}"?`)) return;
