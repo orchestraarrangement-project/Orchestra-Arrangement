@@ -15,35 +15,31 @@
     <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body class="admin-body">
-     <script>
-        // ===== VERIFICAÇÃO DE AUTENTICAÇÃO =====
-        (function() {
-            const token = localStorage.getItem('adminToken');
-            const userId = localStorage.getItem('adminUserId');
-            
-            console.log('🔐 Verificando auth:', { token, userId });
-            
-            if (!token || !userId) {
-                console.log('❌ Não autenticado - redirecionando...');
-                window.location.replace('admin-login.html');
-                return;
-            }
-            
-            console.log('✅ Usuário autenticado!');
-        })();
+        <script>
+        // Verificação de autenticação
+        const token = localStorage.getItem('adminToken');
+        const userId = localStorage.getItem('adminUserId');
         
-        // ===== FUNÇÃO DE LOGOUT =====
+        if (!token || !userId) {
+            window.location.replace('admin-login.html');
+        }
+        
+        // Função de logout
         function fazerLogout() {
             if (confirm('Deseja realmente sair?')) {
-                localStorage.removeItem('adminToken');
-                localStorage.removeItem('adminUserId');
-                localStorage.removeItem('adminUserEmail');
-                localStorage.removeItem('adminUserName');
-                localStorage.removeItem('adminUserRole');
+                localStorage.clear();
                 window.location.href = 'admin-login.html';
             }
         }
+        
+        // Carregar nome do usuário
+        const userName = localStorage.getItem('adminUserName') || 'Usuário';
+        document.addEventListener('DOMContentLoaded', function() {
+            const userNameEl = document.querySelector('.user-name');
+            if (userNameEl) userNameEl.textContent = userName;
+        });
     </script>
+
     
     <!-- Sidebar -->
     <aside class="admin-sidebar">
