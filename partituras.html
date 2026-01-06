@@ -96,96 +96,125 @@
         </div>
     </footer>
 
-    <script>
-        // ✅ CONFIGURAÇÃO DO SUPABASE
-        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  <script>
+    // Configuração do Supabase
+    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let todasPartituras = [];
+    let todasPartituras = [];
 
-        async function carregarPartituras() {
-            try {
-                const { data, error } = await supabase
-                    .from('partituras')
-                    .select('*')
-                    .eq('status', 'Publicado')
-                    .order('created_at', { ascending: false });
+    async function carregarPartituras() {
+        try {
+            console.log('🔄 Carregando partituras...');
+            
+            const { data, error } = await supabase
+                .from('partituras')
+                .select('*')
+                .eq('status', 'Publicado')
+                .order('created_at', { ascending: false });
 
-                if (error) throw error;
-
-                todasPartituras = data || [];
-                renderizarPartituras(todasPartituras);
-                atualizarContador(todasPartituras.length);
-            } catch (error) {
-                console.error('Erro:', error);
-                mostrarErro();
+            if (error) {
+                console.error('❌ Erro Supabase:', error);
+                throw error;
             }
+
+            console.log('✅ Partituras carregadas:', data);
+            todasPartituras = data || [];
+            renderizarPartituras(todasPartituras);
+            atualizarContador(todasPartituras.length);
+        } catch (error) {
+            console.error('❌ Erro geral:', error);
+            mostrarErro();
+        }
+    }
+
+    function renderizarPartituras(partituras) {
+        const grid = document.getElementById('partiturasGrid');
+        
+        if (!grid) {
+            console.error('❌ Elemento #partiturasGrid não encontrado!');
+            return;
+        }
+        
+        if (!partituras || partituras.length === 0) {
+            grid.innerHTML = '<p style="text-align:center;padding:40px;">Nenhuma partitura encontrada</p>';
+            return;
         }
 
-        function renderizarPartituras(partituras) {
-            const grid = document.getElementById('partiturasGrid');
-            
-            if (!partituras || partituras.length === 0) {
-                grid.innerHTML = '<p style="text-align:center;padding:40px;">Nenhuma partitura encontrada</p>';
-                return;
-            }
+        const dificuldadeColors = {
+            'Fácil': 'badge-green',
+            'Intermediário': 'badge-yellow',
+            'Difícil': 'badge-red'
+        };
 
-            const dificuldadeColors = {
-                'Fácil': 'badge-green',
-                'Intermediário': 'badge-yellow',
-                'Difícil': 'badge-red'
-            };
-
-            grid.innerHTML = partituras.map(p => `
-                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
-                    <div class="score-image">
-                        <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
-                        <div class="score-badge ${dificuldadeColors[p.dificuldade] || 'badge-green'}">${p.dificuldade}</div>
-                    </div>
-                    <div class="score-content">
-                        <h3 class="score-title">${p.titulo}</h3>
-                        <p class="score-composer">${p.compositor}</p>
-                        <div class="score-tags">
-                            <span class="tag">${p.instrumento}</span>
-                            ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
-                        </div>
+        grid.innerHTML = partituras.map(p => `
+            <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
+                <div class="score-image">
+                    <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
+                    <div class="score-badge ${dificuldadeColors[p.dificuldade] || 'badge-green'}">${p.dificuldade}</div>
+                </div>
+                <div class="score-content">
+                    <h3 class="score-title">${p.titulo}</h3>
+                    <p class="score-composer">${p.compositor}</p>
+                    <div class="score-tags">
+                        <span class="tag">${p.instrumento}</span>
+                        ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+        
+        console.log('✅ Partituras renderizadas:', partituras.length);
+    }
 
-        function mostrarErro() {
-            const grid = document.getElementById('partiturasGrid');
+    function mostrarErro() {
+        const grid = document.getElementById('partiturasGrid');
+        if (grid) {
             grid.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar partituras</p>';
         }
+    }
 
-        function atualizarContador(count) {
-            document.getElementById('resultsCount').textContent = 
-                `${count} ${count === 1 ? 'partitura encontrada' : 'partituras encontradas'}`;
+    function atualizarContador(count) {
+        const counter = document.getElementById('resultsCount');
+        if (counter) {
+            counter.textContent = `${count} ${count === 1 ? 'partitura encontrada' : 'partituras encontradas'}`;
         }
+    }
 
-        function aplicarFiltros() {
-            const instrumento = document.getElementById('instrumentoFilter').value;
-            const dificuldade = document.getElementById('dificuldadeFilter').value;
-            
-            let filtradas = todasPartituras;
-            
-            if (instrumento !== 'all') {
-                filtradas = filtradas.filter(p => p.instrumento === instrumento);
-            }
-            
-            if (dificuldade !== 'all') {
-                filtradas = filtradas.filter(p => p.dificuldade === dificuldade);
-            }
-            
-            renderizarPartituras(filtradas);
-            atualizarContador(filtradas.length);
+    function aplicarFiltros() {
+        const instrumento = document.getElementById('instrumentoFilter').value;
+        const dificuldade = document.getElementById('dificuldadeFilter').value;
+        
+        let filtradas = todasPartituras;
+        
+        if (instrumento !== 'all') {
+            filtradas = filtradas.filter(p => p.instrumento === instrumento);
         }
+        
+        if (dificuldade !== 'all') {
+            filtradas = filtradas.filter(p => p.dificuldade === dificuldade);
+        }
+        
+        renderizarPartituras(filtradas);
+        atualizarContador(filtradas.length);
+    }
 
+    // ✅ INICIALIZAR QUANDO A PÁGINA CARREGAR
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM carregado via DOMContentLoaded');
+            carregarPartituras();
+            document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
+            document.getElementById('dificuldadeFilter').addEventListener('change', aplicarFiltros);
+        });
+    } else {
+        console.log('📄 DOM já estava carregado');
+        carregarPartituras();
         document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
         document.getElementById('dificuldadeFilter').addEventListener('change', aplicarFiltros);
-        document.addEventListener('DOMContentLoaded', carregarPartituras);
-    </script>
+    }
+</script>
+
 </body>
 </html>
