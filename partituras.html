@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partituras - Orchestra</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <a href="index.html" class="logo-link">
-                <h1 style="font-size: 28px; color: #5B4C9D; font-weight: 700; margin: 0; letter-spacing: 1px;">ORCHESTRA</h1>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
             </a>
             <nav class="nav">
                 <a href="index.html" class="nav-link">Início</a>
@@ -25,15 +22,13 @@
         </div>
     </header>
 
-    <!-- Page Header -->
     <section class="page-header">
         <div class="container">
             <h1 class="page-title">Partituras Musicais</h1>
-            <p class="page-subtitle">Aprenda teoria musical, leitura de partituras e muito mais com nossos ebooks especializados</p>
+            <p class="page-subtitle">Aprenda teoria musical, leitura de partituras e muito mais</p>
         </div>
     </section>
 
-    <!-- Filtros -->
     <section class="filters-section">
         <div class="container">
             <div class="filters">
@@ -62,22 +57,22 @@
         </div>
     </section>
 
-    <!-- Partituras Grid -->
-    <section class="content-section" style="padding: 40px 0;">
+    <section class="content-section">
         <div class="container">
             <div class="cards-grid" id="partiturasGrid">
-                <!-- Será preenchido via JavaScript -->
+                <!-- Carregado via JavaScript -->
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <h1 style="font-size: 24px; color: white; font-weight: 700; margin: 0 0 10px 0;">ORCHESTRA</h1>
-                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                    <div class="logo">
+                        <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+                    </div>
+                    <p class="footer-description">Sua plataforma completa para aprender música</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-column">
@@ -91,13 +86,12 @@
                         <h4 class="footer-title">Contato</h4>
                         <ul class="footer-list">
                             <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
-                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Orchestra Arrangement. Todos os direitos reservados.</p>
+                <p>&copy; 2024 Orchestra. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
@@ -107,47 +101,28 @@
 
         async function carregarPartituras() {
             try {
-                console.log('🎵 Carregando partituras...');
-
                 const { data, error } = await supabase
                     .from('partituras')
                     .select('*')
-                    .eq('status', 'Publicado');
+                    .eq('status', 'Publicado')
+                    .order('created_at', { ascending: false });
 
-                if (error) {
-                    console.error('❌ Erro ao carregar partituras:', error);
-                    mostrarErro('Erro ao carregar partituras');
-                    return;
-                }
+                if (error) throw error;
 
-                console.log('✅ Partituras carregadas:', data);
                 todasPartituras = data || [];
-                
-                if (todasPartituras.length === 0) {
-                    mostrarErro('Nenhuma partitura cadastrada ainda');
-                    return;
-                }
-
                 renderizarPartituras(todasPartituras);
                 atualizarContador(todasPartituras.length);
-
             } catch (error) {
-                console.error('❌ Erro:', error);
-                mostrarErro('Erro ao carregar partituras');
+                console.error('Erro:', error);
+                mostrarErro();
             }
         }
 
         function renderizarPartituras(partituras) {
             const grid = document.getElementById('partiturasGrid');
-
+            
             if (!partituras || partituras.length === 0) {
-                grid.innerHTML = `
-                    <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
-                        <h3 style="color: #666; margin-bottom: 10px;">Nenhuma partitura encontrada</h3>
-                        <p style="color: #999;">Tente ajustar os filtros!</p>
-                    </div>
-                `;
-                atualizarContador(0);
+                grid.innerHTML = '<p style="text-align:center;padding:40px;">Nenhuma partitura encontrada</p>';
                 return;
             }
 
@@ -157,40 +132,32 @@
                 'Difícil': 'badge-red'
             };
 
-            grid.innerHTML = partituras.map(partitura => `
-                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'" style="cursor: pointer;">
+            grid.innerHTML = partituras.map(p => `
+                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
                     <div class="score-image">
-                        <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" 
-                             alt="${partitura.titulo}">
-                        <div class="score-badge ${dificuldadeColors[partitura.dificuldade] || 'badge-green'}">
-                            ${partitura.dificuldade}
-                        </div>
+                        <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
+                        <div class="score-badge ${dificuldadeColors[p.dificuldade] || 'badge-green'}">${p.dificuldade}</div>
                     </div>
                     <div class="score-content">
-                        <h3 class="score-title">${partitura.titulo}</h3>
-                        <p class="score-composer">${partitura.compositor}</p>
+                        <h3 class="score-title">${p.titulo}</h3>
+                        <p class="score-composer">${p.compositor}</p>
                         <div class="score-tags">
-                            <span class="tag">${partitura.instrumento}</span>
-                            ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
+                            <span class="tag">${p.instrumento}</span>
+                            ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function mostrarErro(mensagem) {
+        function mostrarErro() {
             const grid = document.getElementById('partiturasGrid');
-            grid.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; grid-column: 1/-1;">
-                    <h3 style="color: #e74c3c;">${mensagem}</h3>
-                </div>
-            `;
-            atualizarContador(0);
+            grid.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar partituras</p>';
         }
 
         function atualizarContador(count) {
-            const texto = count === 1 ? 'partitura encontrada' : 'partituras encontradas';
-            document.getElementById('resultsCount').textContent = `${count} ${texto}`;
+            document.getElementById('resultsCount').textContent = 
+                `${count} ${count === 1 ? 'partitura encontrada' : 'partituras encontradas'}`;
         }
 
         function aplicarFiltros() {
@@ -211,11 +178,8 @@
             atualizarContador(filtradas.length);
         }
 
-        // Event Listeners
         document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
         document.getElementById('dificuldadeFilter').addEventListener('change', aplicarFiltros);
-
-        // Carregar partituras ao iniciar
         document.addEventListener('DOMContentLoaded', carregarPartituras);
     </script>
 </body>

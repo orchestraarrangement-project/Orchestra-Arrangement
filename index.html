@@ -3,305 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orchestra - Plataforma Musical Completa</title>
-    <!-- SDK do Supabase via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Arquivo de configuração -->
-<script src="supabase-config.js"></script>
-
+    <title>Orchestra - Plataforma Musical</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <style>
-/* ===== ESTILOS PARA CARDS DE EBOOKS (IGUAL ÀS PARTITURAS) ===== */
-
-.course-card {
-    background: var(--white);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.course-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-}
-
-.course-image {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-}
-
-.course-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: all 0.3s ease;
-}
-
-.course-card:hover .course-image img {
-    transform: scale(1.1) rotate(2deg);
-}
-
-.course-content {
-    padding: 20px;
-}
-
-.course-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #2d2d3d;
-    margin-bottom: 6px;
-    transition: all 0.3s ease;
-}
-
-.course-card:hover .course-title {
-    color: #3f3f73;
-}
-
-.course-description {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 0;
-}
-
-/* Animação ao carregar */
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Borda nos botões Ver Todas */
-.btn-primary {
-    border: 3px solid #5B4C9D;
-}
-
-.btn-primary:hover {
-    border-color: #FFC107;
-    background: #5B4C9D;
-    color: white;
-}
-
-.course-card {
-    animation: fadeInScale 0.5s ease;
-}
-
-        /* HEADER FIXO NO TOPO */
-        .header {
-            background: #fff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 1rem 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        /* Compensar altura do header fixo */
-        body {
-            padding-top: 100px;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 0 2rem;
-        }
-        
-        /* LOGO - TAMANHO FIXO SEM ESPAÇO BRANCO */
-        .logo-link {
-            display: block;
-            line-height: 0; /* Remove espaço vertical */
-        }
-        
-      .logo-link img {
-            width: auto;
-            display: block;
-           margin: 0;
-        }
-
-        
-        .nav {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .nav-link {
-            color: #5B4C9D;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        
-        .nav-link:hover {
-            background: #f5f3ff;
-        }
-        
-        .nav-link.active {
-            background: #5B4C9D;
-            color: white;
-            border: 2px solid #5B4C9D;
-        }
-        /* ===== CARDS DE EBOOKS (USAR AS CLASSES DO STYLES.CSS) ===== */
-.card {
-    background: var(--white, #fff);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-}
-
-.card-image {
-    position: relative;
-    width: 100%;
-    height: 240px;
-    overflow: hidden;
-}
-
-.card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: all 0.3s ease;
-}
-
-.card:hover .card-image img {
-    transform: scale(1.1);
-}
-
-.card-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    backdrop-filter: blur(10px);
-}
-
-.badge-green {
-    background: rgba(52, 211, 153, 0.9);
-    color: #fff;
-}
-
-.badge-yellow {
-    background: rgba(251, 191, 36, 0.9);
-    color: #fff;
-}
-
-.badge-red {
-    background: rgba(239, 68, 68, 0.9);
-    color: #fff;
-}
-
-.card-content {
-    padding: 24px;
-}
-
-.card-category {
-    color: #5B4C9D;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.card-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #2d2d3d;
-    margin-bottom: 12px;
-    transition: all 0.3s ease;
-}
-
-.card:hover .card-title {
-    color: #5B4C9D;
-}
-
-.card-description {
-    color: #666;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.card-duration {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #999;
-    font-size: 14px;
-}
-
-.card-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #5B4C9D;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.card:hover .card-link {
-    gap: 10px;
-}
-
-/* ===== GRID DE CARDS ===== */
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 32px;
-    margin-bottom: 40px;
-}
-
-@media (max-width: 768px) {
-    .cards-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-    </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-    <div class="header-content">
-        <a href="index.html" class="logo-link">
-            <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 50px;">
-        </a>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+            </a>
             <nav class="nav">
                 <a href="index.html" class="nav-link active">Início</a>
                 <a href="partituras.html" class="nav-link">Partituras</a>
@@ -310,7 +22,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-badge">
@@ -349,31 +60,29 @@
         </div>
     </section>
 
-    <!-- Partituras em Destaque -->
     <section class="section scores-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">CONHEÇA NOSSAS PARTITURAS</h2>
+                <h2 class="section-title">Partituras em Destaque</h2>
                 <p class="section-subtitle">Explore nossa biblioteca musical</p>
             </div>
-            <div class="cards-grid">
-                <!-- Será preenchido via JavaScript -->
+            <div class="cards-grid" id="partiturasDestaque">
+                <!-- Carregado via JavaScript -->
             </div>
-            <div style="text-align: center; margin-top: 40px;;">
+            <div style="text-align: center; margin-top: 40px;">
                 <a href="partituras.html" class="btn btn-primary">Ver Todas as Partituras</a>
             </div>
         </div>
     </section>
 
-    <!-- Ebooks Musicais -->
     <section class="section featured-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Ebooks Musicais</h2>
                 <p class="section-subtitle">Aprenda com nossos materiais didáticos</p>
             </div>
-            <div class="cards-grid">
-                <!-- Será preenchido via JavaScript -->
+            <div class="cards-grid" id="ebooksDestaque">
+                <!-- Carregado via JavaScript -->
             </div>
             <div style="text-align: center; margin-top: 40px;">
                 <a href="ebooks.html" class="btn btn-primary">Ver Todos os Ebooks</a>
@@ -381,15 +90,14 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                  <div class="logo">
-                    <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
-                </div>
-                    <p class="footer-description">Sua plataforma completa para aprender música e explorar partituras.</p>
+                    <div class="logo">
+                        <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+                    </div>
+                    <p class="footer-description">Sua plataforma completa para aprender música</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-column">
@@ -403,154 +111,94 @@
                         <h4 class="footer-title">Contato</h4>
                         <ul class="footer-list">
                             <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
-                            <li><a href="tel:+5511123456789">+55 11 1234-5678</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Orchestra Arrangement. Todos os direitos reservados.</p>
+                <p>&copy; 2024 Orchestra. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <script src="api.js"></script>
     <script>
-    // Carregar partituras em destaque
-    async function carregarPartiturasDestaque() {
-        try {
-            const { data: partituras, error } = await supabase
-                .from('partituras')
-                .select('*')
-                .eq('status', 'Publicado')
-                .limit(3);
-                
+        async function carregarPartiturasDestaque() {
+            try {
+                const { data, error } = await supabase
+                    .from('partituras')
+                    .select('*')
+                    .eq('status', 'Publicado')
+                    .limit(3);
 
-            if (error) {
-                console.error('Erro ao carregar partituras:', error);
-                return;
-            }
+                if (error) throw error;
 
-            console.log('✅ Partituras carregadas:', partituras);
+                const container = document.getElementById('partiturasDestaque');
+                const dificuldadeColors = {
+                    'Fácil': 'badge-green',
+                    'Intermediário': 'badge-yellow',
+                    'Difícil': 'badge-red'
+                };
 
-            const container = document.querySelector('.scores-section .cards-grid');
-
-            if (!container) {
-                console.error('❌ Container de partituras não encontrado!');
-                return;
-            }
-
-            if (!partituras || partituras.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhuma partitura disponível.</p>';
-                return;
-            }
-
-            const dificuldadeColors = {
-                'Fácil': 'badge-green',
-                'Intermediário': 'badge-yellow',
-                'Difícil': 'badge-red'
-            };
-
-            container.innerHTML = partituras.map(partitura => `
-                <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${partitura.id}'">
-                    <div class="score-image">
-                        <img src="${partitura.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" 
-                             alt="${partitura.titulo}">
-                        <div class="score-badge ${dificuldadeColors[partitura.dificuldade] || 'badge-green'}">
-                            ${partitura.dificuldade}
+                container.innerHTML = data.map(p => `
+                    <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
+                        <div class="score-image">
+                            <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
+                            <div class="score-badge ${dificuldadeColors[p.dificuldade] || 'badge-green'}">${p.dificuldade}</div>
+                        </div>
+                        <div class="score-content">
+                            <h3 class="score-title">${p.titulo}</h3>
+                            <p class="score-composer">${p.compositor}</p>
+                            <div class="score-tags">
+                                <span class="tag">${p.instrumento}</span>
+                                ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
+                            </div>
                         </div>
                     </div>
-                    <div class="score-content">
-                        <h3 class="score-title">${partitura.titulo}</h3>
-                        <p class="score-composer">${partitura.compositor}</p>
-                        <div class="score-tags">
-                            <span class="tag">${partitura.instrumento}</span>
-                            ${partitura.genero ? `<span class="tag">${partitura.genero}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        } catch (error) {
-            console.error('❌ Erro:', error);
+                `).join('');
+            } catch (error) {
+                console.error('Erro:', error);
+            }
         }
-    }
 
-    // Carregar ebooks em destaque
-    async function carregarEbooksDestaque() {
-        try {
-            const { data: ebooks, error } = await supabase
-                .from('cursos')
-                .select('*')
-                .eq('status', 'Publicado')
-                .limit(3);
+        async function carregarEbooksDestaque() {
+            try {
+                const { data, error } = await supabase
+                    .from('cursos')
+                    .select('*')
+                    .eq('status', 'Publicado')
+                    .limit(3);
 
-            if (error) {
-                console.error('Erro ao carregar ebooks:', error);
-                return;
-            }
+                if (error) throw error;
 
-            console.log('✅ Ebooks carregados:', ebooks);
+                const container = document.getElementById('ebooksDestaque');
+                const nivelColors = {
+                    'Iniciante': 'badge-green',
+                    'Intermediário': 'badge-yellow',
+                    'Avançado': 'badge-red'
+                };
 
-            const container = document.querySelector('.featured-section .cards-grid');
-
-            if (!container) {
-                console.error('❌ Container de ebooks não encontrado!');
-                return;
-            }
-
-            if (!ebooks || ebooks.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum ebook disponível.</p>';
-                return;
-            }
-
-            const nivelColors = {
-                'Iniciante': 'badge-green',
-                'Intermediário': 'badge-yellow',
-                'Avançado': 'badge-red'
-            };
-
-            container.innerHTML = ebooks.map(ebook => `
-                <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${ebook.id}'">
-                    <div class="card-image">
-                        <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
-                             alt="${ebook.titulo}">
-                        <span class="card-badge ${nivelColors[ebook.nivel] || 'badge-green'}">${ebook.nivel}</span>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-category">${ebook.categoria || 'Ebook'}</div>
-                        <h3 class="card-title">${ebook.titulo}</h3>
-                        <p class="card-description">${ebook.descricao || 'Ebook educativo de qualidade'}</p>
-                        <div class="card-footer">
-                            <span class="card-duration">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                                ${ebook.duracao || '2-3 horas'}
-                            </span>
-                            <span class="card-link">
-                                Ver detalhes
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </span>
+                container.innerHTML = data.map(e => `
+                    <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${e.id}'">
+                        <div class="card-image">
+                            <img src="${e.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" alt="${e.titulo}">
+                            <span class="card-badge ${nivelColors[e.nivel] || 'badge-green'}">${e.nivel}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-category">${e.categoria || 'Ebook'}</div>
+                            <h3 class="card-title">${e.titulo}</h3>
+                            <p class="card-description">${e.descricao || ''}</p>
                         </div>
                     </div>
-                </div>
-            `).join('');
-        } catch (error) {
-            console.error('❌ Erro:', error);
+                `).join('');
+            } catch (error) {
+                console.error('Erro:', error);
+            }
         }
-    }
 
-    // Carregar tudo ao iniciar
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 Iniciando Orchestra...');
-        carregarPartiturasDestaque();
-        carregarEbooksDestaque();
-    });
-</script>
-
-
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPartiturasDestaque();
+            carregarEbooksDestaque();
+        });
+    </script>
 </body>
 </html>

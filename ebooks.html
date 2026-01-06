@@ -4,67 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebooks - Orchestra</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
                 <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
-            </div>
-
-            <ul class="nav-menu">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="partituras.html">Partituras</a></li>
-                <li><a href="ebooks.html" class="active">Ebooks</a></li>
-            </ul>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Início</a>
+                <a href="partituras.html" class="nav-link">Partituras</a>
+                <a href="ebooks.html" class="nav-link active">Ebooks</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <section class="hero">
+    <section class="page-header">
         <div class="container">
-            <h1>Ebooks Musicais</h1>
-            <p>Aprenda teoria musical, leitura de partituras e muito mais com nossos ebooks especializados</p>
+            <h1 class="page-title">Ebooks Musicais</h1>
+            <p class="page-subtitle">Aprenda teoria musical, leitura de partituras e muito mais com nossos ebooks especializados</p>
         </div>
     </section>
 
     <section class="filters-section">
         <div class="container">
             <div class="filters">
-                <select id="categoriaFilter" onchange="carregarEbooks()">
-                    <option value="">Todas as Categorias</option>
+                <select class="filter-select" id="categoriaFilter">
+                    <option value="all">Todas as Categorias</option>
                     <option value="Teoria Musical">Teoria Musical</option>
-                    <option value="História da Música">História da Música</option>
-                    <option value="Técnica Instrumental">Técnica Instrumental</option>
+                    <option value="Técnica">Técnica</option>
+                    <option value="História">História</option>
+                    <option value="Composição">Composição</option>
+                    <option value="Harmonia">Harmonia</option>
+                    <option value="Leitura">Leitura</option>
                 </select>
-
-                <select id="nivelFilter" onchange="carregarEbooks()">
-                    <option value="">Todos os Níveis</option>
+                
+                <select class="filter-select" id="nivelFilter">
+                    <option value="all">Todos os Níveis</option>
                     <option value="Iniciante">Iniciante</option>
                     <option value="Intermediário">Intermediário</option>
                     <option value="Avançado">Avançado</option>
                 </select>
             </div>
+            <p class="results-count" id="resultsCount">Carregando...</p>
         </div>
     </section>
 
     <section class="content-section">
         <div class="container">
-            <p class="results-count" id="resultsCount">Carregando ebooks...</p>
-            <div class="ebooks-grid" id="ebooksGrid">
-                <!-- Cards serão inseridos aqui -->
+            <div class="cards-grid" id="ebooksGrid">
+                <!-- Carregado via JavaScript -->
             </div>
         </div>
     </section>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Orchestra Arrangement. Todos os direitos reservados.</p>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+                    </div>
+                    <p class="footer-description">Sua plataforma completa para aprender música</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Links Rápidos</h4>
+                        <ul class="footer-list">
+                            <li><a href="ebooks.html">Ebooks</a></li>
+                            <li><a href="partituras.html">Partituras</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4 class="footer-title">Contato</h4>
+                        <ul class="footer-list">
+                            <li><a href="mailto:contato@orchestra-arrangement.com">contato@orchestra-arrangement.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Orchestra. Todos os direitos reservados.</p>
+            </div>
         </div>
     </footer>
 
@@ -73,118 +97,98 @@
 
         async function carregarEbooks() {
             try {
-                const categoriaFiltro = document.getElementById('categoriaFilter').value;
-                const nivelFiltro = document.getElementById('nivelFilter').value;
-
-                let query = supabase
+                const { data, error } = await supabase
                     .from('cursos')
                     .select('*')
                     .eq('status', 'Publicado')
                     .order('created_at', { ascending: false });
 
-                if (categoriaFiltro) {
-                    query = query.eq('categoria', categoriaFiltro);
-                }
-
-                if (nivelFiltro) {
-                    query = query.eq('nivel', nivelFiltro);
-                }
-
-                const { data, error } = await query;
-
-                if (error) {
-                    console.error('Erro ao carregar ebooks:', error);
-                    document.getElementById('ebooksGrid').innerHTML = 
-                        '<p style="text-align: center; padding: 40px; color: #666;">Erro ao carregar ebooks</p>';
-                    return;
-                }
+                if (error) throw error;
 
                 todosEbooks = data || [];
                 renderizarEbooks(todosEbooks);
-
+                atualizarContador(todosEbooks.length);
             } catch (error) {
                 console.error('Erro:', error);
-                document.getElementById('ebooksGrid').innerHTML = 
-                    '<p style="text-align: center; padding: 40px; color: #666;">Erro ao carregar ebooks</p>';
+                mostrarErro();
             }
         }
 
         function renderizarEbooks(ebooks) {
             const grid = document.getElementById('ebooksGrid');
-            const resultsCount = document.getElementById('resultsCount');
-
-            if (ebooks.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">Nenhum ebook encontrado</p>';
-                resultsCount.textContent = '0 ebooks encontrados';
+            
+            if (!ebooks || ebooks.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;padding:40px;">Nenhum ebook encontrado</p>';
                 return;
             }
 
-            resultsCount.textContent = `${ebooks.length} ebook${ebooks.length !== 1 ? 's' : ''} encontrado${ebooks.length !== 1 ? 's' : ''}`;
+            const nivelColors = {
+                'Iniciante': 'badge-green',
+                'Intermediário': 'badge-yellow',
+                'Avançado': 'badge-red'
+            };
 
-            grid.innerHTML = ebooks.map(ebook => `
-                <div class="card">
+            grid.innerHTML = ebooks.map(e => `
+                <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${e.id}'">
                     <div class="card-image">
-                        <img src="${ebook.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800'}" alt="${ebook.titulo}">
-                        ${ebook.nivel ? `<span class="badge badge-${getNivelClass(ebook.nivel)}">${ebook.nivel}</span>` : ''}
+                        <img src="${e.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" alt="${e.titulo}">
+                        <span class="card-badge ${nivelColors[e.nivel] || 'badge-green'}">${e.nivel}</span>
                     </div>
                     <div class="card-content">
-                        <h3>${ebook.titulo}</h3>
-                        <p class="card-description">${ebook.descricao || 'Sem descrição disponível'}</p>
-                        ${ebook.categoria ? `<span class="category-tag">${ebook.categoria}</span>` : ''}
+                        <div class="card-category">${e.categoria || 'Ebook'}</div>
+                        <h3 class="card-title">${e.titulo}</h3>
+                        <p class="card-description">${e.descricao || ''}</p>
                         <div class="card-footer">
-                            <span class="price">${ebook.preco || 'Grátis'}</span>
-                            <a href="ebook-detalhes.html?id=${ebook.id}" class="btn-card">Ver Detalhes</a>
+                            <span class="card-duration">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M8 4V8L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                ${e.duracao || '2-3 horas'}
+                            </span>
+                            <span class="card-link">
+                                Ver detalhes
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function getNivelClass(nivel) {
-            const map = {
-                'Iniciante': 'green',
-                'Intermediário': 'yellow',
-                'Avançado': 'red'
-            };
-            return map[nivel] || 'blue';
+        function mostrarErro() {
+            const grid = document.getElementById('ebooksGrid');
+            grid.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks</p>';
         }
 
-        // Carregar ao iniciar
-        carregarEbooks();
+        function atualizarContador(count) {
+            document.getElementById('resultsCount').textContent = 
+                `${count} ${count === 1 ? 'ebook encontrado' : 'ebooks encontrados'}`;
+        }
+
+        function aplicarFiltros() {
+            const categoria = document.getElementById('categoriaFilter').value;
+            const nivel = document.getElementById('nivelFilter').value;
+            
+            let filtrados = todosEbooks;
+            
+            if (categoria !== 'all') {
+                filtrados = filtrados.filter(e => e.categoria === categoria);
+            }
+            
+            if (nivel !== 'all') {
+                filtrados = filtrados.filter(e => e.nivel === nivel);
+            }
+            
+            renderizarEbooks(filtrados);
+            atualizarContador(filtrados.length);
+        }
+
+        document.getElementById('categoriaFilter').addEventListener('change', aplicarFiltros);
+        document.getElementById('nivelFilter').addEventListener('change', aplicarFiltros);
+        document.addEventListener('DOMContentLoaded', carregarEbooks);
     </script>
-
-    <style>
-        .results-count {
-            margin-bottom: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .price {
-            font-size: 20px;
-            font-weight: 700;
-            color: #F4B627;
-        }
-
-        .category-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #E8E4F3;
-            color: #5B4E9D;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .card-description {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            min-height: 60px;
-        }
-    </style>
 </body>
 </html>
