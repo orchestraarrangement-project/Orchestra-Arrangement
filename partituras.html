@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partituras - Orchestra</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <header class="header">
         <div class="container header-content">
@@ -97,6 +97,11 @@
     </footer>
 
     <script>
+        // ✅ CONFIGURAÇÃO DO SUPABASE
+        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         let todasPartituras = [];
 
         async function carregarPartituras() {
