@@ -97,10 +97,12 @@
     </footer>
 
   <script>
-    // Configuração do Supabase
+    // ✅ SOLUÇÃO: Use window.supabase ao invés de criar nova variável
     const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // ✅ CORREÇÃO PRINCIPAL: Renomeie para 'client'
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     let todasPartituras = [];
 
@@ -108,11 +110,11 @@
         try {
             console.log('🔄 Carregando partituras...');
             
-            const { data, error } = await supabase
+            // ✅ Use 'client' ao invés de 'supabase'
+            const { data, error } = await client
                 .from('partituras')
                 .select('*')
                 .eq('status', 'Publicado')
-                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('❌ Erro Supabase:', error);
@@ -200,21 +202,22 @@
         atualizarContador(filtradas.length);
     }
 
-    // ✅ INICIALIZAR QUANDO A PÁGINA CARREGAR
+    // ✅ INICIALIZAR
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📄 DOM carregado via DOMContentLoaded');
+            console.log('📄 DOM carregado');
             carregarPartituras();
             document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
             document.getElementById('dificuldadeFilter').addEventListener('change', aplicarFiltros);
         });
     } else {
-        console.log('📄 DOM já estava carregado');
+        console.log('📄 DOM já carregado');
         carregarPartituras();
         document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
         document.getElementById('dificuldadeFilter').addEventListener('change', aplicarFiltros);
     }
 </script>
+
 
 </body>
 </html>

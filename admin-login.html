@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Orchestra</title>
     
+    <!-- ✅ CDN do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     
     <style>
         * {
@@ -14,9 +14,9 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -24,98 +24,104 @@
             justify-content: center;
             padding: 20px;
         }
-        
+
         .login-container {
             background: white;
-            padding: 48px;
-            border-radius: 20px;
+            border-radius: 24px;
+            padding: 50px 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
             max-width: 440px;
+            width: 100%;
         }
-        
+
         .logo {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
-        
+
         .logo h1 {
-            font-size: 32px;
-            color: #667eea;
-            margin-bottom: 8px;
+            font-size: 2.5rem;
+            color: #5B4C9D;
+            font-weight: 900;
         }
-        
+
         .logo p {
             color: #666;
-            font-size: 14px;
+            margin-top: 8px;
+            font-size: 1rem;
         }
-        
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            border: 1px solid #fcc;
+        }
+
         .form-group {
             margin-bottom: 24px;
         }
-        
-        .form-label {
+
+        .form-group label {
             display: block;
+            color: #333;
             font-weight: 600;
             margin-bottom: 8px;
-            color: #333;
-            font-size: 14px;
+            font-size: 0.95rem;
         }
-        
-        .form-input {
+
+        .form-group input {
             width: 100%;
             padding: 14px 16px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 1rem;
             transition: all 0.3s;
         }
-        
-        .form-input:focus {
+
+        .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
+
         .btn-login {
             width: 100%;
-            padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
+            padding: 16px;
             border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
+            margin-top: 10px;
         }
-        
+
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
-        
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
         .btn-login:disabled {
-            opacity: 0.6;
+            background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        
-        .alert-error {
-            background: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-        
-        .hidden {
+
+        .loading {
             display: none;
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -125,100 +131,116 @@
             <h1>ORCHESTRA</h1>
             <p>Painel Administrativo</p>
         </div>
-        
-        <div id="alertBox" class="hidden"></div>
-        
+
+        <div class="error-message" id="errorMessage" style="display: none;"></div>
+
         <form id="loginForm">
             <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" id="email" class="form-input" placeholder="admin@orchestra.com" required>
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="admin@orchestra.com"
+                    required
+                >
             </div>
-            
+
             <div class="form-group">
-                <label class="form-label">Senha</label>
-                <input type="password" id="senha" class="form-input" placeholder="Digite sua senha" required>
+                <label for="password">Senha</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="••••••••"
+                    required
+                >
             </div>
-            
-            <button type="submit" class="btn-login">Entrar</button>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
         </form>
+
+        <div class="loading" id="loading">Verificando credenciais...</div>
     </div>
 
-   <script>
-    const form = document.getElementById('loginForm');
-    const alertBox = document.getElementById('alertBox');
-    
-    function mostrarAlerta(mensagem) {
-        alertBox.textContent = mensagem;
-        alertBox.classList.remove('hidden');
-        setTimeout(() => alertBox.classList.add('hidden'), 5000);
-    }
+    <script>
+        // ✅ Configuração do Supabase
+        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value.trim();
-        const senha = document.getElementById('senha').value.trim();
-        
-        if (!email || !senha) {
-            mostrarAlerta('Preencha email e senha');
-            return;
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const btnLogin = document.getElementById('btnLogin');
+        const loading = document.getElementById('loading');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validação básica
+            if (!email || !password) {
+                mostrarErro('Por favor, preencha todos os campos');
+                return;
+            }
+
+            try {
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Verificando...';
+                loading.style.display = 'block';
+                errorMessage.style.display = 'none';
+
+                console.log('🔄 Tentando login com:', email);
+
+                // ✅ Tentar autenticação com Supabase Auth
+                const { data, error } = await client.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    console.error('❌ Erro de login:', error);
+                    throw new Error('Email ou senha incorretos');
+                }
+
+                if (data && data.user) {
+                    console.log('✅ Login bem-sucedido:', data.user);
+                    
+                    // Salvar sessão
+                    localStorage.setItem('admin_user', JSON.stringify(data.user));
+                    localStorage.setItem('admin_session', data.session.access_token);
+                    
+                    // Redirecionar
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    throw new Error('Usuário não autorizado');
+                }
+
+            } catch (erro) {
+                console.error('❌ Erro:', erro);
+                mostrarErro(erro.message || 'Erro ao fazer login. Tente novamente.');
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Entrar';
+                loading.style.display = 'none';
+            }
+        });
+
+        function mostrarErro(mensagem) {
+            errorMessage.textContent = mensagem;
+            errorMessage.style.display = 'block';
         }
-        
-        try {
-            // Hash da senha
-            const encoder = new TextEncoder();
-            const data = encoder.encode(senha);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const senhaHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            
-            // Buscar usuário
-            const { data: usuarios, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('email', email)
-                .single();
 
-            if (error || !usuarios) {
-                mostrarAlerta('Email não encontrado');
-                return;
+        // Verificar se já está logado
+        window.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('admin_session');
+            if (session) {
+                window.location.href = 'admin-dashboard.html';
             }
-            
-            // Verificar se tem senha cadastrada
-            if (!usuarios.senha) {
-                mostrarAlerta('Usuário sem senha cadastrada. Entre em contato com o administrador.');
-                return;
-            }
-            
-            // Verificar senha
-            if (usuarios.senha !== senhaHash) {
-                mostrarAlerta('Senha incorreta');
-                return;
-            }
-            
-            // Login bem-sucedido - salvar no localStorage
-            localStorage.setItem('admin_logged', 'true');
-            localStorage.setItem('admin_email', usuarios.email);
-            localStorage.setItem('admin_user_id', usuarios.id);
-            localStorage.setItem('admin_user_name', usuarios.nome);
-            localStorage.setItem('admin_user_role', usuarios.role);
-            
-            console.log('✅ Login realizado com sucesso!');
-            console.log('Dados salvos:', {
-                logged: localStorage.getItem('admin_logged'),
-                email: localStorage.getItem('admin_email'),
-                id: localStorage.getItem('admin_user_id')
-            });
-            
-            // Redirecionar
-            window.location.href = 'admin-dashboard.html';
-            
-        } catch (error) {
-            console.error('Erro no login:', error);
-            mostrarAlerta('Erro ao fazer login: ' + error.message);
-        }
-    });
-</script>
-
+        });
+    </script>
 </body>
 </html>
