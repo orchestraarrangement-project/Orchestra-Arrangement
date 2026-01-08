@@ -1,525 +1,483 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Ebooks - Orchestra Admin</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-    
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Gerenciar Ebooks - Orchestra Admin</title>
+        
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="admin-styles.css">
+    </head>
 
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="admin-styles.css">
-    
-    <style>
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            margin: auto;
-        }
-        
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
-        
-        .modal-form {
-            padding: 24px;
-        }
-        
-        .modal-footer {
-            padding: 20px 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            position: sticky;
-            bottom: 0;
-            background: white;
-        }
-    </style>
-</head>
-<body class="admin-body">
-       <script>
-        // Verificação de autenticação
-        const isLogged = localStorage.getItem('admin_logged');
-        const userEmail = localStorage.getItem('admin_email');
-        
-        console.log('🔐 Verificando auth:', { isLogged, userEmail });
-        
-        if (!isLogged || !userEmail) {
-            console.log('❌ Não autenticado - redirecionando...');
-            window.location.replace('admin-login.html');
-        } else {
-            console.log('✅ Usuário autenticado:', userEmail);
-        }
-        
-        // Função de logout
-        function fazerLogout() {
-            if (confirm('Deseja realmente sair?')) {
-                localStorage.clear();
-                console.log('🚪 Logout realizado');
-                window.location.href = 'admin-login.html';
+    <body class="admin-body">
+        <script>
+            // REMOVIDO: verificação de autenticação
+            function fazerLogout() {
+                if (confirm('Deseja realmente sair?')) {
+                    localStorage.clear();
+                    window.location.href = 'admin-login.html';
+                }
             }
-        }
-    </script>
+        </script>
 
 
-    <aside class="admin-sidebar">
-        <div class="sidebar-header">
-            <div class="logo-placeholder">ORCHESTRA</div>
-            <span class="admin-badge">Admin</span>
-        </div>
 
-        <nav class="sidebar-nav">
-            <a href="admin-dashboard.html" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                </svg>
-                Dashboard
-            </a>
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-placeholder">ORCHESTRA</div>
+                <span class="admin-badge">Admin</span>
+            </div>
 
-            <a href="admin-ebooks.html" class="sidebar-link active">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
-                </svg>
-                Ebooks
-            </a>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Dashboard
+                </a>
 
-            <a href="admin-partituras.html" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                Partituras
-            </a>
+                <a href="admin-ebooks.html" class="sidebar-link active">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    Ebooks
+                </a>
 
-            <a href="admin-usuarios.html" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
-                </svg>
-                Usuários
-            </a>
+                <a href="admin-partituras.html" class="sidebar-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Partituras
+                </a>
 
-            <a href="admin-configuracoes.html" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                Configurações
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <a href="index.html" class="sidebar-link">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
-                </svg>
-                Ver Site
-            </a>
-          <a href="javascript:void(0)" class="nav-link" onclick="fazerLogout()">
+                <a href="admin-usuarios.html" class="sidebar-link">
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path d="M7 3H3V17H7M13 13L17 10L13 7M17 10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
     </svg>
-    Sair
+    Usuários
 </a>
 
-        </div>
-    </aside>
 
-    <main class="admin-main">
-        <header class="admin-header">
-            <div class="header-left">
-                <h1 class="page-title">Gerenciar Ebooks</h1>
-                <p class="page-subtitle">Adicione, edite ou remova ebooks</p>
-            </div>
-            <div class="header-right">
-                <button class="btn btn-primary" onclick="abrirModal()">
+                <a href="admin-configuracoes.html" class="sidebar-link">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Configurações
+</a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="sidebar-link">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
                     </svg>
-                    Novo Ebook
-                </button>
+                    Ver Site
+                </a>
+                <a href="javascript:void(0)" class="nav-link" onclick="fazerLogout()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7 3H3V17H7M13 13L17 10L13 7M17 10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Sair
+                </a>
             </div>
-        </header>
+        </aside>
 
-        <section class="admin-filters">
-            <div class="search-box">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Buscar ebooks..." class="search-input">
-            </div>
-        </section>
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1 class="page-title">Gerenciar Ebooks</h1>
+                    <p class="page-subtitle">Adicione, edite ou remova ebooks da plataforma</p>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary" onclick="openModal()">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Novo Ebook
+                    </button>
+                </div>
+            </header>
 
-        <section class="admin-table-section">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Ebook</th>
-                        <th>Categoria</th>
-                        <th>Preço</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="5" style="text-align: center; padding: 40px;">Carregando...</td></tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+            <section class="admin-filters">
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" placeholder="Buscar ebooks..." class="search-input" id="searchInput">
+                </div>
+                <select class="filter-select-admin" id="categoriaFilter">
+                    <option value="">Todas as categorias</option>
+                    <option value="Teoria Musical">Teoria Musical</option>
+                    <option value="Leitura de Partituras">Leitura de Partituras</option>
+                    <option value="Harmonia">Harmonia</option>
+                    <option value="Composição">Composição</option>
+                    <option value="Análise Musical">Análise Musical</option>
+                </select>
+            </section>
 
-    <!-- MODAL -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Novo Ebook</h2>
-                <button class="modal-close" onclick="fecharModal()" style="background: none; border: none; cursor: pointer; font-size: 24px; color: #666;">×</button>
-            </div>
-            
-            <form class="modal-form" id="ebookForm">
-                <div class="form-group">
-                    <label class="form-label">Título*</label>
-                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Fundamentos da Teoria Musical" required>
+            <section class="admin-table-section">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Imagem</th>
+                            <th>Título</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ebooksTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:40px;color:#999;">Carregando ebooks...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <!-- MODAL -->
+        <div id="ebookModal" class="modal" style="display:none;">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Novo Ebook</h2>
+                    <button class="modal-close" onclick="closeModal()">×</button>
                 </div>
 
-                <div class="form-row">
+                <form class="modal-form" id="ebookForm" onsubmit="salvarEbook(event)">
                     <div class="form-group">
-                        <label class="form-label">Categoria*</label>
-                        <select id="categoria" class="form-input" required>
-                            <option value="Teoria Musical">Teoria Musical</option>
-                            <option value="Leitura de Partituras">Leitura de Partituras</option>
-                            <option value="Harmonia">Harmonia</option>
-                            <option value="Ritmo">Ritmo</option>
-                            <option value="Composição">Composição</option>
-                            <option value="Análise Musical">Análise Musical</option>
-                        </select>
+                        <label class="form-label">Título do Ebook*</label>
+                        <input type="text" id="titulo" class="form-input" placeholder="Ex: Teoria Musical Completa" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Categoria*</label>
+                            <select id="categoria" class="form-input" required>
+                                <option value="">Selecione</option>
+                                <option value="Teoria Musical">Teoria Musical</option>
+                                <option value="Leitura de Partituras">Leitura de Partituras</option>
+                                <option value="Harmonia">Harmonia</option>
+                                <option value="Composição">Composição</option>
+                                <option value="Análise Musical">Análise Musical</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Preço (R$)*</label>
+                            <input type="number" id="preco" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                            <small style="color:#666;font-size:12px;">Digite 0 para gratuito</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Nível*</label>
-                        <select id="nivel" class="form-input" required>
-                            <option value="Iniciante">Iniciante</option>
-                            <option value="Intermediário">Intermediário</option>
-                            <option value="Avançado">Avançado</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Descrição*</label>
-                    <textarea id="descricao" class="form-input" rows="3" placeholder="Descrição curta do ebook..." required></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Duração</label>
-                        <input type="text" id="duracao" class="form-input" placeholder="Ex: 2-3 horas">
+                        <label class="form-label">Descrição*</label>
+                        <textarea id="descricao" class="form-input" rows="3" placeholder="Descrição do ebook..." required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Idioma</label>
-                        <input type="text" id="idioma" class="form-input" placeholder="Ex: Português" value="Português">
+                        <label class="form-label">Detalhes do Ebook</label>
+                        <textarea id="detalhes" class="form-input" rows="4" placeholder="Informações detalhadas sobre o conteúdo do ebook..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Link de Compra (Kiwify)</label>
+                        <input type="url" id="linkCompra" class="form-input" placeholder="https://pay.kiwify.com.br/...">
+                        <small style="color:#666;font-size:12px;">Cole o link do Kiwify para pagamento</small>
+                    </div>
+
+                   <div class="form-group">
+                    <label class="form-label">Imagem de Capa*</label>
+                    <input type="file" id="imagemFile" class="form-input" accept="image/*" onchange="previewImage(event)">
+                    <small style="color:#666;font-size:12px;">Selecione uma imagem JPG, PNG ou WEBP</small>
+                    
+                    <div id="imagemPreview" style="margin-top:16px;display:none;">
+                        <img id="previewImg" style="max-width:200px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Conteúdo do Ebook (um por linha)*</label>
-                    <textarea id="conteudo" class="form-input" rows="6" placeholder="Digite cada tópico em uma linha:&#10;Introdução ao tema&#10;Conceitos fundamentais&#10;Exercícios práticos&#10;Material complementar" required></textarea>
-                    <small style="color: #666; font-size: 12px;">Cada linha será um item na lista de conteúdo</small>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">URL da Imagem de Capa</label>
+                    <label class="form-label">OU cole a URL da imagem</label>
                     <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
-                    <small style="color: #666; font-size: 12px;">Cole a URL de uma imagem ou deixe em branco</small>
+                    <small style="color:#666;font-size:12px;">Se preferir, cole uma URL ao invés de fazer upload</small>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Preço*</label>
-                        <input type="text" id="preco" class="form-input" placeholder="Ex: R$ 29,90 ou Grátis" required>
-                        <small style="color: #666; font-size: 12px;">Use formato: R$ 29,90 ou "Grátis"</small>
-                    </div>
 
                     <div class="form-group">
                         <label class="form-label">Status*</label>
                         <select id="status" class="form-input" required>
-                            <option value="Rascunho">Rascunho</option>
                             <option value="Publicado">Publicado</option>
+                            <option value="Rascunho">Rascunho</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Criar Ebook</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar Ebook</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <script>
-        let ebooks = [];
-        let editandoId = null;
+        <script>
+            const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+            const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+            let ebooks = [];
+            let editandoId = null;
 
-        async function carregarEbooks() {
-          
-            try {
-                const { data, error } = await supabase
-                    .from('cursos')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+          async function carregarEbooks() {
+    try {
+        const { data, error } = await client
+            .from('cursos')
+            .select('*');
 
-                if (error) throw error;
-
-                ebooks = data || [];
-                renderizarEbooks(ebooks);
-                console.log('✅ Ebooks carregados:', ebooks.length);
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao carregar ebooks: ' + error.message);
-            }
+        if (error) {
+            console.error('❌ Erro Supabase:', error);
+            throw error;
         }
 
-        function renderizarEbooks(lista) {
-            const tbody = document.querySelector('.admin-table tbody');
-            tbody.innerHTML = '';
+        ebooks = data || [];
+        console.log('✅ Ebooks carregados:', ebooks);
+        renderizarTabela(ebooks);
+    } catch (erro) {
+        console.error('❌ Erro completo:', erro);
+        document.getElementById('ebooksTableBody').innerHTML = 
+            '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e74c3c;">Erro: ' + erro.message + '</td></tr>';
+    }
+}
 
-            if (lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #666;">Nenhum ebook cadastrado</td></tr>';
-                return;
-            }
 
-            lista.forEach(ebook => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <div class="table-course">
-                            <img src="${ebook.imagem_capa || 'https://via.placeholder.com/100'}" alt="${ebook.titulo}">
-                            <div>
-                                <strong>${ebook.titulo}</strong>
-                                <span>${ebook.descricao ? ebook.descricao.substring(0, 60) + '...' : ''}</span>
+            function renderizarTabela(lista) {
+                const tbody = document.getElementById('ebooksTableBody');
+                
+                if (!lista || lista.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">Nenhum ebook encontrado</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = lista.map(e => `
+                    <tr>
+                        <td>
+                            <img src="${e.imagem_preview || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=100'}" 
+                                alt="${e.titulo}" 
+                                style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                        </td>
+                        <td><strong>${e.titulo}</strong></td>
+                        <td><span class="table-badge badge-blue">${e.categoria || '-'}</span></td>
+                        <td>${e.preco > 0 ? 'R$ ' + parseFloat(e.preco).toFixed(2) : 'Gratuito'}</td>
+                        <td><span class="status-badge ${e.status === 'Publicado' ? 'status-published' : 'status-draft'}">${e.status || 'Rascunho'}</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="action-btn action-edit" onclick="editarEbook('${e.id}')" title="Editar">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn action-delete" onclick="deletarEbook('${e.id}', '${e.titulo}')" title="Excluir">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
                             </div>
-                        </div>
-                    </td>
-                    <td><span class="table-badge badge-blue">${ebook.categoria || '-'}</span></td>
-                    <td>${ebook.preco || 'Grátis'}</td>
-                    <td><span class="status-badge ${ebook.status === 'Publicado' ? 'status-published' : 'status-draft'}">${ebook.status}</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="action-btn action-edit" onclick="editarEbook('${ebook.id}')" title="Editar">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
-                                </svg>
-                            </button>
-                            <button class="action-btn action-delete" onclick="deletarEbook('${ebook.id}', '${ebook.titulo}')" title="Excluir">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
-        // ABRIR MODAL PARA CRIAR
-        function abrirModal() {
-            editandoId = null;
-            document.getElementById('ebookForm').reset();
-            
-            // VALORES PADRÃO
-            document.getElementById('categoria').value = 'Teoria Musical';
-            document.getElementById('nivel').value = 'Iniciante';
-            document.getElementById('idioma').value = 'Português';
-            document.getElementById('preco').value = 'Grátis';
-            document.getElementById('status').value = 'Publicado';
-            
-            document.getElementById('modalTitle').textContent = 'Novo Ebook';
-            document.getElementById('submitBtn').textContent = 'Criar Ebook';
-            document.getElementById('modal').style.display = 'flex';
-        }
+            function openModal() {
+                editandoId = null;
+                document.getElementById('ebookForm').reset();
+                document.getElementById('imagemPreview').style.display = 'none';
+                document.getElementById('modalTitle').textContent = 'Novo Ebook';
+                document.getElementById('btnSalvar').textContent = 'Salvar Ebook';
+                document.getElementById('preco').value = '0.00';
+                document.getElementById('status').value = 'Publicado';
+                document.getElementById('ebookModal').style.display = 'flex';
+            }
 
-        // ABRIR MODAL PARA EDITAR
-        async function editarEbook(id) {
-            try {
-                const { data: ebook, error } = await supabase
-                    .from('cursos')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
+            function closeModal() {
+                document.getElementById('ebookModal').style.display = 'none';
+                editandoId = null;
+                document.getElementById('ebookForm').reset();
+            }
 
-                if (error) throw error;
+            async function editarEbook(id) {
+                try {
+                    const ebook = ebooks.find(e => e.id === id);
+                    if (!ebook) return;
 
-                editandoId = id;
-                
-                document.getElementById('titulo').value = ebook.titulo;
-                document.getElementById('categoria').value = ebook.categoria || 'Teoria Musical';
-                document.getElementById('nivel').value = ebook.nivel || 'Iniciante';
-                document.getElementById('descricao').value = ebook.descricao || '';
-                document.getElementById('duracao').value = ebook.duracao || '';
-                document.getElementById('idioma').value = ebook.idioma || 'Português';
-                document.getElementById('imagemUrl').value = ebook.imagem_capa || '';
-                document.getElementById('preco').value = ebook.preco || '';
-                document.getElementById('status').value = ebook.status || 'Publicado';
-                
-                // Preencher conteúdo
-                let conteudoTexto = '';
-                if (ebook.conteudo) {
-                    try {
-                        const conteudoArray = JSON.parse(ebook.conteudo);
-                        conteudoTexto = conteudoArray.join('\n');
-                    } catch (e) {
-                        conteudoTexto = ebook.conteudo;
+                    editandoId = id;
+                    
+                    document.getElementById('titulo').value = ebook.titulo || '';
+                    document.getElementById('categoria').value = ebook.categoria || '';
+                    document.getElementById('preco').value = ebook.preco || '0.00';
+                    document.getElementById('descricao').value = ebook.descricao || '';
+                    document.getElementById('detalhes').value = ebook.conteudo || '';
+                    document.getElementById('linkCompra').value = ebook.link_compra || '';
+                    document.getElementById('imagemPreview').value = ebook.imagem_preview || '';
+                    document.getElementById('status').value = ebook.status || 'Publicado';
+
+                    document.getElementById('modalTitle').textContent = 'Editar Ebook';
+                    document.getElementById('btnSalvar').textContent = 'Atualizar Ebook';
+                    document.getElementById('ebookModal').style.display = 'flex';
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    alert('Erro ao carregar dados do ebook');
+                }
+            }
+
+            // Preview da imagem antes do upload
+                function previewImage(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('previewImg').src = e.target.result;
+                            document.getElementById('imagemPreview').style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
                     }
                 }
-                document.getElementById('conteudo').value = conteudoTexto;
 
-                document.getElementById('modalTitle').textContent = 'Editar Ebook';
-                document.getElementById('submitBtn').textContent = 'Salvar Alterações';
-                document.getElementById('modal').style.display = 'flex';
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Erro ao carregar ebook para edição');
-            }
-        }
 
-        // FECHAR MODAL
-        function fecharModal() {
-            document.getElementById('modal').style.display = 'none';
-            editandoId = null;
-            document.getElementById('ebookForm').reset();
-        }
+         async function salvarEbook(event) {
+    event.preventDefault();
 
-        // SALVAR EBOOK (CRIAR OU EDITAR)
-        async function salvarEbook(event) {
-            event.preventDefault();
+    try {
+        // Upload da imagem se houver
+        let imagemUrl = '';
+        const fileInput = document.getElementById('imagemFile');
+        const urlInput = document.getElementById('imagemUrl').value;
 
-            const conteudoTexto = document.getElementById('conteudo').value;
-            const conteudoArray = conteudoTexto.split('\n').filter(line => line.trim() !== '');
-
-            const dados = {
-                titulo: document.getElementById('titulo').value,
-                categoria: document.getElementById('categoria').value || 'Teoria Musical',
-                nivel: document.getElementById('nivel').value || 'Iniciante',
-                descricao: document.getElementById('descricao').value || 'Descrição não disponível',
-                duracao: document.getElementById('duracao').value || '2-3 horas',
-                idioma: document.getElementById('idioma').value || 'Português',
-                conteudo: JSON.stringify(conteudoArray.length > 0 ? conteudoArray : ['Introdução', 'Conceitos fundamentais']),
-                imagem_capa: document.getElementById('imagemUrl').value || 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800',
-                preco: document.getElementById('preco').value || 'Grátis',
-                status: document.getElementById('status').value || 'Publicado'
-            };
-
-            if (!dados.titulo || dados.titulo.trim() === '') {
-                alert('❌ O título é obrigatório!');
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            // Fazer upload da imagem
+            const file = fileInput.files[0];
+            const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            
+            const { data: uploadData, error: uploadError } = await client.storage
+                .from('ebooks-imagens')
+                .upload(fileName, file);
+            
+            if (uploadError) {
+                console.error('Erro ao fazer upload:', uploadError);
+                alert('❌ Erro ao fazer upload da imagem: ' + uploadError.message);
                 return;
             }
-
-            try {
-                if (editandoId) {
-                    const { error } = await supabase
-                        .from('cursos')
-                        .update(dados)
-                        .eq('id', editandoId);
-
-                    if (error) throw error;
-                    alert('✅ Ebook atualizado com sucesso!');
-                } else {
-                    const { error } = await supabase
-                        .from('cursos')
-                        .insert([dados]);
-
-                    if (error) throw error;
-                    alert('✅ Ebook criado com sucesso!');
-                }
-                
-                fecharModal();
-                carregarEbooks();
-            } catch (error) {
-                console.error('Erro completo:', error);
-                alert('❌ Erro ao salvar: ' + error.message);
-            }
+            
+            const { data: { publicUrl } } = client.storage
+                .from('ebooks-imagens')
+                .getPublicUrl(fileName);
+            
+            imagemUrl = publicUrl;
+        } else if (urlInput) {
+            // Usar URL informada
+            imagemUrl = urlInput;
+        } else if (editandoId) {
+            // Manter imagem atual ao editar
+            const ebookAtual = ebooks.find(e => e.id === editandoId);
+            imagemUrl = ebookAtual?.imagem_preview || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+        } else {
+            // Imagem padrão
+            imagemUrl = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
         }
 
-        // DELETAR EBOOK
-        async function deletarEbook(id, titulo) {
-            if (!confirm(`Tem certeza que deseja deletar "${titulo}"?`)) return;
+        const dados = {
+            titulo: document.getElementById('titulo').value,
+            categoria: document.getElementById('categoria').value,
+            preco: parseFloat(document.getElementById('preco').value) || 0,
+            descricao: document.getElementById('descricao').value,
+            conteudo: document.getElementById('detalhes').value,
+            link_compra: document.getElementById('linkCompra').value,
+            imagem_preview: imagemUrl,
+            status: document.getElementById('status').value,
+            nivel: 'Iniciante'
+        };
 
-            try {
-                const { error } = await supabase
-                    .from('cursos')
-                    .delete()
-                    .eq('id', id);
+        if (editandoId) {
+            const { error } = await client
+                .from('cursos')
+                .update(dados)
+                .eq('id', editandoId);
 
-                if (error) throw error;
-                alert('✅ Ebook deletado com sucesso!');
-                carregarEbooks();
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ Erro ao deletar: ' + error.message);
-            }
+            if (error) throw error;
+            alert('✅ Ebook atualizado com sucesso!');
+        } else {
+            const { error } = await client
+                .from('cursos')
+                .insert([dados]);
+
+            if (error) throw error;
+            alert('✅ Ebook criado com sucesso!');
         }
 
-        // BUSCA
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const busca = this.value.toLowerCase();
-            const filtrados = ebooks.filter(e => 
-                e.titulo.toLowerCase().includes(busca) || 
-                (e.categoria && e.categoria.toLowerCase().includes(busca))
-            );
-            renderizarEbooks(filtrados);
-        });
-
-        // FECHAR MODAL AO CLICAR FORA
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('modal')) {
-                fecharModal();
-            }
-        }
-
-        // SUBMETER FORMULÁRIO
-        document.getElementById('ebookForm').addEventListener('submit', salvarEbook);
-
-        // CARREGAR EBOOKS AO INICIAR
+        closeModal();
         carregarEbooks();
-    </script>
-</body>
-</html>
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        alert('❌ Erro ao salvar: ' + erro.message);
+    }
+}
+
+
+            async function deletarEbook(id, titulo) {
+                if (!confirm(`Tem certeza que deseja excluir "${titulo}"?\n\nEsta ação não pode ser desfeita!`)) {
+                    return;
+                }
+
+                try {
+                    const { error } = await client
+                        .from('cursos')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) throw error;
+
+                    alert('✅ Ebook excluído com sucesso!');
+                    carregarEbooks();
+                } catch (erro) {
+                    console.error('Erro:', erro);
+                    alert('❌ Erro ao excluir: ' + erro.message);
+                }
+            }
+
+            // BUSCA
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const busca = e.target.value.toLowerCase();
+                const filtrados = ebooks.filter(eb => 
+                    eb.titulo.toLowerCase().includes(busca) ||
+                    (eb.categoria && eb.categoria.toLowerCase().includes(busca))
+                );
+                renderizarTabela(filtrados);
+            });
+
+            // FILTRO CATEGORIA
+            document.getElementById('categoriaFilter').addEventListener('change', function(e) {
+                const categoria = e.target.value;
+                const filtrados = categoria ? ebooks.filter(eb => eb.categoria === categoria) : ebooks;
+                renderizarTabela(filtrados);
+            });
+
+            // FECHAR MODAL AO CLICAR FORA
+            window.onclick = function(event) {
+                if (event.target == document.getElementById('ebookModal')) {
+                    closeModal();
+                }
+            }
+
+            // INICIALIZAR
+            document.addEventListener('DOMContentLoaded', carregarEbooks);
+        </script>
+    </body>
+    </html>

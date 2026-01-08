@@ -3,287 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Usuários - Orchestra</title>
+    <title>Gerenciar Usuários - Orchestra Admin</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            width: 200px;
-            background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 100%);
-            color: white;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-        }
-
-        .sidebar h1 {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            font-weight: 900;
-        }
-
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .sidebar a:hover, .sidebar a.active {
-            background: rgba(255,255,255,0.15);
-        }
-
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin-left: 200px;
-        }
-
-        .header {
-            background: white;
-            padding: 20px 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .content {
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: #6a1b9a;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #4a148c;
-        }
-
-        .btn-edit {
-            background: #3498db;
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.9rem;
-            margin-right: 5px;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.9rem;
-        }
-
-        table {
-            width: 100%;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .badge-admin {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .badge-cliente {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 9999;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-box {
-            background: white;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            padding: 24px 30px;
-            border-bottom: 2px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #999;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-
-        .btn-close:hover {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .modal-footer {
-            padding: 20px 30px;
-            border-top: 2px solid #f0f0f0;
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
 </head>
-<body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h1>ORCHESTRA</h1>
-        <a href="admin-dashboard.html">🏠 Dashboard</a>
-        <a href="admin-partituras.html">🎼 Partituras</a>
-        <a href="admin-ebooks.html">📚 Ebooks</a>
-        <a href="admin-usuarios.html" class="active">👥 Usuários</a>
-        <a href="admin-configuracoes.html">⚙️ Configurações</a>
-        <div style="margin-top: auto;">
-            <a href="admin-login.html" onclick="localStorage.clear()">🚪 Sair</a>
-        </div>
-    </div>
 
-    <!-- MAIN -->
-    <div class="main">
-        <div class="header">
-            <h1>Gerenciar Usuários</h1>
-            <button class="btn btn-primary" onclick="abrirModal()">
-                ➕ Novo Usuário
-            </button>
+<body class="admin-body">
+    <script>
+        function fazerLogout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.clear();
+                window.location.href = 'admin-login.html';
+            }
+        }
+    </script>
+
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-placeholder">ORCHESTRA</div>
+            <span class="admin-badge">Admin</span>
         </div>
 
-        <div class="content">
-            <table>
+        <nav class="sidebar-nav">
+            <a href="admin-dashboard.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="3" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="3" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="11" y="11" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="admin-partituras.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M8 7H12M8 10H12M8 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Partituras
+            </a>
+
+            <a href="admin-ebooks.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ebooks
+            </a>
+
+            <a href="admin-usuarios.html" class="sidebar-link active">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Usuários
+            </a>
+
+           <a href="admin-configuracoes.html" class="sidebar-link">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Configurações
+</a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="sidebar-link">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M3 7L10 3L17 7V16H3V7Z" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                Ver Site
+            </a>
+            <a href="javascript:void(0)" class="sidebar-link" onclick="fazerLogout()">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M7 3H3V17H7M13 13L17 10L13 7M17 10H7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Sair
+            </a>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <h1 class="page-title">Gerenciar Usuários</h1>
+                <p class="page-subtitle">Adicione, edite ou remova usuários da plataforma</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" onclick="abrirModal()">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Novo Usuário
+                </button>
+            </div>
+        </header>
+
+        <section class="admin-filters">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <input type="text" placeholder="Buscar usuários..." class="search-input" id="searchInput">
+            </div>
+            <select class="filter-select-admin" id="tipoFilter">
+                <option value="">Todos os tipos</option>
+                <option value="admin">Administradores</option>
+                <option value="usuario">Clientes</option>
+            </select>
+        </section>
+
+        <section class="admin-table-section">
+            <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -293,278 +129,271 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="tbody">
+                <tbody id="usuariosTableBody">
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:40px;">Carregando...</td>
+                        <td colspan="5" style="text-align:center;padding:40px;color:#999;">Carregando usuários...</td>
                     </tr>
                 </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- MODAL CRIAR/EDITAR -->
-    <div id="modal" class="modal" onclick="if(event.target==this) fecharModal()">
-        <div class="modal-box">
+    <!-- MODAL -->
+    <div id="usuarioModal" class="modal" style="display:none;">
+        <div class="modal-content modal-large">
             <div class="modal-header">
-                <h3 id="modalTitle">Novo Usuário</h3>
-                <button class="btn-close" onclick="fecharModal()">✕</button>
+                <h2 class="modal-title" id="modalTitle">Novo Usuário</h2>
+                <button class="modal-close" onclick="fecharModal()">×</button>
             </div>
-            
-            <form id="form" onsubmit="salvarUsuario(event)">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Nome</label>
-                        <input type="text" id="nome" required placeholder="Nome completo">
-                    </div>
 
-                    <div class="form-group">
-                        <label>Email</label>
-                       <input type="email" id="email" required placeholder="email@exemplo.com">
-                    </div>
+            <form class="modal-form" id="usuarioForm">
+                <div class="form-group">
+                    <label class="form-label">Nome Completo*</label>
+                    <input type="text" id="nome" class="form-input" placeholder="Ex: João Silva" required>
+                </div>
 
-                    <div class="form-group" id="senhaGroup">
-                        <label>Senha</label>
-                        <input type="password" id="senha" minlength="6" placeholder="Mínimo 6 caracteres">
-                        <small id="senhaHint" style="color:#666;font-size:0.9rem;margin-top:5px;display:block;">
-                            Deixe em branco para manter a senha atual
-                        </small>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Email*</label>
+                    <input type="email" id="email" class="form-input" placeholder="joao@exemplo.com" required>
+                </div>
 
-                    <div class="form-group">
-                        <label>Tipo</label>
-                        <select id="tipo" required>
-                            <option value="Cliente">Cliente</option>
-                            <option value="Administrador">Administrador</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Senha*</label>
+                    <input type="password" id="senha" class="form-input" placeholder="Mínimo 6 caracteres" minlength="6">
+                    <small style="color:#666;font-size:12px;" id="senhaHint">Deixe em branco para manter a senha atual</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de Usuário*</label>
+                    <select id="tipo" class="form-input" required>
+                        <option value="usuario">Cliente</option>
+                        <option value="admin">Administrador</option>
+                    </select>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnSalvar">Criar</button>
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar Usuário</button>
                 </div>
             </form>
         </div>
     </div>
 
- <script>
-    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    let usuarios = [];
-    let editandoId = null;
+        let usuarios = [];
+        let editandoId = null;
 
-    // 🔄 Carregar usuários da tabela 'users'
-    async function carregar() {
-        console.log('🔄 Carregando usuários da tabela users...');
-        
-        try {
-            const { data, error } = await client
-                .from('users')
-                .select('*')
-                .order('nome', { ascending: true });
+        async function hashSenha(senha) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(senha);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-            if (error) {
-                console.error('❌ Erro ao carregar:', error);
-                alert('Erro ao carregar usuários: ' + error.message);
+        async function carregarUsuarios() {
+            try {
+                const { data, error } = await client
+                    .from('users')
+                    .select('*');
+
+                if (error) throw error;
+
+                usuarios = data || [];
+                console.log('✅ Usuários carregados:', usuarios);
+                renderizarTabela(usuarios);
+            } catch (erro) {
+                console.error('❌ Erro:', erro);
+                document.getElementById('usuariosTableBody').innerHTML = 
+                    '<tr><td colspan="5" style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar usuários</td></tr>';
+            }
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById('usuariosTableBody');
+            
+            if (!lista || lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#999;">Nenhum usuário encontrado</td></tr>';
                 return;
             }
 
-            usuarios = data || [];
-            console.log('✅ Usuários carregados:', usuarios.length);
-            renderizar();
-        } catch (e) {
-            console.error('❌ Erro:', e);
-            alert('Erro ao conectar com banco de dados');
+            tbody.innerHTML = lista.map(u => `
+                <tr>
+                    <td><strong>${u.nome || 'Sem nome'}</strong></td>
+                    <td>${u.email}</td>
+                    <td><span class="table-badge ${u.tipo === 'admin' ? 'badge-pink' : 'badge-blue'}">${u.tipo === 'admin' ? 'Administrador' : 'Cliente'}</span></td>
+                    <td>${new Date(u.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="action-btn action-edit" onclick="editarUsuario('${u.id}')" title="Editar">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11 2L14 5L5 14H2V11L11 2Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn action-delete" onclick="deletarUsuario('${u.id}', '${(u.nome || u.email).replace(/'/g, '')}')" title="Excluir">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
-    }
 
-    function renderizar() {
-        const tbody = document.getElementById('tbody');
-        
-        if (usuarios.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;">Nenhum usuário cadastrado</td></tr>';
-            return;
+        function abrirModal() {
+            editandoId = null;
+            document.getElementById('usuarioForm').reset();
+            document.getElementById('modalTitle').textContent = 'Novo Usuário';
+            document.getElementById('btnSalvar').textContent = 'Salvar Usuário';
+            document.getElementById('senha').required = true;
+            document.getElementById('senhaHint').style.display = 'none';
+            document.getElementById('email').disabled = false;
+            document.getElementById('usuarioModal').style.display = 'flex';
         }
 
-        tbody.innerHTML = usuarios.map(u => `
-            <tr>
-                <td><strong>${u.nome || 'Sem nome'}</strong></td>
-                <td>${u.email}</td>
-                <td><span class="badge badge-${u.tipo === 'admin' ? 'admin' : 'cliente'}">${u.tipo === 'admin' ? 'Administrador' : 'Cliente'}</span></td>
-                <td>${new Date(u.created_at || Date.now()).toLocaleDateString('pt-BR')}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editarUsuario('${u.id}')">✏️</button>
-                    <button class="btn btn-danger" onclick="deletarUsuario('${u.id}', '${(u.nome || u.email).replace(/'/g, '')}')">🗑️</button>
-                </td>
-            </tr>
-        `).join('');
-    }
+        function fecharModal() {
+            document.getElementById('usuarioModal').style.display = 'none';
+            editandoId = null;
+            document.getElementById('usuarioForm').reset();
+        }
 
-    function abrirModal() {
-        console.log('✅ Abrindo modal...');
-        editandoId = null;
-        document.getElementById('form').reset();
-        document.getElementById('modalTitle').textContent = 'Novo Usuário';
-        document.getElementById('btnSalvar').textContent = 'Criar';
-        document.getElementById('senha').required = true;
-        document.getElementById('senhaHint').style.display = 'none';
-        document.getElementById('email').disabled = false;
-        document.getElementById('modal').classList.add('active');
-    }
+        async function editarUsuario(id) {
+            try {
+                const usuario = usuarios.find(u => u.id === id);
+                if (!usuario) return;
 
-    function fecharModal() {
-        document.getElementById('modal').classList.remove('active');
-    }
+                editandoId = id;
+                
+                document.getElementById('nome').value = usuario.nome || '';
+                document.getElementById('email').value = usuario.email;
+                document.getElementById('email').disabled = true;
+                document.getElementById('senha').value = '';
+                document.getElementById('senha').required = false;
+                document.getElementById('tipo').value = usuario.tipo;
+                document.getElementById('senhaHint').style.display = 'block';
 
-    function editarUsuario(id) {
-        const usuario = usuarios.find(u => u.id === id);
-        if (!usuario) return;
-
-        editandoId = id;
-        document.getElementById('nome').value = usuario.nome || '';
-        document.getElementById('email').value = usuario.email;
-        document.getElementById('email').disabled = true;
-        document.getElementById('senha').value = '';
-        document.getElementById('senha').required = false;
-        document.getElementById('tipo').value = usuario.tipo === 'admin' ? 'Administrador' : 'Cliente';
-        
-        document.getElementById('modalTitle').textContent = 'Editar Usuário';
-        document.getElementById('btnSalvar').textContent = 'Salvar';
-        document.getElementById('senhaHint').style.display = 'block';
-        document.getElementById('modal').classList.add('active');
-    }
-
-    // 🔐 Função para fazer hash da senha (MD5)
-async function hashSenha(senha) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(senha);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-}
-
-
-   async function salvarUsuario(event) {
-    event.preventDefault();
-
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
-    const tipo = document.getElementById('tipo').value;
-    const tipoDb = tipo === 'Administrador' ? 'admin' : 'usuario';
-    const btn = document.getElementById('btnSalvar');
-
-    btn.disabled = true;
-    btn.textContent = 'Salvando...';
-
-    try {
-        if (editandoId) {
-            // ✏️ EDITAR
-            const updateData = {
-                nome: nome,
-                tipo: tipoDb
-            };
-
-            // Se tiver senha, faz o hash
-            if (senha && senha.length >= 6) {
-                // Hash MD5 simples (mesmo formato do banco)
-                const senhaHash = await hashSenha(senha);
-                updateData.senha = senhaHash;
-                console.log('🔐 Nova senha hash:', senhaHash);
+                document.getElementById('modalTitle').textContent = 'Editar Usuário';
+                document.getElementById('btnSalvar').textContent = 'Atualizar Usuário';
+                document.getElementById('usuarioModal').style.display = 'flex';
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('Erro ao carregar dados do usuário');
             }
+        }
 
-            const { data, error } = await client
-                .from('users')
-                .update(updateData)
-                .eq('id', editandoId)
-                .select();
+        async function salvarUsuario(event) {
+            event.preventDefault();
 
-            if (error) throw error;
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const tipo = document.getElementById('tipo').value;
 
-            console.log('✅ Usuário atualizado!', data);
-            alert('✅ Usuário atualizado com sucesso!');
-        } else {
-            // ➕ CRIAR NOVO
-            if (!senha || senha.length < 6) {
-                alert('❌ A senha deve ter no mínimo 6 caracteres!');
-                btn.disabled = false;
-                btn.textContent = 'Criar';
+            try {
+                if (editandoId) {
+                    const updateData = { nome, tipo };
+
+                    if (senha && senha.length >= 6) {
+                        updateData.senha = await hashSenha(senha);
+                    }
+
+                    const { error } = await client
+                        .from('users')
+                        .update(updateData)
+                        .eq('id', editandoId);
+
+                    if (error) throw error;
+                    alert('✅ Usuário atualizado com sucesso!');
+                } else {
+                    if (!senha || senha.length < 6) {
+                        alert('❌ A senha deve ter no mínimo 6 caracteres!');
+                        return;
+                    }
+
+                    const { data: existente } = await client
+                        .from('users')
+                        .select('id')
+                        .eq('email', email)
+                        .single();
+
+                    if (existente) {
+                        alert('❌ Este email já está cadastrado!');
+                        return;
+                    }
+
+                    const senhaHash = await hashSenha(senha);
+
+                    const { error } = await client
+                        .from('users')
+                        .insert([{ nome, email, senha: senhaHash, tipo }]);
+
+                    if (error) throw error;
+                    alert('✅ Usuário criado com sucesso!');
+                }
+
+                fecharModal();
+                carregarUsuarios();
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('❌ Erro ao salvar: ' + erro.message);
+            }
+        }
+
+        async function deletarUsuario(id, nome) {
+            if (!confirm(`Tem certeza que deseja excluir "${nome}"?\n\nEsta ação não pode ser desfeita!`)) {
                 return;
             }
 
-            // Verificar se email já existe
-            const { data: existente } = await client
-                .from('users')
-                .select('id')
-                .eq('email', email)
-                .single();
+            try {
+                const { error } = await client
+                    .from('users')
+                    .delete()
+                    .eq('id', id);
 
-            if (existente) {
-                alert('❌ Este email já está cadastrado!');
-                btn.disabled = false;
-                btn.textContent = 'Criar';
-                return;
+                if (error) throw error;
+
+                alert('✅ Usuário excluído com sucesso!');
+                carregarUsuarios();
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('❌ Erro ao excluir: ' + erro.message);
             }
-
-            // Hash da senha
-            const senhaHash = await hashSenha(senha);
-
-            const { data, error } = await client
-                .from('users')
-                .insert([{
-                    nome: nome,
-                    email: email,
-                    senha: senhaHash,
-                    tipo: tipoDb
-                }])
-                .select();
-
-            if (error) throw error;
-
-            console.log('✅ Usuário criado:', data);
-            alert('✅ Usuário criado! Ele já pode fazer login.');
         }
 
-        fecharModal();
-        await carregar(); // Recarregar lista
-    } catch (e) {
-        console.error('❌ Erro:', e);
-        alert('❌ Erro: ' + e.message);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = editandoId ? 'Salvar' : 'Criar';
-    }
-}
+        // BUSCA
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const busca = e.target.value.toLowerCase();
+            const filtrados = usuarios.filter(u => 
+                (u.nome && u.nome.toLowerCase().includes(busca)) ||
+                u.email.toLowerCase().includes(busca)
+            );
+            renderizarTabela(filtrados);
+        });
 
+        // FILTRO TIPO
+        document.getElementById('tipoFilter').addEventListener('change', function(e) {
+            const tipo = e.target.value;
+            const filtrados = tipo ? usuarios.filter(u => u.tipo === tipo) : usuarios;
+            renderizarTabela(filtrados);
+        });
 
-    async function deletarUsuario(id, nome) {
-        if (!confirm(`Tem certeza que deseja deletar o usuário "${nome}"?`)) return;
-
-        try {
-            const { error } = await client
-                .from('users')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-
-            console.log('🗑️ Usuário deletado');
-            alert('✅ Usuário deletado!');
-            await carregar(); // Recarregar lista
-        } catch (e) {
-            console.error('❌ Erro:', e);
-            alert('❌ Erro ao deletar: ' + e.message);
+        // FECHAR MODAL AO CLICAR FORA
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('usuarioModal')) {
+                fecharModal();
+            }
         }
-    }
 
-    // INICIAR
-    carregar();
-</script>
+        // VINCULAR SUBMIT
+        document.getElementById('usuarioForm').addEventListener('submit', salvarUsuario);
 
-
-
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', carregarUsuarios);
+    </script>
 </body>
 </html>

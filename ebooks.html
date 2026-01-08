@@ -5,22 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebooks - Orchestra</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="header">
-        <div class="container header-content">
-            <a href="index.html" class="logo">
-                <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+  <header class="header">
+    <div class="header-wrapper">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Orchestra" class="logo-img">
+        </a>
+        
+        <nav class="nav">
+            <a href="index.html" class="nav-link active">
+                <span>Início</span>
             </a>
-            <nav class="nav">
-                <a href="index.html" class="nav-link">Início</a>
-                <a href="partituras.html" class="nav-link">Partituras</a>
-                <a href="ebooks.html" class="nav-link active">Ebooks</a>
-            </nav>
-        </div>
-    </header>
+            <a href="partituras.html" class="nav-link">
+                <span>Partituras</span>
+            </a>
+            <a href="ebooks.html" class="nav-link">
+                <span>Ebooks</span>
+            </a>
+        </nav>
+    </div>
+</header>
+
 
     <section class="page-header">
         <div class="container">
@@ -56,7 +63,7 @@
     <section class="content-section">
         <div class="container">
             <div class="cards-grid" id="ebooksGrid">
-                <!-- Carregado via JavaScript -->
+                <p style="text-align:center;padding:40px;">Carregando...</p>
             </div>
         </div>
     </section>
@@ -92,68 +99,59 @@
         </div>
     </footer>
 
-  <script>
-    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    let todosEbooks = [];
+        let todosEbooks = [];
 
-    async function carregarEbooks() {
-        try {
-            console.log('🔄 Buscando ebooks da tabela cursos...');
+        async function carregarEbooks() {
+            try {
+                console.log('🔄 Buscando ebooks...');
+                
+                const { data, error } = await client
+                    .from('cursos')
+                    .select('*');
+
+                if (error) throw error;
+
+                console.log('✅ Ebooks:', data);
+                todosEbooks = data || [];
+                renderizarEbooks(todosEbooks);
+                atualizarContador(todosEbooks.length);
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                document.getElementById('ebooksGrid').innerHTML = 
+                    `<p style="text-align:center;padding:40px;color:#e74c3c;">Erro: ${error.message}</p>`;
+            }
+        }
+
+        function renderizarEbooks(ebooks) {
+            const grid = document.getElementById('ebooksGrid');
             
-            const { data, error } = await supabase
-                .from('cursos')
-                .select('*');
-
-            if (error) {
-                console.error('❌ Erro Supabase:', error);
-                throw error;
+            if (!ebooks || ebooks.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;padding:40px;color:#999;">Nenhum ebook encontrado</p>';
+                return;
             }
 
-            console.log('✅ Ebooks carregados:', data);
-            todosEbooks = data || [];
-            renderizarEbooks(todosEbooks);
-            atualizarContador(todosEbooks.length);
-        } catch (error) {
-            console.error('❌ Erro geral:', error);
-            mostrarErro(error.message);
-        }
-    }
+            const nivelColors = {
+                'Iniciante': 'badge-green',
+                'Intermediário': 'badge-yellow',
+                'Avançado': 'badge-red'
+            };
 
-    function renderizarEbooks(ebooks) {
-        const grid = document.getElementById('ebooksGrid');
-        
-        if (!ebooks || ebooks.length === 0) {
-            grid.innerHTML = '<p style="text-align:center;padding:40px;color:#999;">Nenhum ebook encontrado</p>';
-            return;
-        }
-
-        const nivelColors = {
-            'Iniciante': 'badge-green',
-            'Intermediário': 'badge-yellow',
-            'Avançado': 'badge-red'
-        };
-
-        grid.innerHTML = ebooks.map(e => {
-            // Usar imagem_preview ou fallback
-            const imagem = e.imagem_preview || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600';
-            const categoria = e.categoria || 'Ebook Musical';
-            const nivel = e.nivel || 'Iniciante';
-            const titulo = e.titulo || 'Sem título';
-            const descricao = e.descricao || '';
-            
-            return `
+            grid.innerHTML = ebooks.map(e => `
                 <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${e.id}'">
                     <div class="card-image">
-                        <img src="${imagem}" alt="${titulo}" onerror="this.src='https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'">
-                        <span class="card-badge ${nivelColors[nivel] || 'badge-green'}">${nivel}</span>
+                        <img src="${e.imagem_preview || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" 
+                             alt="${e.titulo}"
+                             onerror="this.src='https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'">
                     </div>
                     <div class="card-content">
-                        <div class="card-category">${categoria}</div>
-                        <h3 class="card-title">${titulo}</h3>
-                        <p class="card-description">${descricao.substring(0, 100)}${descricao.length > 100 ? '...' : ''}</p>
+                        <div class="card-category">${e.categoria || 'Ebook'}</div>
+                        <h3 class="card-title">${e.titulo}</h3>
+                        <p class="card-description">${(e.descricao || '').substring(0, 100)}</p>
                         <div class="card-footer">
                             <span class="card-duration">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -171,42 +169,35 @@
                         </div>
                     </div>
                 </div>
-            `;
-        }).join('');
-    }
-
-    function mostrarErro(msg) {
-        const grid = document.getElementById('ebooksGrid');
-        grid.innerHTML = `<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks: ${msg}</p>`;
-    }
-
-    function atualizarContador(count) {
-        document.getElementById('resultsCount').textContent = 
-            `${count} ${count === 1 ? 'ebook encontrado' : 'ebooks encontrados'}`;
-    }
-
-    function aplicarFiltros() {
-        const categoria = document.getElementById('categoriaFilter').value;
-        const nivel = document.getElementById('nivelFilter').value;
-        
-        let filtrados = todosEbooks;
-        
-        if (categoria !== 'all') {
-            filtrados = filtrados.filter(e => e.categoria === categoria);
+            `).join('');
         }
-        
-        if (nivel !== 'all') {
-            filtrados = filtrados.filter(e => e.nivel === nivel);
+
+        function atualizarContador(count) {
+            document.getElementById('resultsCount').textContent = 
+                `${count} ${count === 1 ? 'ebook encontrado' : 'ebooks encontrados'}`;
         }
-        
-        renderizarEbooks(filtrados);
-        atualizarContador(filtrados.length);
-    }
 
-    document.getElementById('categoriaFilter').addEventListener('change', aplicarFiltros);
-    document.getElementById('nivelFilter').addEventListener('change', aplicarFiltros);
-    document.addEventListener('DOMContentLoaded', carregarEbooks);
-</script>
+        function aplicarFiltros() {
+            const categoria = document.getElementById('categoriaFilter').value;
+            const nivel = document.getElementById('nivelFilter').value;
+            
+            let filtrados = todosEbooks;
+            
+            if (categoria !== 'all') {
+                filtrados = filtrados.filter(e => e.categoria === categoria);
+            }
+            
+            if (nivel !== 'all') {
+                filtrados = filtrados.filter(e => e.nivel === nivel);
+            }
+            
+            renderizarEbooks(filtrados);
+            atualizarContador(filtrados.length);
+        }
 
+        document.getElementById('categoriaFilter').addEventListener('change', aplicarFiltros);
+        document.getElementById('nivelFilter').addEventListener('change', aplicarFiltros);
+        document.addEventListener('DOMContentLoaded', carregarEbooks);
+    </script>
 </body>
 </html>
