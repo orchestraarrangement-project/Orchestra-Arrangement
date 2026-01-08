@@ -9,46 +9,116 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: #f5f5f5;
             display: flex;
             height: 100vh;
+            overflow: hidden;
         }
 
+        /* ✅ SIDEBAR PADRONIZADA */
         .sidebar {
-            width: 200px;
+            width: 240px;
             background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 100%);
             color: white;
-            padding: 20px;
             display: flex;
             flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
         }
 
-        .sidebar h1 {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
+        .logo {
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h1 {
+            font-size: 1.6rem;
             font-weight: 900;
+            letter-spacing: 1px;
+            margin: 0;
         }
 
-        .sidebar a {
-            display: block;
-            color: white;
+        .menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 8px;
             transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            margin: 4px 0;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: rgba(255,255,255,0.15);
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: #ffc107;
         }
 
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left-color: #ffc107;
+            font-weight: 600;
+        }
+
+        .menu-item-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-item-text {
+            font-size: 0.95rem;
+        }
+
+        .logout-section {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-logout {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ✅ MAIN COM MARGIN */
         .main {
             flex: 1;
             display: flex;
             flex-direction: column;
+            margin-left: 240px;
+            overflow: hidden;
         }
 
         .header {
@@ -101,6 +171,7 @@
         .content {
             padding: 30px;
             overflow-y: auto;
+            flex: 1;
         }
 
         table {
@@ -207,16 +278,42 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h1>ORCHESTRA</h1>
-        <a href="admin-dashboard.html">🏠 Dashboard</a>
-        <a href="admin-partituras.html" class="active">🎼 Partituras</a>
-        <a href="admin-ebooks.html">📚 Ebooks</a>
-        <a href="index.html">🌐 Site</a>
-        <div style="margin-top: auto;">
-            <a href="admin-login.html" onclick="localStorage.clear()">🚪 Sair</a>
+    <!-- ✅ SIDEBAR PADRONIZADA -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h1>ORCHESTRA</h1>
         </div>
-    </div>
+
+        <nav class="menu">
+            <a href="admin-dashboard.html" class="menu-item">
+                <span class="menu-item-icon">🏠</span>
+                <span class="menu-item-text">Dashboard</span>
+            </a>
+            <a href="admin-partituras.html" class="menu-item active">
+                <span class="menu-item-icon">🎼</span>
+                <span class="menu-item-text">Partituras</span>
+            </a>
+            <a href="admin-ebooks.html" class="menu-item">
+                <span class="menu-item-icon">📚</span>
+                <span class="menu-item-text">Ebooks</span>
+            </a>
+            <a href="admin-usuarios.html" class="menu-item">
+                <span class="menu-item-icon">👥</span>
+                <span class="menu-item-text">Usuários</span>
+            </a>
+            <a href="admin-configuracoes.html" class="menu-item">
+                <span class="menu-item-icon">⚙️</span>
+                <span class="menu-item-text">Configurações</span>
+            </a>
+        </nav>
+
+        <div class="logout-section">
+            <button class="btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
 
     <div class="main">
         <div class="header">
@@ -321,6 +418,14 @@
         let partituras = [];
         let editandoId = null;
 
+        // ✅ Verificar auth
+        window.addEventListener('DOMContentLoaded', () => {
+            const user = localStorage.getItem('orchestra_user');
+            if (!user) {
+                window.location.href = 'admin-login.html';
+            }
+        });
+
         async function carregar() {
             try {
                 const { data, error } = await client.from('partituras').select('*');
@@ -387,7 +492,6 @@
             document.getElementById('modal').style.display = 'block';
         }
 
-        // ✅ SUBMIT COM UPLOAD
         document.getElementById('form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -455,7 +559,6 @@
             }
         });
 
-        // ✅ PREVIEW DA IMAGEM
         document.getElementById('imagemFile').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -479,6 +582,12 @@
             } catch (e) {
                 alert('❌ Erro: ' + e.message);
             }
+        }
+
+        // ✅ Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'admin-login.html';
         }
 
         carregar();

@@ -22,94 +22,102 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR ROXA */
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 100%);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
+        /* SIDEBAR FIXA */
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
 
-        .logo {
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+.logo {
+    padding: 24px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-        }
+.logo h1 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin: 0;
+}
 
-        .menu {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 0;
-        }
+.menu {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0;
+}
 
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 25px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s;
-            cursor: pointer;
-            border-left: 4px solid transparent;
-        }
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    margin: 4px 0;
+}
 
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-left-color: #ffc107;
-        }
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: #ffc107;
+}
 
-        .menu-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-left-color: #ffc107;
-        }
+.menu-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-left-color: #ffc107;
+    font-weight: 600;
+}
 
-        .menu-item-icon {
-            font-size: 1.3rem;
-            width: 24px;
-            text-align: center;
-        }
+.menu-item-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
 
-        .menu-item-text {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
+.menu-item-text {
+    font-size: 0.95rem;
+}
 
-        .logout-section {
-            padding: 20px 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
+.logout-section {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-        .btn-logout {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+.btn-logout {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-        .btn-logout:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
 
         /* CONTEÚDO PRINCIPAL */
         .main-content {
@@ -117,8 +125,34 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin-left: 240px; /* ✅ Compensa a sidebar fixa */
         }
 
+        .content-area {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: #f5f5f5;
+}
+
+.welcome-section {
+    background: white;
+    padding: 24px 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+.welcome-section h3 {
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 1.4rem;
+}
+
+.welcome-section p {
+    color: #666;
+    font-size: 1rem;
+}
         .topbar {
             background: white;
             padding: 20px 40px;
@@ -170,8 +204,9 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
         }
 
         .stat-card {
@@ -209,6 +244,20 @@
     </style>
 </head>
 <body>
+    <script src="admin-sidebar.js"></script>
+<style id="sidebar-styles"></style>
+
+<div id="sidebar-container"></div>
+<div class="main">
+    <!-- resto do conteúdo -->
+</div>
+
+<script>
+    document.getElementById('sidebar-container').innerHTML = renderSidebar('dashboard');
+    document.getElementById('sidebar-styles').textContent = sidebarCSS;
+</script>
+
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="logo">
@@ -283,11 +332,6 @@
                         <div class="stat-value">1</div>
                         <div class="stat-label">Usuários</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">✅</div>
-                        <div class="stat-value">100%</div>
-                        <div class="stat-label">Sistema Online</div>
-                    </div>
                 </div>
             </div>
 
@@ -317,82 +361,119 @@
         </div>
     </main>
 
-    <script>
-        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+ <script>
+    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Verificar autenticação
-        async function verificarAuth() {
-            const session = localStorage.getItem('admin_session');
-            if (!session) {
-                window.location.href = 'admin-login.html';
-                return;
-            }
+    // ✅ Verificar autenticação e carregar perfil
+    window.addEventListener('DOMContentLoaded', async () => {
+        const userStorage = localStorage.getItem('orchestra_user');
+        
+        if (!userStorage) {
+            console.log('❌ Não autenticado, redirecionando...');
+            window.location.href = 'admin-login.html';
+            return;
+        }
 
-            const { data: { session: supabaseSession } } = await client.auth.getSession();
-            if (!supabaseSession) {
-                localStorage.clear();
-                window.location.href = 'admin-login.html';
-                return;
-            }
+        const user = JSON.parse(userStorage);
+        console.log('✅ Usuário logado:', user);
 
-            document.getElementById('userEmail').textContent = supabaseSession.user.email;
-            carregarEstatisticas();
+        // Atualizar email no topo
+        const userEmailElement = document.getElementById('userEmail');
+        if (userEmailElement) {
+            userEmailElement.textContent = user.email;
+        }
+        
+        // Atualizar avatar com inicial
+        const avatarElement = document.querySelector('.user-avatar');
+        if (avatarElement) {
+            const inicial = (user.nome || user.email)[0].toUpperCase();
+            avatarElement.textContent = inicial;
         }
 
         // Carregar estatísticas
-        async function carregarEstatisticas() {
-            try {
-                const { data: partituras } = await client.from('partituras').select('id');
-                const { data: ebooks } = await client.from('ebooks').select('id');
-                
-                document.getElementById('totalPartituras').textContent = partituras?.length || 0;
-                document.getElementById('totalEbooks').textContent = ebooks?.length || 0;
-            } catch (erro) {
-                console.error('Erro ao carregar estatísticas:', erro);
-            }
+        carregarEstatisticas();
+    });
+
+   // Carregar estatísticas em tempo real
+async function carregarEstatisticas() {
+    try {
+        // Buscar partituras
+        const { data: partituras, error: erroPart } = await client
+            .from('partituras')
+            .select('id');
+        
+        // Buscar ebooks
+        const { data: ebooks, error: erroEbook } = await client
+            .from('ebooks')
+            .select('id');
+        
+        // Buscar usuários
+        const { data: usuarios, error: erroUser } = await client
+            .from('users')
+            .select('id');
+        
+        // Atualizar contadores
+        document.getElementById('totalPartituras').textContent = partituras?.length || 0;
+        document.getElementById('totalEbooks').textContent = ebooks?.length || 0;
+        
+        // ✅ Atualizar total de usuários
+        const totalUsuarios = usuarios?.length || 0;
+        const userCountElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
+        if (userCountElement) {
+            userCountElement.textContent = totalUsuarios;
         }
+        
+        console.log('📊 Estatísticas:', {
+            partituras: partituras?.length || 0,
+            ebooks: ebooks?.length || 0,
+            usuarios: totalUsuarios
+        });
+        
+    } catch (erro) {
+        console.error('❌ Erro ao carregar estatísticas:', erro);
+    }
+}
 
-        // Trocar seção
-        function showSection(section) {
-            // Esconder todas as seções
-            document.querySelectorAll('[id^="section-"]').forEach(el => {
-                el.classList.remove('section-visible');
-                el.classList.add('section-hidden');
-            });
 
-            // Remover active de todos os menus
-            document.querySelectorAll('.menu-item').forEach(el => {
-                el.classList.remove('active');
-            });
+    // Trocar seção
+    function showSection(section) {
+        // Esconder todas as seções
+        document.querySelectorAll('[id^="section-"]').forEach(el => {
+            el.classList.remove('section-visible');
+            el.classList.add('section-hidden');
+        });
 
-            // Mostrar seção selecionada
-            document.getElementById(`section-${section}`).classList.remove('section-hidden');
-            document.getElementById(`section-${section}`).classList.add('section-visible');
-            
-            // Ativar menu
-            document.getElementById(`menu-${section}`).classList.add('active');
+        // Remover active de todos os menus
+        document.querySelectorAll('.menu-item').forEach(el => {
+            el.classList.remove('active');
+        });
 
-            // Atualizar título
-            const titles = {
-                'dashboard': 'Dashboard',
-                'partituras': 'Gerenciar Partituras',
-                'ebooks': 'Gerenciar Ebooks',
-                'usuarios': 'Gerenciar Usuários',
-                'configuracoes': 'Configurações'
-            };
-            document.getElementById('pageTitle').textContent = titles[section];
-        }
+        // Mostrar seção selecionada
+        document.getElementById(`section-${section}`).classList.remove('section-hidden');
+        document.getElementById(`section-${section}`).classList.add('section-visible');
+        
+        // Ativar menu
+        document.getElementById(`menu-${section}`).classList.add('active');
 
-        // Logout
-        async function logout() {
-            await client.auth.signOut();
-            localStorage.clear();
-            window.location.href = 'admin-login.html';
-        }
+        // Atualizar título
+        const titles = {
+            'dashboard': 'Dashboard',
+            'partituras': 'Gerenciar Partituras',
+            'ebooks': 'Gerenciar Ebooks',
+            'usuarios': 'Gerenciar Usuários',
+            'configuracoes': 'Configurações'
+        };
+        document.getElementById('pageTitle').textContent = titles[section];
+    }
 
-        window.addEventListener('DOMContentLoaded', verificarAuth);
-    </script>
+    // Logout
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'admin-login.html';
+    }
+</script>
+
 </body>
 </html>
