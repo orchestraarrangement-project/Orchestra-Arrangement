@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orchestra - Plataforma Musical</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- ✅ HEADER CORRIGIDO -->
+    <!-- HEADER -->
     <header class="header">
         <div class="container">
             <a href="index.html" class="logo">
@@ -30,6 +29,7 @@
         </div>
     </header>
 
+    <!-- HERO -->
     <section class="hero">
         <div class="container">
             <div class="hero-badge">
@@ -68,36 +68,49 @@
         </div>
     </section>
 
-    <section class="section scores-section">
+    <!-- PARTITURAS EM DESTAQUE -->
+    <section id="partituras">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Partituras em Destaque</h2>
-                <p class="section-subtitle">Explore nossa biblioteca musical</p>
-            </div>
+            <h2 class="section-title">Partituras em Destaque</h2>
+            <p class="section-subtitle">Explore nossa biblioteca musical</p>
+            
             <div class="cards-grid" id="partiturasDestaque">
                 <!-- Carregado via JavaScript -->
             </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="partituras.html" class="btn btn-primary">Ver Todas as Partituras</a>
+
+            <div style="text-align: center; margin-top: 48px;">
+                <a href="partituras.html" class="btn btn-primary btn-large">
+                    Ver Todas as Partituras
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
 
-    <section class="section featured-section">
+    <!-- EBOOKS MUSICAIS -->
+    <section id="ebooks">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Ebooks Musicais</h2>
-                <p class="section-subtitle">Aprenda com nossos materiais didáticos</p>
-            </div>
+            <h2 class="section-title">Ebooks Musicais</h2>
+            <p class="section-subtitle">Aprenda com nossos materiais didáticos</p>
+            
             <div class="cards-grid" id="ebooksDestaque">
                 <!-- Carregado via JavaScript -->
             </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="ebooks.html" class="btn btn-primary">Ver Todos os Ebooks</a>
+
+            <div style="text-align: center; margin-top: 48px;">
+                <a href="ebooks.html" class="btn btn-primary btn-large">
+                    Ver Todos os Ebooks
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -129,84 +142,121 @@
         </div>
     </footer>
 
-    <script>
-        async function carregarPartiturasDestaque() {
-            try {
-                const { data, error } = await supabase
-                    .from('partituras')
-                    .select('*')
-                    .eq('status', 'Publicado')
-                    .limit(3);
+  <script>
+    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-                if (error) throw error;
+    async function carregarPartiturasDestaque() {
+        try {
+            console.log('🔄 Carregando partituras...');
+            
+            const { data, error } = await client
+                .from('partituras')
+                .select('*')
+                .eq('status', 'Publicado')
+                .limit(3);
 
-                const container = document.getElementById('partiturasDestaque');
-                const dificuldadeColors = {
-                    'Fácil': 'badge-green',
-                    'Intermediário': 'badge-yellow',
-                    'Difícil': 'badge-red'
-                };
+            if (error) {
+                console.error('❌ Erro Supabase:', error);
+                throw error;
+            }
 
-                container.innerHTML = data.map(p => `
-                    <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
-                        <div class="score-image">
-                            <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
-                            <div class="score-badge ${dificuldadeColors[p.dificuldade] || 'badge-green'}">${p.dificuldade}</div>
-                        </div>
-                        <div class="score-content">
-                            <h3 class="score-title">${p.titulo}</h3>
-                            <p class="score-composer">${p.compositor}</p>
-                            <div class="score-tags">
-                                <span class="tag">${p.instrumento}</span>
-                                ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
-                            </div>
+            console.log('✅ Partituras carregadas:', data);
+
+            const container = document.getElementById('partiturasDestaque');
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:40px;">Nenhuma partitura encontrada</p>';
+                return;
+            }
+
+            container.innerHTML = data.map(p => `
+                <a href="partitura-detalhes.html?id=${p.id}" class="score-card">
+                    <div class="score-image">
+                        <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
+                    </div>
+                    <div class="score-content">
+                        <h3 class="score-title">${p.titulo}</h3>
+                        <div class="score-tags">
+                            <span class="tag">${p.instrumento || 'Piano'}</span>
+                            ${p.genero ? `<span class="tag">${p.genero}</span>` : ''}
                         </div>
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Erro:', error);
-            }
+                </a>
+            `).join('');
+        } catch (error) {
+            console.error('❌ Erro ao carregar partituras:', error);
+            const container = document.getElementById('partiturasDestaque');
+            container.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar partituras</p>';
         }
+    }
 
-        async function carregarEbooksDestaque() {
-            try {
-                const { data, error } = await supabase
-                    .from('cursos')
-                    .select('*')
-                    .eq('status', 'Publicado')
-                    .limit(3);
+    async function carregarEbooksDestaque() {
+        try {
+            console.log('🔄 Carregando ebooks...');
+            
+            const { data, error } = await client
+                .from('cursos')
+                .select('*')
+                .eq('status', 'Publicado')
+                .limit(3);
 
-                if (error) throw error;
+            if (error) {
+                console.error('❌ Erro Supabase:', error);
+                throw error;
+            }
 
-                const container = document.getElementById('ebooksDestaque');
-                const nivelColors = {
-                    'Iniciante': 'badge-green',
-                    'Intermediário': 'badge-yellow',
-                    'Avançado': 'badge-red'
-                };
+            console.log('✅ Ebooks carregados:', data);
 
-                container.innerHTML = data.map(e => `
-                    <div class="card" onclick="window.location.href='ebook-detalhes.html?id=${e.id}'">
-                        <div class="card-image">
-                            <img src="${e.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" alt="${e.titulo}">
-                            <span class="card-badge ${nivelColors[e.nivel] || 'badge-green'}">${e.nivel}</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="card-category">${e.categoria || 'Ebook'}</div>
-                            <h3 class="card-title">${e.titulo}</h3>
-                            <p class="card-description">${e.descricao || ''}</p>
+            const container = document.getElementById('ebooksDestaque');
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:40px;">Nenhum ebook encontrado</p>';
+                return;
+            }
+
+            container.innerHTML = data.map(e => `
+                <a href="ebook-detalhes.html?id=${e.id}" class="card">
+                    <div class="card-image">
+                        <img src="${e.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" alt="${e.titulo}">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">${e.categoria || 'Ebook'}</div>
+                        <h3 class="card-title">${e.titulo}</h3>
+                        <p class="card-description">${e.descricao || ''}</p>
+                        <div class="card-footer">
+                            <span class="card-link">
+                                Acessar
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </span>
                         </div>
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Erro:', error);
-            }
+                </a>
+            `).join('');
+        } catch (error) {
+            console.error('❌ Erro ao carregar ebooks:', error);
+            const container = document.getElementById('ebooksDestaque');
+            container.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks</p>';
         }
+    }
 
+    // INICIALIZAR
+    if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM carregado');
             carregarPartiturasDestaque();
             carregarEbooksDestaque();
         });
-    </script>
+    } else {
+        console.log('📄 DOM já carregado');
+        carregarPartiturasDestaque();
+        carregarEbooksDestaque();
+    }
+</script>
+
+
 </body>
 </html>
