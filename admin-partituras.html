@@ -16,7 +16,7 @@
             overflow: hidden;
         }
 
-        /* ✅ SIDEBAR PADRONIZADA */
+        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: linear-gradient(180deg, #4a148c 0%, #6a1b9a 100%);
@@ -109,10 +109,9 @@
 
         .btn-logout:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
         }
 
-        /* ✅ MAIN COM MARGIN */
+        /* MAIN */
         .main {
             flex: 1;
             display: flex;
@@ -138,7 +137,7 @@
         .btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
@@ -152,20 +151,29 @@
 
         .btn-primary:hover {
             background: #4a148c;
+            transform: translateY(-2px);
         }
 
         .btn-danger {
             background: #e74c3c;
             color: white;
-            padding: 5px 10px;
+            padding: 8px 16px;
             font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
         }
 
         .btn-edit {
             background: #3498db;
             color: white;
-            padding: 5px 10px;
+            padding: 8px 16px;
             font-size: 0.9rem;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
         }
 
         .content {
@@ -177,13 +185,13 @@
         table {
             width: 100%;
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         th, td {
-            padding: 15px;
+            padding: 16px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
@@ -191,12 +199,18 @@
         th {
             background: #f8f9fa;
             font-weight: 600;
+            color: #333;
         }
 
         tr:hover {
             background: #f8f9fa;
         }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ✅ MODAL MODERNO CENTRALIZADO */
         .modal {
             display: none;
             position: fixed;
@@ -204,20 +218,75 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            overflow-y: auto;
-            padding: 20px;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
         }
 
         .modal-box {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
+            border-radius: 16px;
             width: 90%;
             max-width: 600px;
-            margin: 40px auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 24px 30px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 30px;
         }
 
         .form-group {
@@ -229,17 +298,27 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
+            font-size: 0.95rem;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-family: inherit;
             font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6a1b9a;
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
         }
 
         .form-group textarea {
@@ -248,37 +327,104 @@
 
         .form-group small {
             display: block;
-            margin-top: 5px;
+            margin-top: 6px;
             color: #666;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .img-thumb {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
-            border-radius: 5px;
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .modal-footer {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: flex-end;
-            margin-top: 20px;
+            padding: 20px 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .modal-footer .btn {
+            padding: 12px 24px;
+        }
+
+        /* ✅ MODAL DE CONFIRMAÇÃO DE DELETE */
+        .modal-confirm {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-confirm.active {
+            display: flex;
+        }
+
+        .modal-confirm-box {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-confirm-header {
+            padding: 24px;
+            text-align: center;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-confirm-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-confirm-header h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 0 0 8px 0;
+        }
+
+        .modal-confirm-header p {
+            color: #666;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .modal-confirm-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px 24px;
+        }
+
+        .modal-confirm-footer .btn {
+            flex: 1;
+            padding: 14px;
+        }
+
+        .btn-cancel {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #e0e0e0;
         }
     </style>
 </head>
 <body>
-    <!-- ✅ SIDEBAR PADRONIZADA -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="logo">
             <h1>ORCHESTRA</h1>
@@ -342,255 +488,299 @@
         </div>
     </div>
 
-    <div id="modal" class="modal" onclick="if(event.target==this) closeModal()">
+    <!-- ✅ MODAL DE EDIÇÃO -->
+    <div id="modal" class="modal">
         <div class="modal-box">
             <div class="modal-header">
                 <h2 id="modalTitle">Nova Partitura</h2>
+                <button class="btn-close" onclick="closeModal()">×</button>
             </div>
             
             <form id="form">
-                <div class="form-group">
-                    <label>Título*</label>
-                    <input type="text" id="titulo" required placeholder="Ex: Für Elise">
-                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Título*</label>
+                        <input type="text" id="titulo" required placeholder="Ex: Für Elise">
+                    </div>
 
-                <div class="form-group">
-                    <label>Descrição Curta</label>
-                    <input type="text" id="descricao" maxlength="100" placeholder="Partitura de alta qualidade">
-                    <small>Aparece ao lado do preço (máx. 100 caracteres)</small>
-                </div>
+                    <div class="form-group">
+                        <label>Descrição Curta</label>
+                        <input type="text" id="descricao" maxlength="100" placeholder="Partitura de alta qualidade">
+                        <small>Aparece ao lado do preço (máx. 100 caracteres)</small>
+                    </div>
 
-                <div class="form-group">
-                    <label>Detalhes da Partitura</label>
-                    <textarea id="detalhes" rows="5" placeholder="Descrição completa, informações técnicas..."></textarea>
-                    <small>Aparece na seção "Detalhes da Partitura"</small>
-                </div>
+                    <div class="form-group">
+                        <label>Detalhes da Partitura</label>
+                        <textarea id="detalhes" rows="5" placeholder="Descrição completa, informações técnicas..."></textarea>
+                        <small>Aparece na seção "Detalhes da Partitura"</small>
+                    </div>
 
-                <div class="form-group">
-                    <label>Instrumento*</label>
-                    <select id="instrumento" required>
-                        <option value="">Selecione</option>
-                        <option value="Piano">Piano</option>
-                        <option value="Violino">Violino</option>
-                        <option value="Violão">Violão</option>
-                        <option value="Guitarra">Guitarra</option>
-                        <option value="Flauta">Flauta</option>
-                        <option value="Saxofone">Saxofone</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label>Instrumento*</label>
+                        <select id="instrumento" required>
+                            <option value="">Selecione</option>
+                            <option value="Piano">Piano</option>
+                            <option value="Violino">Violino</option>
+                             <option value="Violoncelo">Violoncelo</option>
+                            <option value="Violão">Violão</option>
+                            <option value="Guitarra">Guitarra</option>
+                            <option value="Flauta">Flauta</option>
+                            <option value="Saxofone">Saxofone</option>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label>Preço (R$)</label>
-                    <input type="number" id="preco" step="0.01" value="0" placeholder="0.00">
-                    <small>0 = Gratuito</small>
-                </div>
+                    <div class="form-group">
+                        <label>Preço (R$)</label>
+                        <input type="number" id="preco" step="0.01" value="0" placeholder="0.00">
+                        <small>0 = Gratuito</small>
+                    </div>
 
-                <div class="form-group">
-                    <label>Imagem da Partitura</label>
-                    <input type="file" id="imagemFile" accept="image/*">
-                    <small>Selecione uma imagem do seu computador (JPG, PNG)</small>
-                    <div id="imagemPreview" style="margin-top:10px;display:none;">
-                        <img id="previewImg" style="max-width:200px;border-radius:8px;">
+                    <div class="form-group">
+                        <label>Link de Compra (Kiwify)</label>
+                        <input type="url" id="linkCompra" placeholder="https://pay.kiwify.com.br/...">
+                        <small>Cole aqui o link da página de checkout do Kiwify</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagem da Partitura</label>
+                        <input type="file" id="imagemFile" accept="image/*">
+                        <small>Selecione uma imagem do seu computador (JPG, PNG)</small>
+                        <div id="imagemPreview" style="margin-top:10px;display:none;">
+                            <img id="previewImg" style="max-width:200px;border-radius:8px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status*</label>
+                        <select id="status" required>
+                            <option value="Publicado">Publicado</option>
+                            <option value="Rascunho">Rascunho</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Status*</label>
-                    <select id="status" required>
-                        <option value="Publicado">Publicado</option>
-                        <option value="Rascunho">Rascunho</option>
-                    </select>
-                </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn" onclick="closeModal()">Cancelar</button>
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">Criar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-        const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <!-- ✅ MODAL DE CONFIRMAÇÃO DE DELETE -->
+    <div id="modalConfirm" class="modal-confirm">
+        <div class="modal-confirm-box">
+            <div class="modal-confirm-header">
+                <div class="modal-confirm-icon">🗑️</div>
+                <h3>Deletar Partitura?</h3>
+                <p id="confirmText">Tem certeza que deseja deletar esta partitura?</p>
+            </div>
+            <div class="modal-confirm-footer">
+                <button class="btn btn-cancel" onclick="closeConfirmModal()">Cancelar</button>
+                <button class="btn btn-danger" onclick="confirmarDelete()">Deletar</button>
+            </div>
+        </div>
+    </div>
 
-        let partituras = [];
-        let editandoId = null;
+   <script>
+    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ✅ Verificar auth
-        window.addEventListener('DOMContentLoaded', () => {
-            const user = localStorage.getItem('orchestra_user');
-            if (!user) {
-                window.location.href = 'admin-login.html';
-            }
-        });
+    let partituras = [];
+    let editandoId = null;
+    let deletandoId = null;
 
-        async function carregar() {
-            try {
-                const { data, error } = await client.from('partituras').select('*');
-                if (error) throw error;
-                partituras = data || [];
-                renderizar();
-                console.log('✅ Carregadas:', partituras.length, 'partituras');
-            } catch (e) {
-                console.error('❌ Erro:', e);
-                document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="color:red;text-align:center;">Erro: ' + e.message + '</td></tr>';
-            }
-        }
-
-        function renderizar() {
-            const tbody = document.getElementById('tbody');
-            
-            if (partituras.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;">Nenhuma partitura cadastrada</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = partituras.map(p => `
-                <tr>
-                    <td><img src="${p.imagem_preview || 'https://via.placeholder.com/50'}" class="img-thumb"></td>
-                    <td><strong>${p.titulo}</strong></td>
-                    <td>${p.instrumento}</td>
-                    <td><strong>${p.preco > 0 ? 'R$ ' + parseFloat(p.preco).toFixed(2) : 'Gratuito'}</strong></td>
-                    <td>${p.status}</td>
-                    <td>
-                        <button class="btn btn-edit" onclick="editar('${p.id}')">✏️</button>
-                        <button class="btn btn-danger" onclick="deletar('${p.id}', '${p.titulo.replace(/'/g, '')}')">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function openModal() {
-            editandoId = null;
-            document.getElementById('form').reset();
-            document.getElementById('imagemPreview').style.display = 'none';
-            document.getElementById('modalTitle').textContent = 'Nova Partitura';
-            document.getElementById('submitBtn').textContent = 'Criar';
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        function editar(id) {
-            const p = partituras.find(x => x.id === id);
-            if (!p) return;
-
-            editandoId = id;
-            document.getElementById('titulo').value = p.titulo;
-            document.getElementById('descricao').value = p.descricao || '';
-            document.getElementById('detalhes').value = p.detalhes || '';
-            document.getElementById('instrumento').value = p.instrumento;
-            document.getElementById('preco').value = p.preco || 0;
-            document.getElementById('status').value = p.status;
-
-            document.getElementById('modalTitle').textContent = 'Editar Partitura';
-            document.getElementById('submitBtn').textContent = 'Salvar';
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        document.getElementById('form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = submitBtn.textContent;
-            submitBtn.textContent = 'Salvando...';
-            submitBtn.disabled = true;
-
-            try {
-                let imagemUrl = '';
-                const fileInput = document.getElementById('imagemFile');
-                
-                if (fileInput.files && fileInput.files[0]) {
-                    const file = fileInput.files[0];
-                    const fileName = `${Date.now()}_${file.name}`;
-                    
-                    const { data: uploadData, error: uploadError } = await client.storage
-                        .from('partituras-imagens')
-                        .upload(fileName, file);
-                    
-                    if (uploadError) {
-                        console.error('❌ Erro upload:', uploadError);
-                        throw new Error('Erro ao fazer upload da imagem');
-                    }
-                    
-                    const { data: { publicUrl } } = client.storage
-                        .from('partituras-imagens')
-                        .getPublicUrl(fileName);
-                    
-                    imagemUrl = publicUrl;
-                    console.log('✅ Imagem enviada:', imagemUrl);
-                } else if (editandoId) {
-                    const partituraAtual = partituras.find(x => x.id === editandoId);
-                    imagemUrl = partituraAtual?.imagem_preview || '';
-                }
-
-                const dados = {
-                    titulo: document.getElementById('titulo').value,
-                    descricao: document.getElementById('descricao').value,
-                    detalhes: document.getElementById('detalhes').value,
-                    instrumento: document.getElementById('instrumento').value,
-                    preco: parseFloat(document.getElementById('preco').value) || 0,
-                    imagem_preview: imagemUrl || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=600',
-                    status: document.getElementById('status').value
-                };
-
-                if (editandoId) {
-                    const { error } = await client.from('partituras').update(dados).eq('id', editandoId);
-                    if (error) throw error;
-                    alert('✅ Partitura atualizada!');
-                } else {
-                    const { error } = await client.from('partituras').insert([dados]);
-                    if (error) throw error;
-                    alert('✅ Partitura criada!');
-                }
-                
-                closeModal();
-                carregar();
-            } catch (e) {
-                console.error('❌ Erro:', e);
-                alert('❌ Erro: ' + e.message);
-            } finally {
-                submitBtn.textContent = btnText;
-                submitBtn.disabled = false;
-            }
-        });
-
-        document.getElementById('imagemFile').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    document.getElementById('previewImg').src = event.target.result;
-                    document.getElementById('imagemPreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        async function deletar(id, titulo) {
-            if (!confirm(`Deletar "${titulo}"?`)) return;
-
-            try {
-                const { error } = await client.from('partituras').delete().eq('id', id);
-                if (error) throw error;
-                alert('✅ Deletado!');
-                carregar();
-            } catch (e) {
-                alert('❌ Erro: ' + e.message);
-            }
-        }
-
-        // ✅ Logout
-        function logout() {
-            localStorage.clear();
+    // Verificar auth
+    window.addEventListener('DOMContentLoaded', () => {
+        const user = localStorage.getItem('orchestra_user');
+        if (!user) {
             window.location.href = 'admin-login.html';
+            return;
+        }
+        carregar();
+    });
+
+    // ✅ CORRIGIDO - Removido order by created_at
+    async function carregar() {
+        try {
+            const { data, error } = await client.from('partituras').select('*');
+            if (error) throw error;
+            partituras = data || [];
+            renderizar();
+            console.log('✅ Carregadas:', partituras.length, 'partituras');
+        } catch (e) {
+            console.error('❌ Erro:', e);
+            document.getElementById('tbody').innerHTML = '<tr><td colspan="6" style="color:red;text-align:center;">Erro: ' + e.message + '</td></tr>';
+        }
+    }
+
+    function renderizar() {
+        const tbody = document.getElementById('tbody');
+        
+        if (partituras.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">Nenhuma partitura cadastrada</td></tr>';
+            return;
         }
 
-        carregar();
-    </script>
+        tbody.innerHTML = partituras.map(p => `
+            <tr>
+                <td><img src="${p.imagem_preview || 'https://via.placeholder.com/60'}" class="img-thumb" onerror="this.src='https://via.placeholder.com/60'"></td>
+                <td><strong>${p.titulo}</strong></td>
+                <td>${p.instrumento}</td>
+                <td><strong>${p.preco > 0 ? 'R$ ' + parseFloat(p.preco).toFixed(2) : 'Gratuito'}</strong></td>
+                <td>${p.status}</td>
+                <td>
+                    <button class="btn btn-edit" onclick="editar('${p.id}')">✏️ Editar</button>
+                    <button class="btn btn-danger" onclick="abrirModalDelete('${p.id}', '${p.titulo.replace(/'/g, "\\'")}')">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function openModal() {
+        editandoId = null;
+        document.getElementById('form').reset();
+        document.getElementById('imagemPreview').style.display = 'none';
+        document.getElementById('modalTitle').textContent = 'Nova Partitura';
+        document.getElementById('submitBtn').textContent = 'Criar';
+        document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+    }
+
+    function editar(id) {
+        const p = partituras.find(x => x.id === id);
+        if (!p) {
+            console.error('❌ Partitura não encontrada:', id);
+            alert('❌ Partitura não encontrada!');
+            return;
+        }
+
+        editandoId = id;
+        document.getElementById('titulo').value = p.titulo;
+        document.getElementById('descricao').value = p.descricao || '';
+        document.getElementById('detalhes').value = p.detalhes || '';
+        document.getElementById('instrumento').value = p.instrumento;
+        document.getElementById('preco').value = p.preco || 0;
+        document.getElementById('linkCompra').value = p.link_compra || '';
+        document.getElementById('status').value = p.status;
+
+        document.getElementById('modalTitle').textContent = 'Editar Partitura';
+        document.getElementById('submitBtn').textContent = 'Salvar Alterações';
+        document.getElementById('modal').classList.add('active');
+    }
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.textContent;
+        submitBtn.textContent = editandoId ? 'Salvando...' : 'Criando...';
+        submitBtn.disabled = true;
+
+        try {
+            let imagemUrl = '';
+            const fileInput = document.getElementById('imagemFile');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileName = `${Date.now()}_${file.name}`;
+                
+                const { data: uploadData, error: uploadError } = await client.storage
+                    .from('partituras-imagens')
+                    .upload(fileName, file);
+                
+                if (uploadError) throw new Error('Erro ao fazer upload da imagem');
+                
+                const { data: { publicUrl } } = client.storage
+                    .from('partituras-imagens')
+                    .getPublicUrl(fileName);
+                
+                imagemUrl = publicUrl;
+            } else if (editandoId) {
+                const partituraAtual = partituras.find(x => x.id === editandoId);
+                imagemUrl = partituraAtual?.imagem_preview || '';
+            }
+
+            const dados = {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                detalhes: document.getElementById('detalhes').value,
+                instrumento: document.getElementById('instrumento').value,
+                preco: parseFloat(document.getElementById('preco').value) || 0,
+                link_compra: document.getElementById('linkCompra').value,
+                imagem_preview: imagemUrl || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=600',
+                status: document.getElementById('status').value
+            };
+
+            if (editandoId) {
+                const { error } = await client.from('partituras').update(dados).eq('id', editandoId);
+                if (error) throw error;
+                alert('✅ Partitura atualizada com sucesso!');
+            } else {
+                const { error } = await client.from('partituras').insert([dados]);
+                if (error) throw error;
+                alert('✅ Partitura criada com sucesso!');
+            }
+            
+            closeModal();
+            carregar();
+        } catch (e) {
+            console.error('❌ Erro:', e);
+            alert('❌ Erro: ' + e.message);
+        } finally {
+            submitBtn.textContent = btnText;
+            submitBtn.disabled = false;
+        }
+    });
+
+    document.getElementById('imagemFile').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                document.getElementById('previewImg').src = event.target.result;
+                document.getElementById('imagemPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Sistema de confirmação de delete
+    function abrirModalDelete(id, titulo) {
+        deletandoId = id;
+        document.getElementById('confirmText').textContent = `Tem certeza que deseja deletar "${titulo}"?`;
+        document.getElementById('modalConfirm').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('modalConfirm').classList.remove('active');
+        deletandoId = null;
+    }
+
+    async function confirmarDelete() {
+        if (!deletandoId) return;
+
+        try {
+            const { error } = await client.from('partituras').delete().eq('id', deletandoId);
+            if (error) throw error;
+            alert('✅ Partitura deletada com sucesso!');
+            closeConfirmModal();
+            carregar();
+        } catch (e) {
+            console.error('❌ Erro:', e);
+            alert('❌ Erro ao deletar: ' + e.message);
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'admin-login.html';
+    }
+</script>
+
 </body>
 </html>

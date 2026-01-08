@@ -315,121 +315,133 @@
             </div>
         </div>
     </footer>
+<script>
+const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
+const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-    <script>
-    const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
-    const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+async function carregarDetalhesPartitura() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
 
-    async function carregarDetalhesPartitura() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id');
-
-            if (!id) {
-                mostrarErro('ID não encontrado');
-                return;
-            }
-
-            console.log('🔄 Carregando ID:', id);
-
-            const { data, error } = await client
-                .from('partituras')
-                .select('*')
-                .eq('id', id)
-                .single();
-
-            if (error) {
-                console.error('❌ Erro Supabase:', error);
-                throw error;
-            }
-            
-            if (!data) {
-                mostrarErro('Partitura não encontrada');
-                return;
-            }
-
-            console.log('✅ Dados carregados:', data);
-            exibirPartitura(data);
-        } catch (erro) {
-            console.error('❌ Erro geral:', erro);
-            mostrarErro('Erro ao carregar: ' + erro.message);
+        if (!id) {
+            mostrarErro('ID não encontrado');
+            return;
         }
-    }
 
-    function exibirPartitura(p) {
-        try {
-            console.log('📝 Exibindo partitura:', p);
-            
-            document.title = `${p.titulo} - Orchestra`;
-            document.getElementById('courseTitle').textContent = p.titulo;
-            
-            // IMAGEM
-            document.getElementById('heroImage').innerHTML = 
-                `<img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800'}" alt="${p.titulo}">`;
-            
-            // META (instrumento)
-            document.getElementById('courseMeta').innerHTML = `
-                <div class="meta-item">${p.instrumento || 'Instrumento'}</div>
-            `;
+        console.log('🔄 Carregando ID:', id);
 
-            // PREÇO
-            const heroContent = document.querySelector('.hero-content');
-            const descElement = document.getElementById('courseDescription');
-            
-            // Remove preço antigo se existir
-            const oldPrice = heroContent.querySelector('.price-tag');
-            if (oldPrice) oldPrice.remove();
-            
-            let priceHTML = '';
-            if (p.preco && p.preco > 0) {
-                priceHTML = `<div class="price-tag"><span class="currency">R$</span><span>${p.preco.toFixed(2).replace('.', ',')}</span></div>`;
-            } else {
-                priceHTML = '<div class="price-tag"><span>GRATUITO</span></div>';
-            }
-            
-            descElement.insertAdjacentHTML('beforebegin', priceHTML);
+        const { data, error } = await client
+            .from('partituras')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-            // DESCRIÇÃO CURTA (ao lado do preço)
-            descElement.textContent = p.descricao || 'Partitura de alta qualidade.';
-
-            // DETALHES COMPLETOS (embaixo)
-            const detalhesTexto = p.detalhes || p.descricao || `Partitura de ${p.titulo}`;
-            document.getElementById('descriptionContent').innerHTML = `<p>${detalhesTexto}</p>`;
-
-            // BOTÃO COMPRAR
-            const btn = document.querySelector('.btn-comprar');
-            if (btn) {
-                btn.textContent = p.preco > 0 ? `Comprar por R$ ${p.preco.toFixed(2).replace('.', ',')}` : 'Baixar Grátis';
-                btn.onclick = () => alert('Em desenvolvimento!');
-            }
-            
-            console.log('✅ Partitura exibida com sucesso!');
-        } catch (erro) {
-            console.error('❌ Erro ao exibir:', erro);
-            mostrarErro('Erro ao exibir partitura');
+        if (error) {
+            console.error('❌ Erro Supabase:', error);
+            throw error;
         }
-    }
-
-    function mostrarErro(msg) {
-        console.error('🚫', msg);
-        const container = document.querySelector('.course-hero .hero-container');
-        if (container) {
-            container.innerHTML = 
-                `<div style="grid-column:1/-1;text-align:center;color:white;padding:60px">
-                    <h2>${msg}</h2>
-                    <a href="partituras.html" style="color:#FFC107">← Voltar</a>
-                </div>`;
+        
+        if (!data) {
+            mostrarErro('Partitura não encontrada');
+            return;
         }
-    }
 
-    // INICIAR
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', carregarDetalhesPartitura);
-    } else {
-        carregarDetalhesPartitura();
+        console.log('✅ Dados carregados:', data);
+        exibirPartitura(data);
+    } catch (erro) {
+        console.error('❌ Erro geral:', erro);
+        mostrarErro('Erro ao carregar: ' + erro.message);
     }
+}
+
+function exibirPartitura(p) {
+    try {
+        console.log('📝 Exibindo partitura:', p);
+        
+        document.title = `${p.titulo} - Orchestra`;
+        document.getElementById('courseTitle').textContent = p.titulo;
+        
+        // IMAGEM
+        document.getElementById('heroImage').innerHTML = 
+            `<img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800'}" alt="${p.titulo}">`;
+        
+        // META
+        document.getElementById('courseMeta').innerHTML = `
+            <div class="meta-item">${p.instrumento || 'Instrumento'}</div>
+        `;
+
+        // PREÇO
+        const heroContent = document.querySelector('.hero-content');
+        const descElement = document.getElementById('courseDescription');
+        
+        const oldPrice = heroContent.querySelector('.price-tag');
+        if (oldPrice) oldPrice.remove();
+        
+        let priceHTML = '';
+        if (p.preco && p.preco > 0) {
+            priceHTML = `<div class="price-tag"><span class="currency">R$</span><span>${p.preco.toFixed(2).replace('.', ',')}</span></div>`;
+        } else {
+            priceHTML = '<div class="price-tag"><span>GRATUITO</span></div>';
+        }
+        
+        descElement.insertAdjacentHTML('beforebegin', priceHTML);
+        descElement.textContent = p.descricao || 'Partitura de alta qualidade.';
+
+        // DETALHES
+        const detalhesTexto = p.detalhes || p.descricao || `Partitura de ${p.titulo}`;
+        document.getElementById('descriptionContent').innerHTML = `<p>${detalhesTexto}</p>`;
+
+        // ✅ BOTÃO - VERSÃO FINAL FUNCIONANDO
+        const btn = document.querySelector('.btn-comprar');
+        if (btn) {
+            btn.textContent = p.preco > 0 ? `Comprar por R$ ${p.preco.toFixed(2).replace('.', ',')}` : 'Baixar Grátis';
+            
+            // Remove evento antigo e cria novo
+            const newBtn = btn.cloneNode(true);
+            btn.replaceWith(newBtn);
+            
+            newBtn.addEventListener('click', function() {
+                console.log('🛒 Clique detectado!');
+                console.log('🔗 Link:', p.link_compra);
+                
+                if (p.link_compra && p.link_compra.trim() !== '') {
+                    console.log('✅ Redirecionando...');
+                    window.location.href = p.link_compra;
+                } else {
+                    alert('❌ Link de compra não configurado');
+                }
+            });
+        }
+        
+        console.log('✅ Tudo carregado!');
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        mostrarErro('Erro ao exibir partitura');
+    }
+}
+
+function mostrarErro(msg) {
+    console.error('🚫', msg);
+    const container = document.querySelector('.course-hero .hero-container');
+    if (container) {
+        container.innerHTML = 
+            `<div style="grid-column:1/-1;text-align:center;color:white;padding:60px">
+                <h2>${msg}</h2>
+                <a href="partituras.html" style="color:#FFC107">← Voltar</a>
+            </div>`;
+    }
+}
+
+// INICIAR
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', carregarDetalhesPartitura);
+} else {
+    carregarDetalhesPartitura();
+}
 </script>
+
     
 </body>
 </html>
