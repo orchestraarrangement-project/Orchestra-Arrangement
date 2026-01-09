@@ -192,56 +192,58 @@
         }
     }
 
-    async function carregarEbooksDestaque() {
-        try {
-            console.log('🔄 Carregando ebooks...');
-            
-            const { data, error } = await client
-                .from('cursos')
-                .select('*')
-                .eq('status', 'Publicado')
-                .limit(3);
+   async function carregarEbooksDestaque() {
+    try {
+        console.log('🔄 Carregando ebooks...');
+        
+        const { data, error } = await client
+            .from('cursos')
+            .select('*')
+            .eq('status', 'Publicado')
+            .limit(3);
 
-            if (error) {
-                console.error('❌ Erro Supabase:', error);
-                throw error;
-            }
-
-            console.log('✅ Ebooks carregados:', data);
-
-            const container = document.getElementById('ebooksDestaque');
-            
-            if (!data || data.length === 0) {
-                container.innerHTML = '<p style="text-align:center;padding:40px;">Nenhum ebook encontrado</p>';
-                return;
-            }
-
-            container.innerHTML = data.map(e => `
-                <a href="ebook-detalhes.html?id=${e.id}" class="card">
-                    <div class="card-image">
-                        <img src="${e.imagem_capa || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=600'}" alt="${e.titulo}">
-                    </div>
-                    <div class="card-content">
-                        <div class="card-category">${e.categoria || 'Ebook'}</div>
-                        <h3 class="card-title">${e.titulo}</h3>
-                        <p class="card-description">${e.descricao || ''}</p>
-                        <div class="card-footer">
-                            <span class="card-link">
-                                Acessar
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            `).join('');
-        } catch (error) {
-            console.error('❌ Erro ao carregar ebooks:', error);
-            const container = document.getElementById('ebooksDestaque');
-            container.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks</p>';
+        if (error) {
+            console.error('❌ Erro Supabase:', error);
+            throw error;
         }
+
+        console.log('✅ Ebooks carregados:', data);
+
+        const container = document.getElementById('ebooksDestaque');
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="text-align:center;padding:40px;">Nenhum ebook encontrado</p>';
+            return;
+        }
+
+        // ✅ CACHE-BUSTING: Adiciona timestamp na URL da imagem
+        container.innerHTML = data.map(e => `
+            <a href="/ebook/${e.id}" class="card">
+                <div class="card-image">
+                    <img src="${e.imagem_capa}?t=${Date.now()}" alt="${e.titulo}">
+                </div>
+                <div class="card-content">
+                    <div class="card-category">${e.categoria || 'Ebook'}</div>
+                    <h3 class="card-title">${e.titulo}</h3>
+                    <p class="card-description">${e.descricao || ''}</p>
+                    <div class="card-footer">
+                        <span class="card-link">
+                            Acessar
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        `).join('');
+    } catch (error) {
+        console.error('❌ Erro ao carregar ebooks:', error);
+        const container = document.getElementById('ebooksDestaque');
+        container.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks</p>';
     }
+}
+
 
     // INICIALIZAR
     if (document.readyState === 'loading') {
