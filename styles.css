@@ -40,9 +40,8 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
     overflow-x: hidden;
-    padding-top: 80px; /* ✅ Compensa o header fixo */
+   /* Compensa o header fixo */
 }
-
 
 .container {
     max-width: 1200px;
@@ -51,9 +50,8 @@ body {
 }
 
 /* ===== HEADER FIXO ===== */
-/* ===== HEADER FIXO ===== */
 .header {
-    position: fixed !important;  /* ✅ CORRIGIDO */
+    position: block !important;
     top: 0;
     left: 0;
     right: 0;
@@ -67,22 +65,22 @@ body {
 }
 
 .header .container {
-    max-width: 1400px !important; /* ✅ Reduzido de 2300px */
-    padding: 0 24px !important;
+    max-width: 2300px !important;
+    padding: 0 20px !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 80px; /* ✅ Altura fixa */
 }
 
 .logo {
     display: flex;
     align-items: center;
+    margin-right: auto;
     text-decoration: none;
 }
 
 .logo-img {
-    height: 60px !important; /* ✅ Reduzido de 160px */
+    height: 160px !important;
     width: auto;
     display: block;
 }
@@ -90,8 +88,8 @@ body {
 .nav {
     display: flex;
     gap: 8px;
+    margin-left: auto;
 }
-
 
 /* ===== NAV LINKS - HOVER CORRIGIDO ===== */
 .nav-link {
@@ -878,5 +876,3 @@ section {
 .course-meta-item {
     color: var(--white) !important;
 }
-
-
