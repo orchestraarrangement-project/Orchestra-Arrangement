@@ -216,33 +216,40 @@
             return;
         }
 
-        // ✅ CACHE-BUSTING: Adiciona timestamp na URL da imagem
-        container.innerHTML = data.map(e => `
-            <a href="/ebook/${e.id}" class="card">
-                <div class="card-image">
-                    <img src="${e.imagem_capa}?t=${Date.now()}" alt="${e.titulo}">
-                </div>
-                <div class="card-content">
-                    <div class="card-category">${e.categoria || 'Ebook'}</div>
-                    <h3 class="card-title">${e.titulo}</h3>
-                    <p class="card-description">${e.descricao || ''}</p>
-                    <div class="card-footer">
-                        <span class="card-link">
-                            Acessar
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </span>
+        // ✅ CORRIGIDO: Verifica se imagem_capa existe e adiciona fallback
+        container.innerHTML = data.map(e => {
+            const imagemUrl = e.imagem_capa && e.imagem_capa.trim() !== '' 
+                ? e.imagem_capa 
+                : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600';
+            
+            return `
+                <a href="ebook-detalhes.html?id=${e.id}" class="card">
+                    <div class="card-image">
+                        <img src="${imagemUrl}" alt="${e.titulo}" loading="lazy">
                     </div>
-                </div>
-            </a>
-        `).join('');
+                    <div class="card-content">
+                        <div class="card-category">${e.categoria || 'Ebook'}</div>
+                        <h3 class="card-title">${e.titulo}</h3>
+                        <p class="card-description">${e.descricao || ''}</p>
+                        <div class="card-footer">
+                            <span class="card-link">
+                                Acessar
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join('');
     } catch (error) {
         console.error('❌ Erro ao carregar ebooks:', error);
         const container = document.getElementById('ebooksDestaque');
         container.innerHTML = '<p style="text-align:center;padding:40px;color:#e74c3c;">Erro ao carregar ebooks</p>';
     }
 }
+
 
 
     // INICIALIZAR
