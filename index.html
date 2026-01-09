@@ -116,7 +116,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="logo">
-                        <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+<img src="https://zuqkclsdztbyzslzmzfr.supabase.co/storage/v1/object/public/imagens/logo-site-ajustada.png" alt="Orchestra" class="logo-img">
                     </div>
                     <p class="footer-description">Sua plataforma completa para aprender música</p>
                 </div>
@@ -220,7 +220,7 @@
         container.innerHTML = data.map(e => {
             const imagemUrl = e.imagem_capa && e.imagem_capa.trim() !== '' 
                 ? e.imagem_capa 
-                : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600';
+                : '';
             
             return `
                 <a href="ebook-detalhes.html?id=${e.id}" class="card">
