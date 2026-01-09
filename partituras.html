@@ -11,27 +11,24 @@
 <body>
   <header class="header">
     <div class="container">
-        <a href="index.html" class="logo">
-<img src="https://zuqkclsdztbyzslzmzfr.supabase.co/storage/v1/object/public/imagens/logo-site-ajustada.png" alt="Orchestra" class="logo-img">
+        <a href="/" class="logo">
+        <img src="https://zuqkclsdztbyzslzmzfr.supabase.co/storage/v1/object/public/imagens/logo-site-ajustada.png" alt="Orchestra" class="logo-img">
         </a>
         
        <nav class="nav">
-    <a href="index.html" class="nav-link">
+    <a href="/" class="nav-link">
         <span>Início</span>
     </a>
-    <a href="partituras.html" class="nav-link active">  <!-- ← ACTIVE AQUI -->
+    <a href="/partituras" class="nav-link active">
         <span>Partituras</span>
     </a>
-    <a href="ebooks.html" class="nav-link">
+    <a href="/ebooks" class="nav-link">
         <span>Ebooks</span>
     </a>
-</nav>
+    </nav>
+</div>
 
-    </div>
 </header>
-
-
-
     <section class="page-header">
         <div class="container">
             <h1 class="page-title">Partituras Musicais</h1>
@@ -74,7 +71,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="logo">
-                        <img src="imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
+                        <img src="https://zuqkclsdztbyzslzmzfr.supabase.co/storage/v1/object/public/imagens/logo-branca.png" alt="Orchestra" style="height: 40px;">
                     </div>
                     <p class="footer-description">Sua plataforma completa para aprender música</p>
                 </div>
@@ -82,8 +79,8 @@
                     <div class="footer-column">
                         <h4 class="footer-title">Links Rápidos</h4>
                         <ul class="footer-list">
-                            <li><a href="ebooks.html">Ebooks</a></li>
-                            <li><a href="partituras.html">Partituras</a></li>
+                            <li><a href="/ebooks">Ebooks</a></li>
+                            <li><a href="/partituras">Partituras</a></li>
                         </ul>
                     </div>
                     <div class="footer-column">
@@ -144,9 +141,9 @@
             return;
         }
 
-        // ✅ SEM BADGES DE DIFICULDADE
+        // ✅ URL LIMPA: /partitura/123 em vez de partitura-detalhes.html?id=123
         grid.innerHTML = partituras.map(p => `
-            <div class="score-card" onclick="window.location.href='partitura-detalhes.html?id=${p.id}'">
+            <div class="score-card" onclick="window.location.href='/partitura/${p.id}'">
                 <div class="score-image">
                     <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600'}" alt="${p.titulo}">
                 </div>
@@ -203,8 +200,6 @@
         document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
     }
 </script>
-
-
 
 </body>
 </html>

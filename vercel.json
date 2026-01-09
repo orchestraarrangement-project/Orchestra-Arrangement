@@ -1,17 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.js",
-      "use": "@vercel/static"
-    }
-  ]
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/partituras", "destination": "/partituras.html" },
+    { "source": "/ebooks", "destination": "/ebooks.html" },
+    { "source": "/partitura/:id", "destination": "/partitura-detalhes.html" },
+    { "source": "/ebook/:id", "destination": "/ebook-detalhes.html" }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
