@@ -352,7 +352,93 @@
                 }
 
 
-         async function salvarEbook(event) {
+        async function salvarEbook(event) {
+    event.preventDefault();
+
+    try {
+        // Upload da imagem se houver
+        let imagemUrl = '';
+        const fileInput = document.getElementById('imagemFile');
+        const urlInput = document.getElementById('imagemUrl').value;
+
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            // ✅ LIMPAR NOME DO ARQUIVO (remover acentos e caracteres especiais)
+            const file = fileInput.files[0];
+            const nomeOriginal = file.name
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+                .replace(/[^a-zA-Z0-9.-]/g, '-')  // Substitui caracteres especiais por hífen
+                .toLowerCase();
+            
+            const fileName = `${Date.now()}-${nomeOriginal}`;
+            
+            console.log('📤 Fazendo upload:', fileName);
+            
+            const { data: uploadData, error: uploadError } = await client.storage
+                .from('imagens')  // ✅ CORRIGIDO: usar bucket 'imagens'
+                .upload(fileName, file);
+            
+            if (uploadError) {
+                console.error('❌ Erro ao fazer upload:', uploadError);
+                alert('❌ Erro ao fazer upload da imagem: ' + uploadError.message);
+                return;
+            }
+            
+            const { data: { publicUrl } } = client.storage
+                .from('imagens')  // ✅ CORRIGIDO: usar bucket 'imagens'
+                .getPublicUrl(fileName);
+            
+            imagemUrl = publicUrl;
+            console.log('✅ Imagem carregada:', imagemUrl);
+        } else if (urlInput) {
+            imagemUrl = urlInput;
+        } else if (editandoId) {
+            const ebookAtual = ebooks.find(e => e.id === editandoId);
+            imagemUrl = ebookAtual?.imagem_capa || ebookAtual?.imagem_preview || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+        } else {
+            imagemUrl = 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800';
+        }
+
+        const dados = {
+            titulo: document.getElementById('titulo').value,
+            categoria: document.getElementById('categoria').value,
+            preco: parseFloat(document.getElementById('preco').value) || 0,
+            descricao: document.getElementById('descricao').value,
+            conteudo: document.getElementById('detalhes').value,
+            link_compra: document.getElementById('linkCompra').value,
+            imagem_capa: imagemUrl,      // ✅ CORRIGIDO: usar imagem_capa
+            imagem_preview: imagemUrl,    // ✅ Mantém compatibilidade
+            status: document.getElementById('status').value,
+            nivel: 'Iniciante'
+        };
+
+        console.log('💾 Salvando dados:', dados);
+
+        if (editandoId) {
+            const { error } = await client
+                .from('cursos')
+                .update(dados)
+                .eq('id', editandoId);
+
+            if (error) throw error;
+            alert('✅ Ebook atualizado com sucesso!');
+        } else {
+            const { error } = await client
+                .from('cursos')
+                .insert([dados]);
+
+            if (error) throw error;
+            alert('✅ Ebook criado com sucesso!');
+        }
+
+        closeModal();
+        carregarEbooks();
+    } catch (erro) {
+        console.error('❌ Erro:', erro);
+        alert('❌ Erro ao salvar: ' + erro.message);
+    }
+}
+
     event.preventDefault();
 
     try {
@@ -428,7 +514,6 @@
         console.error('❌ Erro:', erro);
         alert('❌ Erro ao salvar: ' + erro.message);
     }
-}
 
 
             async function deletarEbook(id, titulo) {
