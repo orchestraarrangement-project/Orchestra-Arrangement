@@ -80,7 +80,7 @@ body {
 }
 
 .logo-img {
-    height: 160px !important;
+    height: 180px !important;
     width: auto;
     display: block;
 }
@@ -96,7 +96,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 10px 20px;''
     color: var(--text-gray);
     text-decoration: none;
     border-radius: 8px;
@@ -666,6 +666,22 @@ section {
     color: var(--white);
     padding: 60px 0 30px;
 }
+
+/* ===== LOGO DO FOOTER - FORÇAR EXIBIÇÃO E TAMANHO ===== */
+.footer .logo {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.footer .logo img {
+    height: 220px !important;
+    width: auto !important;
+    max-width: 200px;
+    display: block !important;
+    filter: brightness(1.1);
+}
+
+
 
 .footer-content {
     display: grid;
