@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Partituras - Orchestra Admin</title>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin-styles.css">
 </head>
-
 <body class="admin-body">
     <script>
-        // Autenticação desabilitada temporariamente
         function fazerLogout() {
             if (confirm('Deseja realmente sair?')) {
                 localStorage.clear();
@@ -27,7 +23,6 @@
             <div class="logo-placeholder">ORCHESTRA</div>
             <span class="admin-badge">Admin</span>
         </div>
-
         <nav class="sidebar-nav">
             <a href="admin-dashboard.html" class="sidebar-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -38,7 +33,6 @@
                 </svg>
                 Dashboard
             </a>
-
             <a href="admin-partituras.html" class="sidebar-link active">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <rect x="4" y="3" width="12" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
@@ -46,34 +40,27 @@
                 </svg>
                 Partituras
             </a>
-
             <a href="admin-ebooks.html" class="sidebar-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M4 2H12C12.55 2 13 2.45 13 3V14L8 11L3 14V3C3 2.45 3.45 2 4 2Z" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
                 Ebooks
             </a>
-
-            
-                <a href="admin-usuarios.html" class="sidebar-link">
+            <a href="admin-usuarios.html" class="sidebar-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    ircle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
                     <path d="M5 17C5 14 7 12 10 12C13 12 15 14 15 17" stroke="currentColor" stroke-width="1.5"/>
                 </svg>
                 Usuários
-                </a>
-
-
+            </a>
             <a href="admin-configuracoes.html" class="sidebar-link">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    Configurações
-</a>
-
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    ircle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 7V10M10 13H10.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Configurações
+            </a>
         </nav>
-
         <div class="sidebar-footer">
             <a href="index.html" class="sidebar-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -96,33 +83,48 @@
                 <h1 class="page-title">Gerenciar Partituras</h1>
                 <p class="page-subtitle">Adicione, edite ou remova partituras da plataforma</p>
             </div>
-            <div class="header-right">
-                <button class="btn btn-primary" onclick="openModal()">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    Nova Partitura
-                </button>
-            </div>
+           <div class="header-right" style="display:flex;gap:16px;align-items:center;">
+    <button onclick="openModalGaleria()" style="background:none;border:none;color:#4a4a7e;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;transition:all 0.2s;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="2" y="2" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            ircle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M18 13L14 9L6 17" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Galeria
+    </button>
+    <button onclick="openModalInstrumentos()" style="background:none;border:none;color:#4a4a7e;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;transition:all 0.2s;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M9 2L3 8V18H7V14H13V18H17V8L11 2H9Z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Instrumentos
+    </button>
+    <button class="btn btn-primary" onclick="openModal()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 5V15M5 10H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Nova Partitura
+    </button>
+</div>
+
         </header>
 
         <section class="admin-filters">
             <div class="search-box">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+                    ircle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
                     <path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
                 <input type="text" placeholder="Buscar partituras..." class="search-input" id="searchInput">
             </div>
+            <select class="filter-select-admin" id="tipoFilter">
+                <option value="">Todos os tipos</option>
+                <option value="Hino">Hino</option>
+                <option value="Louvor">Louvor</option>
+                <option value="Música">Música</option>
+                <option value="Trilha">Trilha</option>
+            </select>
             <select class="filter-select-admin" id="instrumentoFilter">
                 <option value="">Todos os instrumentos</option>
-                <option value="Piano">Piano</option>
-                <option value="Violino">Violino</option>
-                <option value="Violoncelo">Violoncelo</option>
-                <option value="Viola">Viola</option>
-                <option value="Violão">Violão</option>
-                <option value="Flauta">Flauta</option>
-                <option value="Saxofone">Saxofone</option>
             </select>
         </section>
 
@@ -132,7 +134,9 @@
                     <tr>
                         <th>Imagem</th>
                         <th>Título</th>
-                        <th>Instrumento</th>
+                        <th>Tipo</th>
+                        <th>Obra</th>
+                        <th>Instrumento/Voz</th>
                         <th>Preço</th>
                         <th>Status</th>
                         <th>Ações</th>
@@ -140,88 +144,116 @@
                 </thead>
                 <tbody id="partiturasTableBody">
                     <tr>
-                        <td colspan="6" style="text-align:center;padding:40px;color:#999;">Carregando partituras...</td>
+                        <td colspan="8" style="text-align:center;padding:40px;color:#999;">Carregando partituras...</td>
                     </tr>
                 </tbody>
             </table>
         </section>
     </main>
 
-    <!-- MODAL -->
+    <!-- MODAL DE PARTITURA -->
     <div id="partituraModal" class="modal" style="display:none;">
         <div class="modal-content modal-large">
             <div class="modal-header">
                 <h2 class="modal-title" id="modalTitle">Nova Partitura</h2>
                 <button class="modal-close" onclick="closeModal()">×</button>
             </div>
-
             <form class="modal-form" id="partituraForm" onsubmit="salvarPartitura(event)">
-                <div class="form-group">
-                    <label class="form-label">Título da Partitura*</label>
-                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Für Elise" required>
+                <div style="background:#f8f9fc;padding:20px;border-radius:12px;margin-bottom:24px;">
+                    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:#4a4a7e;">📂 Organização</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Partitura*</label>
+                            <select id="tipo" class="form-input" required>
+                                <option value="">Selecione</option>
+                                <option value="Hino">Hino</option>
+                                <option value="Louvor">Louvor</option>
+                                <option value="Música">Música</option>
+                                <option value="Trilha">Trilha Sonora</option>
+                            </select>
+                            <small style="color:#666;font-size:12px;">Ex: Hino, Música, Trilha</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nome da Obra*</label>
+                            <input type="text" id="obra" class="form-input" placeholder="Ex: Glória Sempiterna" required list="obrasExistentes">
+                            <datalist id="obrasExistentes"></datalist>
+                            <small style="color:#666;font-size:12px;">Digite ou escolha uma obra já cadastrada</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Instrumento*</label>
+                            <input type="text" id="instrumento" class="form-input" placeholder="Ex: Violino" required list="instrumentosExistentes">
+                            <datalist id="instrumentosExistentes"></datalist>
+                            <small style="color:#666;font-size:12px;">Digite ou escolha um instrumento já cadastrado</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Voz / Parte</label>
+                            <input type="text" id="voz" class="form-input" placeholder="Ex: Violino 1, Violino 2">
+                            <small style="color:#666;font-size:12px;">Use para diferenciar partes (1, 2, 3...)</small>
+                        </div>
+                    </div>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label">Título da Partitura*</label>
+                    <input type="text" id="titulo" class="form-input" placeholder="Ex: Glória Sempiterna - Violino 1" required>
+                    <small style="color:#666;font-size:12px;">Sugestão: use Obra + Instrumento + Voz</small>
+                </div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Instrumento*</label>
-                        <select id="instrumento" class="form-input" required>
-                            <option value="">Selecione</option>
-                            <option value="Piano">Piano</option>
-                            <option value="Violino">Violino</option>
-                            <option value="Violoncelo">Violoncelo</option>
-                            <option value="Viola">Viola</option>
-                            <option value="Violão">Violão</option>
-                            <option value="Flauta">Flauta</option>
-                            <option value="Saxofone">Saxofone</option>
-                        </select>
-                    </div>
-
                     <div class="form-group">
                         <label class="form-label">Preço (R$)*</label>
                         <input type="number" id="preco" class="form-input" placeholder="0.00" step="0.01" min="0" required>
                         <small style="color:#666;font-size:12px;">Digite 0 para gratuito</small>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Status*</label>
+                        <select id="status" class="form-input" required>
+                            <option value="Publicado">Publicado</option>
+                            <option value="Rascunho">Rascunho</option>
+                        </select>
+                    </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Descrição*</label>
                     <textarea id="descricao" class="form-input" rows="3" placeholder="Descrição da partitura..." required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Detalhes da Partitura</label>
-                    <textarea id="detalhes" class="form-input" rows="4" placeholder="Informações detalhadas sobre a partitura..."></textarea>
+                    <textarea id="detalhes" class="form-input" rows="4" placeholder="Informações detalhadas..."></textarea>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Link de Compra (Kiwify)</label>
                     <input type="url" id="linkCompra" class="form-input" placeholder="https://pay.kiwify.com.br/...">
                     <small style="color:#666;font-size:12px;">Cole o link do Kiwify para pagamento</small>
                 </div>
+                <div style="background:#f0f4f8;padding:20px;border-radius:12px;margin-bottom:16px;">
+                    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:#4a4a7e;">🖼️ Imagem de Capa</h3>
 
-               <div class="form-group">
-                    <label class="form-label">Imagem de Capa*</label>
-                    <input type="file" id="imagemFile" class="form-input" accept="image/*" onchange="previewImage(event)">
-                    <small style="color:#666;font-size:12px;">Selecione uma imagem JPG, PNG ou WEBP</small>
-                    
-                    <div id="imagemPreview" style="margin-top:16px;display:none;">
-                        <img id="previewImg" style="max-width:200px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                    <div class="form-group">
+                        <label class="form-label">Selecionar Imagem Padrão</label>
+                        <select id="imagemPadrao" class="form-input" onchange="selecionarImagemPadrao(this.value)">
+                            <option value="">-- Escolha uma imagem padrão --</option>
+                        </select>
+                        <small style="color:#666;font-size:12px;">Selecione uma das imagens padrão cadastradas</small>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">OU cole a URL da imagem</label>
-                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
-                    <small style="color:#666;font-size:12px;">Se preferir, cole uma URL ao invés de fazer upload</small>
-                </div>
+                    <div id="imagemPreview" style="margin-top:16px;display:none;text-align:center;">
+                        <img id="previewImg" style="max-width:200px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                        <p style="margin-top:8px;font-size:12px;color:#666;" id="imagemSelecionadaNome"></p>
+                    </div>
 
-
-                <div class="form-group">
-                    <label class="form-label">Status*</label>
-                    <select id="status" class="form-input" required>
-                        <option value="Publicado">Publicado</option>
-                        <option value="Rascunho">Rascunho</option>
-                    </select>
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px dashed #ccc;">
+                        <p style="font-size:13px;color:#888;margin-bottom:12px;">Ou use uma imagem personalizada:</p>
+                        <div class="form-group">
+                            <label class="form-label">Upload de arquivo</label>
+                            <input type="file" id="imagemFile" class="form-input" accept="image/*" onchange="previewImageUpload(event)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">OU cole a URL da imagem</label>
+                            <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg" onchange="previewImageUrl(this.value)">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -232,68 +264,293 @@
         </div>
     </div>
 
-    
+        <!-- MODAL DE INSTRUMENTOS -->
+    <div id="instrumentosModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Gerenciar Instrumentos</h2>
+                <button class="modal-close" onclick="closeModalInstrumentos()">×</button>
+            </div>
+
+            <div style="padding:20px;">
+                <div style="display:flex;gap:12px;margin-bottom:20px;">
+                    <input type="text" id="novoInstrumento" class="form-input" placeholder="Ex: Trombone, Harpa..." style="flex:1;">
+                    <button class="btn btn-primary" onclick="adicionarInstrumento()">Adicionar</button>
+                </div>
+
+                <div style="max-height:400px;overflow-y:auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Instrumento</th>
+                                <th style="width:100px;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="instrumentosTableBody">
+                            <tr>
+                                <td colspan="2" style="text-align:center;padding:20px;">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModalInstrumentos()">Fechar</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Preview da imagem antes do upload
-function previewImage(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('previewImg').src = e.target.result;
-            document.getElementById('imagemPreview').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
         const supabaseUrl = 'https://zuqkclsdztbyzslzmzfr.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1cWtjbHNkenRieXpzbHptemZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NzM0NzgsImV4cCI6MjA3ODU0OTQ3OH0.nBC2GYWPTfdaSYzi0jOgnBu4bi5xURoHBJ70MRjrdOs';
         const client = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let partituras = [];
         let editandoId = null;
+        let instrumentosCadastrados = [];
+        let imagensPadrao = [];
+        let imagemSelecionadaUrl = '';
 
-                async function carregarPartituras() {
+        // ========== FUNÇÕES DE IMAGEM PADRÃO ==========
+
+        async function carregarImagensPadrao() {
             try {
                 const { data, error } = await client
-                    .from('partituras')
-                    .select('*');
+                    .from('imagens_padrao')
+                    .select('*')
+                    .eq('ativo', true)
+                    .eq('tipo', 'partitura')
+                    .order('nome');
 
-                if (error) {
-                    console.error('❌ Erro Supabase:', error);
-                    throw error;
-                }
-
-                partituras = data || [];
-                console.log('✅ Partituras carregadas:', partituras);
-                renderizarTabela(partituras);
+                if (error) throw error;
+                imagensPadrao = data || [];
+                atualizarSelectImagensPadrao();
             } catch (erro) {
-                console.error('❌ Erro completo:', erro);
-                document.getElementById('partiturasTableBody').innerHTML = 
-                    '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e74c3c;">Erro: ' + erro.message + '</td></tr>';
+                console.error('Erro ao carregar imagens padrão:', erro);
+                imagensPadrao = [];
             }
         }
 
+        function atualizarSelectImagensPadrao() {
+            const select = document.getElementById('imagemPadrao');
+            if (!select) return;
 
-        function renderizarTabela(lista) {
-            const tbody = document.getElementById('partiturasTableBody');
-            
-            if (!lista || lista.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">Nenhuma partitura encontrada</td></tr>';
+            select.innerHTML = '<option value="">-- Escolha uma imagem padrão --</option>' +
+                imagensPadrao.map(img => `<option value="${img.url}">${img.nome}</option>`).join('');
+        }
+
+        function selecionarImagemPadrao(url) {
+            if (!url) {
+                document.getElementById('imagemPreview').style.display = 'none';
+                imagemSelecionadaUrl = '';
                 return;
             }
 
-            tbody.innerHTML = lista.map(p => `
+            imagemSelecionadaUrl = url;
+            document.getElementById('previewImg').src = url;
+            document.getElementById('imagemPreview').style.display = 'block';
+
+            // Limpar os outros campos
+            document.getElementById('imagemFile').value = '';
+            document.getElementById('imagemUrl').value = '';
+
+            // Mostrar nome da imagem selecionada
+            const imgSelecionada = imagensPadrao.find(img => img.url === url);
+            const nomeEl = document.getElementById('imagemSelecionadaNome');
+            if (nomeEl && imgSelecionada) {
+                nomeEl.textContent = imgSelecionada.nome;
+            }
+        }
+
+        function previewImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagemPreview').style.display = 'block';
+                    document.getElementById('imagemSelecionadaNome').textContent = 'Upload: ' + file.name;
+                };
+                reader.readAsDataURL(file);
+
+                // Limpar seleção padrão
+                document.getElementById('imagemPadrao').value = '';
+                document.getElementById('imagemUrl').value = '';
+                imagemSelecionadaUrl = '';
+            }
+        }
+
+        function previewImageUrl(url) {
+            if (url) {
+                document.getElementById('previewImg').src = url;
+                document.getElementById('imagemPreview').style.display = 'block';
+                document.getElementById('imagemSelecionadaNome').textContent = 'URL personalizada';
+
+                // Limpar outros campos
+                document.getElementById('imagemPadrao').value = '';
+                document.getElementById('imagemFile').value = '';
+                imagemSelecionadaUrl = '';
+            }
+        }
+
+        async function carregarPartituras() {
+            try {
+                const { data, error } = await client.from('partituras').select('*');
+                if (error) throw error;
+                partituras = data || [];
+                renderizarTabela(partituras);
+            } catch (erro) {
+                console.error('Erro:', erro);
+                document.getElementById('partiturasTableBody').innerHTML = 
+                    '<tr><td colspan="8" style="text-align:center;padding:40px;color:#e74c3c;">Erro: ' + erro.message + '</td></tr>';
+            }
+        }
+
+        async function carregarObrasExistentes() {
+            try {
+                const { data, error } = await client.from('partituras').select('obra');
+                if (error) throw error;
+                const obrasUnicas = [...new Set(data.map(p => p.obra).filter(o => o && o.trim() !== ''))];
+                document.getElementById('obrasExistentes').innerHTML = obrasUnicas.map(obra => `<option value="${obra}">`).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar obras:', erro);
+            }
+        }
+
+        async function carregarInstrumentosDoBanco() {
+            try {
+                const { data, error } = await client.from('instrumentos').select('*').eq('ativo', true).order('nome');
+                if (error) throw error;
+                instrumentosCadastrados = data || [];
+                return instrumentosCadastrados;
+            } catch (erro) {
+                console.error('Erro ao carregar instrumentos:', erro);
+                return [];
+            }
+        }
+
+        async function carregarInstrumentosExistentes() {
+            try {
+                const instrumentos = await carregarInstrumentosDoBanco();
+                const datalist = document.getElementById('instrumentosExistentes');
+                if (datalist) {
+                    datalist.innerHTML = instrumentos.map(inst => `<option value="${inst.nome}">`).join('');
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar instrumentos:', erro);
+            }
+        }
+
+        function openModalInstrumentos() {
+            document.getElementById('instrumentosModal').style.display = 'flex';
+            renderizarTabelaInstrumentos();
+        }
+
+        function closeModalInstrumentos() {
+            document.getElementById('instrumentosModal').style.display = 'none';
+            document.getElementById('novoInstrumento').value = '';
+        }
+
+        async function renderizarTabelaInstrumentos() {
+            const tbody = document.getElementById('instrumentosTableBody');
+            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;">Carregando...</td></tr>';
+            const instrumentos = await carregarInstrumentosDoBanco();
+            if (!instrumentos || instrumentos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;color:#999;">Nenhum instrumento cadastrado</td></tr>';
+                return;
+            }
+            tbody.innerHTML = instrumentos.map(inst => `
+                <tr>
+                    <td><strong>${inst.nome}</strong></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="action-btn action-delete" onclick="excluirInstrumento('${inst.id}', '${inst.nome}')" title="Excluir">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function adicionarInstrumento() {
+            const input = document.getElementById('novoInstrumento');
+            const nome = input.value.trim();
+            if (!nome) {
+                alert('Digite o nome do instrumento');
+                return;
+            }
+            try {
+                const { error } = await client.from('instrumentos').insert([{ nome: nome }]);
+                if (error) {
+                    if (error.code === '23505') {
+                        alert('Este instrumento já existe!');
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
+                alert('✅ Instrumento adicionado com sucesso!');
+                input.value = '';
+                renderizarTabelaInstrumentos();
+                carregarInstrumentosExistentes();
+                atualizarFiltroInstrumentosAdmin();
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('❌ Erro ao adicionar instrumento: ' + erro.message);
+            }
+        }
+
+        async function excluirInstrumento(id, nome) {
+            if (!confirm(`Tem certeza que deseja excluir "${nome}"?\n\nEsta ação não pode ser desfeita!`)) {
+                return;
+            }
+            try {
+                const { error } = await client.from('instrumentos').delete().eq('id', id);
+                if (error) throw error;
+                alert('✅ Instrumento excluído com sucesso!');
+                renderizarTabelaInstrumentos();
+                carregarInstrumentosExistentes();
+                atualizarFiltroInstrumentosAdmin();
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('❌ Erro ao excluir: ' + erro.message);
+            }
+        }
+
+        async function atualizarFiltroInstrumentosAdmin() {
+            const selectInstrumento = document.getElementById('instrumentoFilter');
+            if (!selectInstrumento) return;
+            const instrumentos = await carregarInstrumentosDoBanco();
+            const valorAtual = selectInstrumento.value;
+            selectInstrumento.innerHTML = '<option value="">Todos os instrumentos</option>' +
+                instrumentos.map(inst => `<option value="${inst.nome}">${inst.nome}</option>`).join('');
+            if (valorAtual) {
+                selectInstrumento.value = valorAtual;
+            }
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById('partiturasTableBody');
+            if (!lista || lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#999;">Nenhuma partitura encontrada</td></tr>';
+                return;
+            }
+            tbody.innerHTML = lista.map(p => {
+                const instVoz = [p.instrumento, p.voz].filter(Boolean).join(' - ');
+                return `
                 <tr>
                     <td>
                         <img src="${p.imagem_preview || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=100'}" 
-                             alt="${p.titulo}" 
-                             style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                             alt="${p.titulo}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
                     </td>
                     <td><strong>${p.titulo}</strong></td>
-                    <td><span class="table-badge badge-purple">${p.instrumento || '-'}</span></td>
+                    <td><span class="table-badge badge-purple">${p.tipo || '-'}</span></td>
+                    <td>${p.obra || '-'}</td>
+                    <td>${instVoz || '-'}</td>
                     <td>${p.preco > 0 ? 'R$ ' + parseFloat(p.preco).toFixed(2) : 'Gratuito'}</td>
                     <td><span class="status-badge ${p.status === 'Publicado' ? 'status-published' : 'status-draft'}">${p.status || 'Rascunho'}</span></td>
                     <td>
@@ -311,18 +568,21 @@ function previewImage(event) {
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function openModal() {
             editandoId = null;
             document.getElementById('partituraForm').reset();
-            document.getElementById('imagemPreview').style.display = 'none'; // ✅ ADICIONE ESTA LINHA
+            document.getElementById('imagemPreview').style.display = 'none';
             document.getElementById('modalTitle').textContent = 'Nova Partitura';
             document.getElementById('btnSalvar').textContent = 'Salvar Partitura';
             document.getElementById('preco').value = '0.00';
             document.getElementById('status').value = 'Publicado';
             document.getElementById('partituraModal').style.display = 'flex';
+            carregarObrasExistentes();
+            carregarInstrumentosExistentes();
         }
 
         function closeModal() {
@@ -335,18 +595,23 @@ function previewImage(event) {
             try {
                 const partitura = partituras.find(p => p.id === id);
                 if (!partitura) return;
-
                 editandoId = id;
-                
-                document.getElementById('titulo').value = partitura.titulo || '';
+                document.getElementById('tipo').value = partitura.tipo || '';
+                document.getElementById('obra').value = partitura.obra || '';
                 document.getElementById('instrumento').value = partitura.instrumento || '';
+                document.getElementById('voz').value = partitura.voz || '';
+                document.getElementById('titulo').value = partitura.titulo || '';
                 document.getElementById('preco').value = partitura.preco || '0.00';
                 document.getElementById('descricao').value = partitura.descricao || '';
                 document.getElementById('detalhes').value = partitura.detalhes || '';
                 document.getElementById('linkCompra').value = partitura.link_compra || '';
-                document.getElementById('imagemPreview').value = partitura.imagem_preview || '';
                 document.getElementById('status').value = partitura.status || 'Publicado';
-
+                if (partitura.imagem_preview) {
+                    document.getElementById('previewImg').src = partitura.imagem_preview;
+                    document.getElementById('imagemPreview').style.display = 'block';
+                }
+                carregarObrasExistentes();
+                carregarInstrumentosExistentes();
                 document.getElementById('modalTitle').textContent = 'Editar Partitura';
                 document.getElementById('btnSalvar').textContent = 'Atualizar Partitura';
                 document.getElementById('partituraModal').style.display = 'flex';
@@ -358,74 +623,67 @@ function previewImage(event) {
 
         async function salvarPartitura(event) {
             event.preventDefault();
+            let imagemUrl = '';
+            const fileInput = document.getElementById('imagemFile');
+            const urlInput = document.getElementById('imagemUrl').value;
+            const imagemPadraoSelect = document.getElementById('imagemPadrao').value;
 
-           // Upload da imagem se houver
-let imagemUrl = '';
-const fileInput = document.getElementById('imagemFile');
-const urlInput = document.getElementById('imagemUrl').value;
+            // Prioridade: 1. Upload, 2. URL digitada, 3. Imagem padrão, 4. Manter atual (edição), 5. Padrão do sistema
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+                try {
+                    const { data: uploadData, error: uploadError } = await client.storage
+                        .from('partituras-imagens')
+                        .upload(fileName, file, {
+                            cacheControl: '3600',
+                            upsert: false
+                        });
+                    if (uploadError) {
+                        alert('❌ Erro ao fazer upload: ' + uploadError.message);
+                        return;
+                    }
+                    const { data: { publicUrl } } = client.storage.from('partituras-imagens').getPublicUrl(fileName);
+                    imagemUrl = publicUrl;
+                } catch (err) {
+                    alert('❌ Erro no upload da imagem. Tente usar a URL ao invés de upload.');
+                    return;
+                }
+            } else if (urlInput) {
+                imagemUrl = urlInput;
+            } else if (imagemPadraoSelect) {
+                imagemUrl = imagemPadraoSelect;
+            } else if (editandoId) {
+                const partituraAtual = partituras.find(p => p.id === editandoId);
+                imagemUrl = partituraAtual?.imagem_preview || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=800';
+            } else {
+                imagemUrl = 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=800';
+            }
 
-if (fileInput.files && fileInput.files[0]) {
-    // Fazer upload da imagem
-    const file = fileInput.files[0];
-    const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-    
-    const { data: uploadData, error: uploadError } = await client.storage
-        .from('partituras-imagens')
-        .upload(fileName, file);
-    
-    if (uploadError) {
-        console.error('Erro ao fazer upload:', uploadError);
-        alert('❌ Erro ao fazer upload da imagem: ' + uploadError.message);
-        return;
-    }
-    
-    const { data: { publicUrl } } = client.storage
-        .from('partituras-imagens')
-        .getPublicUrl(fileName);
-    
-    imagemUrl = publicUrl;
-} else if (urlInput) {
-    // Usar URL informada
-    imagemUrl = urlInput;
-} else if (editandoId) {
-    // Manter imagem atual ao editar
-    const partituraAtual = partituras.find(p => p.id === editandoId);
-    imagemUrl = partituraAtual?.imagem_preview || 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=800';
-} else {
-    // Imagem padrão
-    imagemUrl = 'https://images.unsplash.com/photo-1552422535-c45813c61732?w=800';
-}
-
-const dados = {
-    titulo: document.getElementById('titulo').value,
-    instrumento: document.getElementById('instrumento').value,
-    preco: parseFloat(document.getElementById('preco').value) || 0,
-    descricao: document.getElementById('descricao').value,
-    detalhes: document.getElementById('detalhes').value,
-    link_compra: document.getElementById('linkCompra').value,
-    imagem_preview: imagemUrl,
-    status: document.getElementById('status').value
-};
-
+            const dados = {
+                tipo: document.getElementById('tipo').value,
+                obra: document.getElementById('obra').value,
+                instrumento: document.getElementById('instrumento').value,
+                voz: document.getElementById('voz').value || null,
+                titulo: document.getElementById('titulo').value,
+                preco: parseFloat(document.getElementById('preco').value) || 0,
+                descricao: document.getElementById('descricao').value,
+                detalhes: document.getElementById('detalhes').value || null,
+                link_compra: document.getElementById('linkCompra').value || null,
+                imagem_preview: imagemUrl,
+                status: document.getElementById('status').value
+            };
 
             try {
                 if (editandoId) {
-                    const { error } = await client
-                        .from('partituras')
-                        .update(dados)
-                        .eq('id', editandoId);
-
+                    const { error } = await client.from('partituras').update(dados).eq('id', editandoId);
                     if (error) throw error;
                     alert('✅ Partitura atualizada com sucesso!');
                 } else {
-                    const { error } = await client
-                        .from('partituras')
-                        .insert([dados]);
-
+                    const { error } = await client.from('partituras').insert([dados]);
                     if (error) throw error;
                     alert('✅ Partitura criada com sucesso!');
                 }
-
                 closeModal();
                 carregarPartituras();
             } catch (erro) {
@@ -438,15 +696,9 @@ const dados = {
             if (!confirm(`Tem certeza que deseja excluir "${titulo}"?\n\nEsta ação não pode ser desfeita!`)) {
                 return;
             }
-
             try {
-                const { error } = await client
-                    .from('partituras')
-                    .delete()
-                    .eq('id', id);
-
+                const { error } = await client.from('partituras').delete().eq('id', id);
                 if (error) throw error;
-
                 alert('✅ Partitura excluída com sucesso!');
                 carregarPartituras();
             } catch (erro) {
@@ -455,32 +707,47 @@ const dados = {
             }
         }
 
-        // BUSCA
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const busca = e.target.value.toLowerCase();
             const filtrados = partituras.filter(p => 
-                p.titulo.toLowerCase().includes(busca) ||
+                (p.titulo && p.titulo.toLowerCase().includes(busca)) ||
+                (p.obra && p.obra.toLowerCase().includes(busca)) ||
                 (p.instrumento && p.instrumento.toLowerCase().includes(busca))
             );
             renderizarTabela(filtrados);
         });
 
-        // FILTRO INSTRUMENTO
-        document.getElementById('instrumentoFilter').addEventListener('change', function(e) {
-            const instrumento = e.target.value;
-            const filtrados = instrumento ? partituras.filter(p => p.instrumento === instrumento) : partituras;
-            renderizarTabela(filtrados);
-        });
+        document.getElementById('tipoFilter').addEventListener('change', aplicarFiltros);
+        document.getElementById('instrumentoFilter').addEventListener('change', aplicarFiltros);
 
-        // FECHAR MODAL AO CLICAR FORA
+        function aplicarFiltros() {
+            const tipo = document.getElementById('tipoFilter').value;
+            const instrumento = document.getElementById('instrumentoFilter').value;
+            let filtrados = [...partituras];
+            if (tipo) {
+                filtrados = filtrados.filter(p => p.tipo === tipo);
+            }
+            if (instrumento) {
+                filtrados = filtrados.filter(p => p.instrumento === instrumento);
+            }
+            renderizarTabela(filtrados);
+        }
+
         window.onclick = function(event) {
             if (event.target == document.getElementById('partituraModal')) {
                 closeModal();
             }
+            if (event.target == document.getElementById('instrumentosModal')) {
+                closeModalInstrumentos();
+            }
         }
 
-        // INICIALIZAR
-        document.addEventListener('DOMContentLoaded', carregarPartituras);
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPartituras();
+            atualizarFiltroInstrumentosAdmin();
+            carregarImagensPadrao();
+        });
     </script>
 </body>
 </html>
+

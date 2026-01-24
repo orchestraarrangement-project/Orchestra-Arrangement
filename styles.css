@@ -6,13 +6,13 @@
 }
 
 :root {
-    --primary-color: #4a4a7e;
-    --primary-dark: #3a3a6e;
-    --primary-light: #5a5a8e;
+    --primary-color: #1a1a2e;
+    --primary-dark: #1a1a2e;
+    --primary-light: #1a1a2e;
     --accent-color: #f4c430;
     --text-dark: #2d2d3d;
-    --text-gray: #666;
-    --text-light: #999;
+    --text-gray: #f8f9fa
+    --text-light: #f8f9fa
     --bg-light: #f8f9fa;
     --white: #ffffff;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -455,7 +455,9 @@ section {
     justify-content: space-between;
     align-items: center;
     padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #edeef0;
+    b
+
 }
 
 .card-duration {
@@ -891,4 +893,24 @@ section {
 
 .course-meta-item {
     color: var(--white) !important;
+}
+
+
+.btn-link-purple {
+    background: none;
+    border: none;
+    color: #4a4a7e;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.btn-link-purple:hover {
+    background: rgba(74, 74, 126, 0.08);
 }

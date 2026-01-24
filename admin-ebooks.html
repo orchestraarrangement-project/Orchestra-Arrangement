@@ -196,21 +196,34 @@
                         <small style="color:#666;font-size:12px;">Cole o link do Kiwify para pagamento</small>
                     </div>
 
-                   <div class="form-group">
-                    <label class="form-label">Imagem de Capa*</label>
-                    <input type="file" id="imagemFile" class="form-input" accept="image/*" onchange="previewImage(event)">
-                    <small style="color:#666;font-size:12px;">Selecione uma imagem JPG, PNG ou WEBP</small>
-                    
-                    <div id="imagemPreview" style="margin-top:16px;display:none;">
-                        <img id="previewImg" style="max-width:200px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-                    </div>
-                </div>
+                   <div style="background:#f0f4f8;padding:20px;border-radius:12px;margin-bottom:16px;">
+                        <h3 style="font-size:16px;font-weight:600;margin-bottom:16px;color:#4a4a7e;">🖼️ Imagem de Capa</h3>
 
-                <div class="form-group">
-                    <label class="form-label">OU cole a URL da imagem</label>
-                    <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg">
-                    <small style="color:#666;font-size:12px;">Se preferir, cole uma URL ao invés de fazer upload</small>
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">Selecionar Imagem Padrão</label>
+                            <select id="imagemPadrao" class="form-input" onchange="selecionarImagemPadrao(this.value)">
+                                <option value="">-- Escolha uma imagem padrão --</option>
+                            </select>
+                            <small style="color:#666;font-size:12px;">Selecione uma das imagens padrão cadastradas</small>
+                        </div>
+
+                        <div id="imagemPreview" style="margin-top:16px;display:none;text-align:center;">
+                            <img id="previewImg" style="max-width:200px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                            <p style="margin-top:8px;font-size:12px;color:#666;" id="imagemSelecionadaNome"></p>
+                        </div>
+
+                        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed #ccc;">
+                            <p style="font-size:13px;color:#888;margin-bottom:12px;">Ou use uma imagem personalizada:</p>
+                            <div class="form-group">
+                                <label class="form-label">Upload de arquivo</label>
+                                <input type="file" id="imagemFile" class="form-input" accept="image/*" onchange="previewImageUpload(event)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">OU cole a URL da imagem</label>
+                                <input type="url" id="imagemUrl" class="form-input" placeholder="https://exemplo.com/imagem.jpg" onchange="previewImageUrl(this.value)">
+                            </div>
+                        </div>
+                    </div>
 
 
                     <div class="form-group">
@@ -236,6 +249,90 @@
 
             let ebooks = [];
             let editandoId = null;
+            let imagensPadrao = [];
+            let imagemSelecionadaUrl = '';
+
+            // ========== FUNÇÕES DE IMAGEM PADRÃO ==========
+
+            async function carregarImagensPadrao() {
+                try {
+                    const { data, error } = await client
+                        .from('imagens_padrao')
+                        .select('*')
+                        .eq('ativo', true)
+                        .eq('tipo', 'ebook')
+                        .order('nome');
+
+                    if (error) throw error;
+                    imagensPadrao = data || [];
+                    atualizarSelectImagensPadrao();
+                } catch (erro) {
+                    console.error('Erro ao carregar imagens padrão:', erro);
+                    imagensPadrao = [];
+                }
+            }
+
+            function atualizarSelectImagensPadrao() {
+                const select = document.getElementById('imagemPadrao');
+                if (!select) return;
+
+                select.innerHTML = '<option value="">-- Escolha uma imagem padrão --</option>' +
+                    imagensPadrao.map(img => `<option value="${img.url}">${img.nome}</option>`).join('');
+            }
+
+            function selecionarImagemPadrao(url) {
+                if (!url) {
+                    document.getElementById('imagemPreview').style.display = 'none';
+                    imagemSelecionadaUrl = '';
+                    return;
+                }
+
+                imagemSelecionadaUrl = url;
+                document.getElementById('previewImg').src = url;
+                document.getElementById('imagemPreview').style.display = 'block';
+
+                // Limpar os outros campos
+                document.getElementById('imagemFile').value = '';
+                document.getElementById('imagemUrl').value = '';
+
+                // Mostrar nome da imagem selecionada
+                const imgSelecionada = imagensPadrao.find(img => img.url === url);
+                const nomeEl = document.getElementById('imagemSelecionadaNome');
+                if (nomeEl && imgSelecionada) {
+                    nomeEl.textContent = imgSelecionada.nome;
+                }
+            }
+
+            function previewImageUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('previewImg').src = e.target.result;
+                        document.getElementById('imagemPreview').style.display = 'block';
+                        document.getElementById('imagemSelecionadaNome').textContent = 'Upload: ' + file.name;
+                    };
+                    reader.readAsDataURL(file);
+
+                    // Limpar seleção padrão
+                    document.getElementById('imagemPadrao').value = '';
+                    document.getElementById('imagemUrl').value = '';
+                    imagemSelecionadaUrl = '';
+                }
+            }
+
+            function previewImageUrl(url) {
+                if (url) {
+                    document.getElementById('previewImg').src = url;
+                    document.getElementById('imagemPreview').style.display = 'block';
+                    document.getElementById('imagemSelecionadaNome').textContent = 'URL personalizada';
+
+                    // Limpar outros campos
+                    document.getElementById('imagemPadrao').value = '';
+                    document.getElementById('imagemFile').value = '';
+                    imagemSelecionadaUrl = '';
+                }
+            }
 
           async function carregarEbooks() {
     try {
@@ -338,20 +435,6 @@
                 }
             }
 
-            // Preview da imagem antes do upload
-                function previewImage(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            document.getElementById('previewImg').src = e.target.result;
-                            document.getElementById('imagemPreview').style.display = 'block';
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                }
-
-
          async function salvarEbook(event) {
     event.preventDefault();
 
@@ -360,30 +443,35 @@
         let imagemUrl = '';
         const fileInput = document.getElementById('imagemFile');
         const urlInput = document.getElementById('imagemUrl').value;
+        const imagemPadraoSelect = document.getElementById('imagemPadrao').value;
 
+        // Prioridade: 1. Upload, 2. URL digitada, 3. Imagem padrão, 4. Manter atual (edição), 5. Padrão do sistema
         if (fileInput && fileInput.files && fileInput.files[0]) {
             // Fazer upload da imagem
             const file = fileInput.files[0];
             const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-            
+
             const { data: uploadData, error: uploadError } = await client.storage
                 .from('ebooks-imagens')
                 .upload(fileName, file);
-            
+
             if (uploadError) {
                 console.error('Erro ao fazer upload:', uploadError);
                 alert('❌ Erro ao fazer upload da imagem: ' + uploadError.message);
                 return;
             }
-            
+
             const { data: { publicUrl } } = client.storage
                 .from('ebooks-imagens')
                 .getPublicUrl(fileName);
-            
+
             imagemUrl = publicUrl;
         } else if (urlInput) {
             // Usar URL informada
             imagemUrl = urlInput;
+        } else if (imagemPadraoSelect) {
+            // Usar imagem padrão selecionada
+            imagemUrl = imagemPadraoSelect;
         } else if (editandoId) {
             // Manter imagem atual ao editar
             const ebookAtual = ebooks.find(e => e.id === editandoId);
@@ -477,7 +565,10 @@
             }
 
             // INICIALIZAR
-            document.addEventListener('DOMContentLoaded', carregarEbooks);
+            document.addEventListener('DOMContentLoaded', () => {
+                carregarEbooks();
+                carregarImagensPadrao();
+            });
         </script>
     </body>
     </html>
